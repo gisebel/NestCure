@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,7 +9,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
+  /*@override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NestCure',
@@ -21,6 +22,18 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Home'),
+    );
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Login Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: LoginPage(), // Utiliza LoginPage como la página de inicio
     );
   }
 }
