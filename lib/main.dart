@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
           background: const Color.fromARGB(255, 255, 251, 245),
           primary: const Color.fromARGB(255, 255, 251, 245),
         ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontSize: 17),
+        ),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Home'),

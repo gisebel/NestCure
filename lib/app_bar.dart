@@ -25,7 +25,7 @@ AppBar customAppBar(BuildContext context) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) {
-                  return const ProfileWidget();
+                  return ProfileWidget();
                 },
               ),
             );
@@ -81,7 +81,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return const ProfileWidget();
+                  return ProfileWidget();
                 }),
               );
             },
