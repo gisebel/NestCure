@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/main.dart';
 import 'package:nestcure/profile.dart';
+import 'package:nestcure/validate_certificate.dart';
+import 'package:nestcure/list_certificates.dart';
 
 AppBar customAppBar(BuildContext context) {
   return AppBar(
@@ -82,6 +84,32 @@ class NavigationDrawerWidget extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
                   return ProfileWidget();
+                }),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.upload_file),
+            title: const Text('Valida Certificat'),
+            onTap: () {
+              Navigator.pop(context);
+
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return const ValidateCertificate();
+                }),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text('Els Meus Certificats'),
+            onTap: () {
+              Navigator.pop(context);
+
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return const ListCertificates();
                 }),
               );
             },

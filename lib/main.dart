@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/profile.dart';
+import 'package:nestcure/validate_certificate.dart';
+import 'package:nestcure/list_certificates.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,10 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title),
-      ),
+      appBar: customAppBar(context),
       drawer: const NavigationDrawerWidget(),
       body: Center(
         child: Column(
