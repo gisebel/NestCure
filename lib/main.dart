@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
-import 'package:nestcure/profile.dart';
-import 'package:nestcure/validate_certificate.dart';
-import 'package:nestcure/list_certificates.dart';
+import 'package:nestcure/certificate_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,20 +12,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NestCure',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 251, 245),
-          background: const Color.fromARGB(255, 255, 251, 245),
-          primary: const Color.fromARGB(255, 255, 251, 245),
+    return ChangeNotifierProvider(
+      create: (context) => CertificateProvider(),
+      child: MaterialApp(
+        title: 'NestCure',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 255, 251, 245),
+            surface: const Color.fromARGB(255, 255, 251, 245),
+            primary: const Color.fromARGB(255, 255, 251, 245),
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(fontSize: 17),
+          ),
+          useMaterial3: true,
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontSize: 17),
-        ),
-        useMaterial3: true,
+        home: const MyHomePage(title: 'Home'),
       ),
-      home: const MyHomePage(title: 'Home'),
     );
   }
 }
