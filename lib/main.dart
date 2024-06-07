@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/certificate_provider.dart';
+import 'package:nestcure/validate_certificate.dart';
+import 'package:nestcure/list_certificates.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +30,10 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const MyHomePage(title: 'Home'),
+        routes: {
+          '/validate': (context) => const ValidateCertificate(),
+          '/list': (context) => const ListCertificates(),
+        },
       ),
     );
   }
@@ -74,6 +80,18 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/list');
+          },
+          child: const Text('Ir a la Lista de Certificados'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green.shade200,
+          ),
+        ),
       ),
     );
   }

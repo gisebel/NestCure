@@ -4,8 +4,15 @@ import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ListCertificates extends StatelessWidget {
+class ListCertificates extends StatefulWidget {
   const ListCertificates({super.key});
+
+  @override
+  _ListCertificatesState createState() => _ListCertificatesState();
+}
+
+class _ListCertificatesState extends State<ListCertificates> {
+  int? _selectedIndex;
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
@@ -18,48 +25,48 @@ class ListCertificates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Lista hard-coded de certificados
-    final List<Certificate> hardCodedCertificates = [
-      Certificate(
-        name: 'Certificado primeros auxilios',
-        description: 'Certificado de primeros auxilios por parte de Desarrolo ING',
-        fileUrl: 'https://ipfsgw.vottun.tech/ipfs/bafkreicg4p6wh7tmc5t7vt36e6qlaouvrbzjsz63lznvguuupdoegfz7t4',
-      ),
-      Certificate(
-        name: 'Certificado 2',
-        description: 'Descripción del Certificado 2',
-        fileUrl: 'https://ejemplo.com/archivo2.pdf',
-      ),
-      Certificate(
-        name: 'Certificado 3',
-        description: 'Descripción del Certificado 3',
-        fileUrl: 'https://ejemplo.com/archivo3.pdf',
-      ),
-    ];
+    final certificateProvider = Provider.of<CertificateProvider>(context);
+    final certificates = certificateProvider.certificates;
 
     return Scaffold(
       appBar: customAppBar(context),
       drawer: const NavigationDrawerWidget(),
       body: ListView.builder(
-        itemCount: hardCodedCertificates.length,
+        itemCount: certificates.length,
         itemBuilder: (context, index) {
-          final certificate = hardCodedCertificates[index];
+          final certificate = certificates[index];
           return ExpansionTile(
-            leading: const Icon(Icons.book),
-            title: Text(certificate.name),
+            leading: Icon(
+              Icons.book,
+              color: _selectedIndex == index ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              certificate.name,
+              textAlign: TextAlign.left,
+            ),
+            onExpansionChanged: (expanded) {
+              setState(() {
+                _selectedIndex = expanded ? index : null;
+              });
+            },
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Nom: ${certificate.name}"),
-                    Text("Descripció: ${certificate.description}"),
+                    Text(
+                      certificate.description, // Agrega la descripción del certificado aquí
+                      textAlign: TextAlign.left, // Alinea el texto a la izquierda
+                    ),
                     TextButton(
                       onPressed: () {
                         _launchURL(certificate.fileUrl);
                       },
-                      child: const Text("Obrir Fitxer"),
+                      child: const Text(
+                        "Obrir Fitxer",
+                        style: TextStyle(color: Colors.blue),
+                      ),
                     ),
                   ],
                 ),
