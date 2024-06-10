@@ -33,6 +33,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
+  // Lista de correos electrónicos registrados
+  List<String> _registeredEmails = [];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -158,9 +160,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, 
+                      backgroundColor: Color.fromRGBO(255, 102, 102, 1),
                     ),
-                    child: Text('Cancelar'),
+                    child: Text('Cancel·lar'),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -171,12 +173,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       String experienciaPrevia = _experienciaPreviaController.text;
                       bool esCuidadorPersonal = _esCuidadorPersonal;
 
-                      if (nomCognoms.isNotEmpty &&
+                      if (_registeredEmails.contains(correu)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Aquest correu electrònic ja està registrat')),
+                        );
+                      } else if (nomCognoms.isNotEmpty &&
                           dataNaixement != null &&
                           correu.isNotEmpty &&
                           contrasena.isNotEmpty) {
+                        _registeredEmails.add(correu);
+
                         print(
                             'Registre correcte: $nomCognoms, $dataNaixement, $correu, $esCuidadorPersonal, $experienciaPrevia');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Usuari registrat correctament')),
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Has de completar tots els camps')),
