@@ -30,7 +30,7 @@ class _ListCertificatesState extends State<ListCertificates> {
       Certificate(
         name: 'Certificado negativo de delitos penales',
         description: 'Certificado negativo de delitos penales por parte del Ministerio de Justicia',
-        fileUrl: 'https://ipfsgw.vottun.tech/ipfs/bafybeigfi3j5nnxqetgfp4pelcpyx3om5xh5cuviiqys43xznzdxv2oh4e',
+        fileUrl: 'https://ipfsgw.vottun.tech/ipfs/bafkreigzswrxu4m2asy27xmqsarv3cmwfcesluq6bmldtbsjn5omrxgxnm',
       ),
       Certificate(
         name: 'Certificado de expedición de titulo oficial',
