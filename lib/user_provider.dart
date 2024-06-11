@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nestcure/login.dart';
+
+import 'usuari.dart';
 
 class UserProvider extends ChangeNotifier {
   Usuari? _usuari;
