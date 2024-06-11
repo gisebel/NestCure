@@ -35,7 +35,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 87, 133, 1),
         size: 28,
       ),
-      page: Container(),
+      page: const Scaffold(),
     ),
     ProfileItem(
       name: "Certificats",
@@ -44,7 +44,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 87, 133, 1),
         size: 28,
       ),
-      page: Container(),
+      page: const Scaffold(),
     ),
     ProfileItem(
       name: "Tasques i hores dedicades",
@@ -53,7 +53,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
-      page: Container(),
+      page: const Scaffold(),
     ),
     ProfileItem(
       name: "Resgistre d'activitats",
@@ -62,7 +62,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
-      page: Container(),
+      page: const Scaffold(),
     ),
   ];
 
@@ -85,7 +85,7 @@ class ProfileWidget extends StatelessWidget {
                 width: 150,
                 height: 150,
                 color: Colors.transparent,
-                child: Image.asset('images/logo.jpg'),
+                child: Image.asset('images/avatar.png'),
               ),
             ),
             const SizedBox(
