@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
 import 'usuari.dart';
+import 'package:nestcure/logged_user.dart';
+import 'package:nestcure/main.dart';
 
 class LoginPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -62,6 +64,14 @@ class LoginPage extends StatelessWidget {
                       // Verifica si las credenciales ingresadas coinciden con el usuari hardcodeado
                       if (usuariIngresado == usuariHardcodeado.correu &&
                           contrasenaIngresada == usuariHardcodeado.contrasena) {
+                        LoggedUsuari().login(usuariHardcodeado);
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const MyHomePage();
+                            },
+                          ),
+                        );
                         print('Inici de sessió exitós');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +96,8 @@ class LoginPage extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => RegisterPage()),
+                            MaterialPageRoute(
+                                builder: (context) => RegisterPage()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
