@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/user_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
@@ -79,27 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(context),
+      appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      body: Container(),
+      /*
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
@@ -112,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+      */
     );
   }
 }

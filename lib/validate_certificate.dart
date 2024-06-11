@@ -94,7 +94,7 @@ class _ValidateCertificateState extends State<ValidateCertificate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(context),
+      appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

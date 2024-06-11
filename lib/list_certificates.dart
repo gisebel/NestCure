@@ -25,11 +25,25 @@ class _ListCertificatesState extends State<ListCertificates> {
 
   @override
   Widget build(BuildContext context) {
+    // Lista hard-coded de certificados
+    final List<Certificate> hardCodedCertificates = [
+      Certificate(
+        name: 'Certificado negativo de delitos penales',
+        description: 'Certificado negativo de delitos penales por parte del Ministerio de Justicia',
+        fileUrl: 'https://ipfsgw.vottun.tech/ipfs/bafybeigfi3j5nnxqetgfp4pelcpyx3om5xh5cuviiqys43xznzdxv2oh4e',
+      ),
+      Certificate(
+        name: 'Certificado de expedición de titulo oficial',
+        description: 'Certificado de expedición de titulo oficial por parte de la Universidad de Castilla y la Mancha',
+        fileUrl: 'https://ipfsgw.vottun.tech/ipfs/bafkreif5sxr5q6yazf27rw25hz4z524optyja3kquryq3knpb2phept2ma',
+      ),
+    ];
+
     final certificateProvider = Provider.of<CertificateProvider>(context);
-    final certificates = certificateProvider.certificates;
+    final certificates = hardCodedCertificates + certificateProvider.certificates;
 
     return Scaffold(
-      appBar: customAppBar(context),
+      appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),
       body: ListView.builder(
         itemCount: certificates.length,
@@ -56,8 +70,8 @@ class _ListCertificatesState extends State<ListCertificates> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      certificate.description, // Agrega la descripción del certificado aquí
-                      textAlign: TextAlign.left, // Alinea el texto a la izquierda
+                      certificate.description,
+                      textAlign: TextAlign.left,
                     ),
                     TextButton(
                       onPressed: () {
