@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'NestCure',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 255, 251, 245),
+            seedColor: const Color.fromRGBO(45, 88, 133, 1),
             background: const Color.fromARGB(255, 255, 251, 245),
           ),
           textTheme: const TextTheme(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nestcure/addPersonaDependent.dart';
+import 'package:nestcure/add_persona_dependent.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
