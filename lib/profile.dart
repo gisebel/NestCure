@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/logged_user.dart';
+import 'package:nestcure/user_information.dart';
 
 class ProfileItem {
   final String name;
   final Icon icon;
+  final Widget page;
 
   ProfileItem({
     required this.name,
     required this.icon,
+    required this.page,
   });
 }
 
@@ -22,6 +26,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 87, 133, 1),
         size: 28,
       ),
+      page: const UserInformationWidget(),
     ),
     ProfileItem(
       name: "Notificacions",
@@ -30,6 +35,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 87, 133, 1),
         size: 28,
       ),
+      page: Container(),
     ),
     ProfileItem(
       name: "Certificats",
@@ -38,6 +44,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 87, 133, 1),
         size: 28,
       ),
+      page: Container(),
     ),
     ProfileItem(
       name: "Tasques i hores dedicades",
@@ -46,6 +53,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
+      page: Container(),
     ),
     ProfileItem(
       name: "Resgistre d'activitats",
@@ -54,13 +62,17 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
+      page: Container(),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    var loggedUser = LoggedUsuari();
+    var user = loggedUser.usuari;
+
     return Scaffold(
-      appBar: customAppBar(context),
+      appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),
       body: Center(
         child: Column(
@@ -80,7 +92,7 @@ class ProfileWidget extends StatelessWidget {
               height: 8.0,
             ),
             Text(
-              'NOM COGNOM',
+              user.nomCognoms,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(
@@ -95,7 +107,13 @@ class ProfileWidget extends StatelessWidget {
                     contentPadding: const EdgeInsets.only(left: 30),
                     title: Text(profileItems[index].name),
                     leading: profileItems[index].icon,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) {
+                          return profileItems[index].page;
+                        }),
+                      );
+                    },
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) =>

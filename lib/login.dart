@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nestcure/logged_user.dart';
+import 'package:nestcure/main.dart';
+import 'package:nestcure/persona_dependent.dart';
 
 class Usuari {
   final String nomCognoms;
@@ -7,6 +10,8 @@ class Usuari {
   final String contrasena;
   final bool esCuidadorPersonal;
   final String descripcio;
+  final String fotoPerfil = 'images/avatar.png';
+  final List<PersonaDependent> personesDependents;
 
   Usuari({
     required this.nomCognoms,
@@ -15,6 +20,7 @@ class Usuari {
     required this.contrasena,
     required this.esCuidadorPersonal,
     required this.descripcio,
+    required this.personesDependents,
   });
 }
 
@@ -26,6 +32,18 @@ class LoginPage extends StatelessWidget {
     contrasena: '12345',
     esCuidadorPersonal: false,
     descripcio: 'Usuari hardcodeado',
+    personesDependents: [
+      PersonaDependent(
+        nom: 'Paco Martinez',
+        descripcio: 'Persona amb discapacitat física',
+        depenDe: 'Gisela Beltran',
+      ),
+      PersonaDependent(
+        nom: 'Carme Diaz',
+        descripcio: 'Necessita més atenció per les matinades',
+        depenDe: 'Gisela Beltran',
+      ),
+    ],
   );
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -87,6 +105,14 @@ class LoginPage extends StatelessWidget {
                       // Verifica si las credenciales ingresadas coinciden con el usuari hardcodeado
                       if (usuariIngresado == usuariHardcodeado.correu &&
                           contrasenaIngresada == usuariHardcodeado.contrasena) {
+                        LoggedUsuari().login(usuariHardcodeado);
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const MyHomePage();
+                            },
+                          ),
+                        );
                         print('Inici de sessió exitós');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
