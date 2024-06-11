@@ -4,14 +4,14 @@ class LoggedUsuari {
   static final LoggedUsuari _instance = LoggedUsuari._internal();
 
   Usuari _usuari = Usuari(
-    nomCognoms: '',
-    dataNaixement: DateTime.now(),
-    correu: '',
-    contrasena: '',
-    esCuidadorPersonal: false,
-    descripcio: '',
-    personesDependents: [],
-  );
+      nomCognoms: '',
+      dataNaixement: DateTime.now(),
+      correu: '',
+      contrasena: '',
+      esCuidadorPersonal: false,
+      descripcio: '',
+      personesDependents: [],
+      activitats: {});
 
   LoggedUsuari._internal();
 
@@ -25,14 +25,14 @@ class LoggedUsuari {
 
   void logout() {
     _usuari = Usuari(
-      nomCognoms: '',
-      dataNaixement: DateTime.now(),
-      correu: '',
-      contrasena: '',
-      esCuidadorPersonal: false,
-      descripcio: '',
-      personesDependents: [],
-    );
+        nomCognoms: '',
+        dataNaixement: DateTime.now(),
+        correu: '',
+        contrasena: '',
+        esCuidadorPersonal: false,
+        descripcio: '',
+        personesDependents: [],
+        activitats: {});
   }
 
   Usuari get usuari => _usuari;
