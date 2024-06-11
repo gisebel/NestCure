@@ -1,33 +1,8 @@
 import 'package:flutter/material.dart';
-
-class Usuari {
-  final String nomCognoms;
-  final DateTime dataNaixement;
-  final String correu;
-  final String contrasena;
-  final bool esCuidadorPersonal;
-  final String descripcio;
-
-  Usuari({
-    required this.nomCognoms,
-    required this.dataNaixement,
-    required this.correu,
-    required this.contrasena,
-    required this.esCuidadorPersonal,
-    required this.descripcio,
-  });
-}
+import 'sign_in.dart';
+import 'usuari.dart';
 
 class LoginPage extends StatelessWidget {
-  final Usuari usuariHardcodeado = Usuari(
-    nomCognoms: 'Gisela Beltran',
-    dataNaixement: DateTime(2002, 5, 31),
-    correu: 'gisela@suara.com',
-    contrasena: '12345',
-    esCuidadorPersonal: false,
-    descripcio: 'Usuari hardcodeado',
-  );
-
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -91,7 +66,7 @@ class LoginPage extends StatelessWidget {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Usuari o contrasenya incorrecta'),
+                            content: Text('Usuari o contrasenya incorrectes'),
                           ),
                         );
                       }
@@ -109,7 +84,10 @@ class LoginPage extends StatelessWidget {
                       SizedBox(width: 10.0),
                       ElevatedButton(
                         onPressed: () {
-                          // Aquí puedes agregar la lógica para crear una cuenta nueva
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegisterPage()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromRGBO(255, 255, 251, 245),
