@@ -4,9 +4,17 @@ import 'package:nestcure/profile.dart';
 import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
 
-AppBar customAppBar(BuildContext context) {
+AppBar customAppBar(BuildContext context, bool canReturnBack) {
   return AppBar(
-    backgroundColor: Theme.of(context).colorScheme.primary,
+    backgroundColor: const Color.fromARGB(255, 255, 251, 245),
+    leading: canReturnBack
+        ? IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        : null,
     title: SizedBox(
       height: AppBar().preferredSize.height,
       child: Image.asset(
@@ -69,7 +77,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) {
-                    return const MyHomePage(title: 'Home');
+                    return const MyHomePage();
                   },
                 ),
               );

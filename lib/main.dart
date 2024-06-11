@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/login.dart';
+import 'package:nestcure/user_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
@@ -14,49 +17,65 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CertificateProvider(),
-      child: MaterialApp(
-        title: 'NestCure',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 255, 251, 245),
-            surface: const Color.fromARGB(255, 255, 251, 245),
-            primary: const Color.fromARGB(255, 255, 251, 245),
-          ),
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(fontSize: 17),
-          ),
-          useMaterial3: true,
+  
+    return  MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CertificateProvider(),
         ),
-        home: const MyHomePage(title: 'Home'),
-        routes: {
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
+        ),
+      ],
+      child: MaterialApp(
+          title: 'NestCure',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 255, 251, 245),
+              surface: const Color.fromARGB(255, 255, 251, 245),
+              ),
+            textTheme: const TextTheme(
+                bodyLarge: TextStyle(fontSize: 17),
+                titleMedium:
+                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            useMaterial3: true,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+          home: LoginPage(),
+          routes: {
           '/validate': (context) => const ValidateCertificate(),
           '/list': (context) => const ListCertificates(),
         },
       ),
     );
   }
+
+  /* @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Login Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: LoginPage(), // Utiliza LoginPage como la página de inicio
+        routes: {
+          '/validate': (context) => const ValidateCertificate(),
+          '/list': (context) => const ListCertificates(),
+        },
+      ),
+    );
+  }*/
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
