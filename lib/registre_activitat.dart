@@ -33,7 +33,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
     'Rehabilitació',
     'Compra',
     'Gestió',
-    'Activitat diaria',
+    'Activitat diària',
     'Altres',
   ];
 
@@ -64,8 +64,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
     }
 
     return Scaffold(
-      appBar: customAppBar(context, false),
-      drawer: const NavigationDrawerWidget(),
+      appBar: customAppBar(context, true),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
@@ -201,6 +200,27 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
+                          if (selectedPersonaCuidada == null ||
+                              _selectedDate == null ||
+                              selectedTipusActivitat == null ||
+                              _titolController.text.isEmpty ||
+                              _horesController.text.isEmpty ||
+                              _descripcioController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Omple tots els camps'),
+                              ),
+                            );
+                            return;
+                          }
+                          if (int.tryParse(_horesController.text) == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Les hores han de ser un número'),
+                              ),
+                            );
+                            return;
+                          }
                           user.activitats[selectedPersonaCuidada]!.add(
                             Activitat(
                               title: _titolController.text,
@@ -211,6 +231,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             ),
                           );
                           provider.setUsuari(user);
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           side:

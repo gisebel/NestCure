@@ -90,6 +90,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
                               depenDe: user.correu,
                             ),
                           );
+                          user.activitats[nom] = [];
                           provider.setUsuari(user);
                           Navigator.of(context).pop();
                         },

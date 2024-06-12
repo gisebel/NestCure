@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/llistat_activitats.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_information.dart';
 
@@ -62,7 +63,7 @@ class ProfileWidget extends StatelessWidget {
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
-      page: const Scaffold(),
+      page: const LlistaActivitats(),
     ),
   ];
 
