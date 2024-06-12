@@ -20,7 +20,8 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
     //var user = LoggedUsuari().usuari;
     var user = usuariHardcodeado;
     return Scaffold(
-      appBar: customAppBar(context, true),
+      appBar: customAppBar(context, false),
+      drawer: const NavigationDrawerWidget(),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return Center(

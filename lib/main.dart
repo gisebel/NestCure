@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(45, 88, 133, 1),
+            background: const Color.fromARGB(255, 255, 251, 245),
             surface: const Color.fromARGB(255, 255, 251, 245),
           ),
           textTheme: const TextTheme(

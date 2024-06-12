@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nestcure/llistat_activitats.dart';
 import 'package:nestcure/main.dart';
 import 'package:nestcure/profile.dart';
 import 'package:nestcure/validate_certificate.dart';
@@ -92,6 +93,19 @@ class NavigationDrawerWidget extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
                   return ProfileWidget();
+                }),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.content_paste_search),
+            title: const Text('Les Meves activitats'),
+            onTap: () {
+              Navigator.pop(context);
+
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return const LlistaActivitats();
                 }),
               );
             },
