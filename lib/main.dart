@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/user_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:nestcure/certificate_provider.dart';
+import 'package:nestcure/validate_certificate.dart';
+import 'package:nestcure/list_certificates.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +19,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) => CertificateProvider(),
+        ),
+        ChangeNotifierProvider(
           create: (_) => UserProvider(),
         ),
       ],
@@ -24,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(45, 88, 133, 1),
-            background: const Color.fromARGB(255, 255, 251, 245),
+            surface: const Color.fromARGB(255, 255, 251, 245),
           ),
           textTheme: const TextTheme(
               bodyLarge: TextStyle(fontSize: 17),
@@ -34,6 +40,10 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: LoginPage(),
+        routes: {
+          '/validate': (context) => const ValidateCertificate(),
+          '/list': (context) => const ListCertificates(),
+        },
       ),
     );
   }
@@ -47,6 +57,11 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginPage(), // Utiliza LoginPage como la página de inicio
+        routes: {
+          '/validate': (context) => const ValidateCertificate(),
+          '/list': (context) => const ListCertificates(),
+        },
+      ),
     );
   }*/
 }
@@ -65,6 +80,20 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),
       body: Container(),
+      /*
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/list');
+          },
+          child: const Text('Ir a la Lista de Certificados'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green.shade200,
+          ),
+        ),
+      ),
+      */
     );
   }
 }
