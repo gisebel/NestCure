@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nestcure/persona_dependent.dart';
 import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/login.dart';
@@ -6,7 +7,6 @@ import 'package:nestcure/user_provider.dart';
 import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
-import 'package:nestcure/persones_cuidades.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         home: LoginPage(),
         routes: {
           '/validate': (context) => const ValidateCertificate(),
-          '/list': (context) => PersonesCuidadesPage(),
+          '/list': (context) => const PersonesDependentsWidget(),
           '/list_certificates': (context) => const ListCertificates(),
           //'/list_certificates_provided': (context) => CertificateProvider(),
         },
@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () {
-                  //Navigator.pushNamed(context, '/list_certificates_provided');
+                  Navigator.pushNamed(context, '/validate');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),

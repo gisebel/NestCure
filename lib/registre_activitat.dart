@@ -4,7 +4,7 @@ import 'package:nestcure/activitat.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
-import 'package:nestcure/usuari.dart';
+//import 'package:nestcure/usuari.dart';
 import 'package:provider/provider.dart';
 
 class RegistreActivitatPage extends StatefulWidget {
@@ -42,20 +42,20 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dataController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _dataController.text = DateFormat('dd-MM-yyyy').format(picked);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //var user = LoggedUsuari().usuari;
-    var user = usuariHardcodeado;
+    var user = LoggedUsuari().usuari;
+    //var user = usuariHardcodeado;
 
     List<String> personesCuidades = [];
 
@@ -80,8 +80,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20.0),
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 30.0),
                 TextField(
                   controller: _titolController,
                   decoration: const InputDecoration(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nestcure/add_persona_dependent.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
@@ -9,11 +10,15 @@ class PersonaDependent {
   final String nom;
   final String descripcio;
   final String depenDe;
+  final String gender;
+  final DateTime dataNaixement;
 
   PersonaDependent({
     required this.nom,
     required this.descripcio,
     required this.depenDe,
+    required this.gender,
+    required this.dataNaixement,
   });
 }
 
@@ -66,11 +71,29 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                     child: ListView.builder(
                       itemCount: user.personesDependents.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(user.personesDependents[index].nom),
-                          subtitle:
-                              Text(user.personesDependents[index].descripcio),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                        var date = DateFormat('dd-MM-yyyy').format(
+                            user.personesDependents[index].dataNaixement);
+                        return Card(
+                          margin: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            leading: Icon(
+                                user.personesDependents[index].gender == 'Dona'
+                                    ? Icons.woman
+                                    : Icons.man,
+                                color: const Color.fromRGBO(45, 88, 133, 1)),
+                            title: Text(user.personesDependents[index].nom,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Data de naixement: $date'),
+                                const SizedBox(height: 4.0),
+                                Text(
+                                    'Descripció: ${user.personesDependents[index].descripcio}'),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     ),

@@ -4,7 +4,7 @@ import 'package:nestcure/llista_activitats_detall.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/registre_activitat.dart';
 import 'package:nestcure/user_provider.dart';
-import 'package:nestcure/usuari.dart';
+//simport 'package:nestcure/usuari.dart';
 import 'package:provider/provider.dart';
 
 class LlistaActivitats extends StatefulWidget {
@@ -17,8 +17,8 @@ class LlistaActivitats extends StatefulWidget {
 class _LlistaActivitatsState extends State<LlistaActivitats> {
   @override
   Widget build(BuildContext context) {
-    //var user = LoggedUsuari().usuari;
-    var user = usuariHardcodeado;
+    var user = LoggedUsuari().usuari;
+    //var user = usuariHardcodeado;
     return Scaffold(
       appBar: customAppBar(context, false),
       drawer: const NavigationDrawerWidget(),

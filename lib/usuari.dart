@@ -42,11 +42,15 @@ final Usuari usuariHardcodeado = Usuari(
         descripcio:
             'Amb problemes de desplaçament i necessita ajuda per les tasques de la casa',
         depenDe: 'Gisela Beltran',
+        gender: 'Home',
+        dataNaixement: DateTime(1949, 7, 15),
       ),
       PersonaDependent(
         nom: 'Carme Diaz',
         descripcio: 'Necessita més atenció per les matinades',
         depenDe: 'Gisela Beltran',
+        gender: 'Dona',
+        dataNaixement: DateTime(1950, 3, 12),
       ),
     ],
     activitats: {

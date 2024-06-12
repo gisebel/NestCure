@@ -31,18 +31,23 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                     fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16.0),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.activitats.length,
-                  itemBuilder: (context, index) {
-                    var activitat = widget.activitats[index];
-                    return ActivityCard(
-                      activitat: activitat,
-                    );
-                  },
-                ),
-              ),
+              widget.activitats.isEmpty
+                  ? const Text(
+                      'No hi ha activitats registrades.',
+                      style: TextStyle(fontSize: 15.0),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: widget.activitats.length,
+                        itemBuilder: (context, index) {
+                          var activitat = widget.activitats[index];
+                          return ActivityCard(
+                            activitat: activitat,
+                          );
+                        },
+                      ),
+                    ),
             ],
           ),
         );
