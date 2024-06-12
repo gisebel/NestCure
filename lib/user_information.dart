@@ -50,7 +50,8 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                 const Divider(),
                 ListTile(
                   title: const Text('Data de naixement'),
-                  subtitle: Text(user.dataNaixement.toString()),
+                  subtitle: Text(
+                      '${user.dataNaixement.day.toString()}-${user.dataNaixement.month.toString()}-${user.dataNaixement.year.toString()}'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                 ),
                 const Divider(),
