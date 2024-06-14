@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/llistat_activitats.dart';
 import 'package:nestcure/main.dart';
 import 'package:nestcure/profile.dart';
@@ -132,6 +133,19 @@ class NavigationDrawerWidget extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
                   return const ListCertificates();
+                }),
+              );
+            },
+          ),
+           ListTile(
+            leading: const Icon(Icons.quiz),
+            title: const Text('Tests de Coneixements'),
+            onTap: () {
+              Navigator.pop(context);
+
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return const KnowledgeTestsScreen();
                 }),
               );
             },

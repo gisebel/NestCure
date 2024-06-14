@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:provider/provider.dart';
 import 'package:nestcure/app_bar.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
           '/list': (context) => const PersonesDependentsWidget(),
           '/list_certificates': (context) => const ListCertificates(),
           //'/list_certificates_provided': (context) => CertificateProvider(),
+          '/knowledge_tests': (context) => const KnowledgeTestsScreen(),
         },
       ),
     );
@@ -149,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Aquí maneja la navegación para validar la experiencia
+                  Navigator.pushNamed(context, '/knowledge_tests');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
