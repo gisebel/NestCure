@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
-import 'usuari.dart';
+import 'user.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/main.dart';
 

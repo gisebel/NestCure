@@ -2,12 +2,12 @@ import 'package:nestcure/activitat.dart';
 import 'package:nestcure/persona_dependent.dart';
 
 class Usuari {
-  final String nomCognoms;
-  final DateTime dataNaixement;
-  final String correu;
-  final String contrasena;
-  final bool esCuidadorPersonal;
-  final String descripcio;
+  String nomCognoms;
+   DateTime dataNaixement;
+  String correu;
+  String contrasena;
+  bool esCuidadorPersonal;
+  String descripcio;
   final String fotoPerfil = 'images/avatar.png';
   final List<PersonaDependent> personesDependents;
   final Map<String, List<Activitat>> activitats;
@@ -23,8 +23,8 @@ class Usuari {
     required this.activitats,
   });
   // Verificar si un correo electrónico ya está registrado
-  static bool isEmailRegistered(String email, List<Usuari> usuarios) {
-    return usuarios.any((usuari) => usuari.correu == email);
+  static bool isEmailRegistered(String email, List<Usuari> users) {
+    return users.any((usuari) => usuari.correu == email);
   }
 }
 

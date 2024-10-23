@@ -4,6 +4,7 @@ import 'package:nestcure/list_certificates.dart';
 import 'package:nestcure/llistat_activitats.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_information.dart';
+import 'package:nestcure/login.dart';
 
 class ProfileItem {
   final String name;
@@ -22,7 +23,7 @@ class ProfileWidget extends StatelessWidget {
 
   final List<ProfileItem> profileItems = [
     ProfileItem(
-      name: "Informació Personal",
+      name: "Información personal",
       icon: const Icon(
         Icons.person,
         color: Color.fromRGBO(45, 87, 133, 1),
@@ -31,7 +32,7 @@ class ProfileWidget extends StatelessWidget {
       page: const UserInformationWidget(),
     ),
     ProfileItem(
-      name: "Notificacions",
+      name: "Notificaciones",
       icon: const Icon(
         Icons.notifications,
         color: Color.fromRGBO(45, 87, 133, 1),
@@ -40,7 +41,7 @@ class ProfileWidget extends StatelessWidget {
       page: const Scaffold(),
     ),
     ProfileItem(
-      name: "Certificats",
+      name: "Certificados",
       icon: const Icon(
         Icons.book,
         color: Color.fromRGBO(45, 87, 133, 1),
@@ -49,7 +50,7 @@ class ProfileWidget extends StatelessWidget {
       page: const ListCertificates(),
     ),
     ProfileItem(
-      name: "Tasques i hores dedicades",
+      name: "Tareas y horas dedicadas",
       icon: const Icon(
         Icons.volunteer_activism,
         color: Color.fromRGBO(45, 88, 133, 1),
@@ -58,7 +59,7 @@ class ProfileWidget extends StatelessWidget {
       page: const Scaffold(),
     ),
     ProfileItem(
-      name: "Resgistre d'activitats",
+      name: "Resgistro de actividades",
       icon: const Icon(
         Icons.content_paste_search,
         color: Color.fromRGBO(45, 88, 133, 1),
@@ -103,8 +104,33 @@ class ProfileWidget extends StatelessWidget {
             const Divider(),
             Expanded(
               child: ListView.separated(
-                itemCount: profileItems.length,
+                itemCount: profileItems.length + 2,
                 itemBuilder: (BuildContext context, int index) {
+                  if (index == profileItems.length) {
+                    return ListTile(
+                      contentPadding: const EdgeInsets.only(left: 30),
+                      title: const Text("Cerrar sesión"),
+                      leading: const Icon(
+                        Icons.logout,
+                        color: Colors.blueGrey,
+                      ),
+                      onTap: () => _logout(context),
+                    );
+                  } else if (index == profileItems.length + 1) {
+                    return ListTile(
+                      contentPadding: const EdgeInsets.only(left: 30),
+                      title: const Text(
+                        "Eliminar cuenta",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      leading: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onTap: () => _confirmDeleteAccount(context),
+                    );
+                  }
+
                   return ListTile(
                     contentPadding: const EdgeInsets.only(left: 30),
                     title: Text(profileItems[index].name),
@@ -124,6 +150,59 @@ class ProfileWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmar eliminación"),
+          content: const Text(
+              "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+            TextButton(
+              child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                _deleteAccount(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _logout(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Cierre de sesión exitoso"),
+      ),
+    );
+  }
+
+  void _deleteAccount(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Cuenta eliminada exitosamente"),
       ),
     );
   }

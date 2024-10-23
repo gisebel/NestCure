@@ -1,4 +1,4 @@
-import 'usuari.dart';
+import 'user.dart';
 
 class LoggedUsuari {
   static final LoggedUsuari _instance = LoggedUsuari._internal();

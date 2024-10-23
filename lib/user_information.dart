@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:nestcure/user_provider.dart';
+import 'package:nestcure/edit_profile.dart';
 import 'package:provider/provider.dart';
 
 class UserInformationWidget extends StatefulWidget {
@@ -19,7 +19,22 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
     var user = loggedUser.usuari;
 
     return Scaffold(
-      appBar: customAppBar(context, true),
+      appBar: AppBar(
+        title: const Text('Informació Personal'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              // Navegamos a la pantalla de edición de perfil
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return EditProfileScreen(user: user);
+                }),
+              );
+            },
+          ),
+        ],
+      ),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return Padding(
@@ -75,18 +90,34 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                 ),
                 const Divider(),
                 ListTile(
-                    title: const Text('Persones al càrrec'),
-                    subtitle: Text(
-                        '${user.personesDependents.length} persones al càrrec'),
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
+                  title: const Text('Persones al càrrec'),
+                  subtitle:
+                      Text('${user.personesDependents.length} persones al càrrec'),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const PersonesDependentsWidget();
+                      }),
+                    );
+                  },
+                ),
+                const Divider(),
+
+                // Botón "Editar" al final de la página
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navegamos a la pantalla de edición de perfil
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) {
-                          return const PersonesDependentsWidget();
+                          return EditProfileScreen(user: user);
                         }),
                       );
-                    }),
-                const Divider()
+                    },
+                    child: const Text('Editar'),
+                  ),
+                ),
               ],
             ),
           );
@@ -94,29 +125,4 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => UserProvider(),
-      ),
-    ],
-    child: MaterialApp(
-      title: 'NestCure',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 251, 245),
-          background: const Color.fromARGB(255, 255, 251, 245),
-        ),
-        textTheme: const TextTheme(
-            bodyLarge: TextStyle(fontSize: 17),
-            titleMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        useMaterial3: true,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: UserInformationWidget(),
-    ),
-  ));
 }

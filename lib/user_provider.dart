@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'usuari.dart';
+import 'user.dart';
 
 class UserProvider extends ChangeNotifier {
   Usuari? _usuari;
