@@ -76,7 +76,7 @@ class _ValidateCertificateState extends State<ValidateCertificate> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Certificado enviado para validación')),
+        const SnackBar(content: Text('Certificado enviado para validar')),
       );
 
       Navigator.pop(context);
@@ -112,7 +112,7 @@ class _ValidateCertificateState extends State<ValidateCertificate> {
             ElevatedButton.icon(
               onPressed: _pickFile,
               icon: const Icon(Icons.attach_file),
-              label: const Text('Adjunta fitxer'),
+              label: const Text('Adjunta fichero'),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
                 backgroundColor: Colors.green,
@@ -122,13 +122,13 @@ class _ValidateCertificateState extends State<ValidateCertificate> {
             if (_certificateFile != null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Fitxer seleccionat: ${_certificateFile!.path}'),
+                child: Text('Fichero seleccionado: ${_certificateFile!.path}'),
               ),
             TextField(
               controller: _commentController,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Comentaris i observacions...',
+                labelText: 'Comentarios y observaciones...',
               ),
               maxLines: 5,
             ),
@@ -138,7 +138,7 @@ class _ValidateCertificateState extends State<ValidateCertificate> {
               children: [
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Enrere'),
+                  child: const Text('Atrás'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade200,
                   ),

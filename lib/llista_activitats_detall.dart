@@ -26,14 +26,14 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Activitats registrades de ${widget.nom}',
+                'Actividades registradas de ${widget.nom}',
                 style: const TextStyle(
                     fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16.0),
               widget.activitats.isEmpty
                   ? const Text(
-                      'No hi ha activitats registrades.',
+                      'No hay actividades registradas.',
                       style: TextStyle(fontSize: 15.0),
                     )
                   : Expanded(
@@ -44,6 +44,15 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                           var activitat = widget.activitats[index];
                           return ActivityCard(
                             activitat: activitat,
+                            onDelete: () {
+                              setState(() {
+                                widget.activitats.removeAt(index);
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Actividad eliminada')),
+                              );
+                            },
                           );
                         },
                       ),
@@ -58,17 +67,18 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
 
 class ActivityCard extends StatelessWidget {
   final Activitat activitat;
-  ActivityCard({super.key, required this.activitat});
+  final VoidCallback onDelete;
+  ActivityCard({super.key, required this.activitat, required this.onDelete});
 
   final Map<String, IconData> activityIcons = {
     'Higiene personal': Icons.clean_hands,
-    'Higiene de la llar': Icons.cleaning_services,
-    'Suport emocional': Icons.emoji_emotions,
-    'Rehabilitació': Icons.assist_walker,
+    'Higiene del hogar': Icons.cleaning_services,
+    'Soporte emocional': Icons.emoji_emotions,
+    'Rehabilitación': Icons.assist_walker,
     'Compra': Icons.shopping_cart,
-    'Gestió': Icons.article,
-    'Activitat diària': Icons.accessibility_new,
-    'Altres': Icons.more_horiz,
+    'Gestión': Icons.article,
+    'Actividad diaria': Icons.accessibility_new,
+    'Otros': Icons.miscellaneous_services,
   };
 
   @override
@@ -101,24 +111,28 @@ class ActivityCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                          '${activitat.date.day.toString()}-${activitat.date.month.toString()}-${activitat.date.year.toString()}'),
+                          '${activitat.date.day}-${activitat.date.month}-${activitat.date.year}'),
                     ],
                   ),
                 ),
                 Text(
-                  '${activitat.hours.toString()} h',
+                  '${activitat.hours} h',
                   style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(45, 88, 133, 1)),
                 ),
-                const SizedBox(width: 8.0)
+                const SizedBox(width: 8.0),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: onDelete,
+                ),
               ],
             ),
             const SizedBox(height: 10.0),
             Row(
               children: [
-                const Text('Tipus: ',
+                const Text('Tipo: ',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(activitat.type),
               ],
@@ -127,7 +141,7 @@ class ActivityCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Descripció: ',
+                const Text('Descripción: ',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 Expanded(
                     child: Text(

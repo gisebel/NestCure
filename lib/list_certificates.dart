@@ -49,6 +49,7 @@ class _ListCertificatesState extends State<ListCertificates> {
         itemCount: certificates.length,
         itemBuilder: (context, index) {
           final certificate = certificates[index];
+
           return ExpansionTile(
             leading: Icon(
               Icons.book,
@@ -73,14 +74,35 @@ class _ListCertificatesState extends State<ListCertificates> {
                       certificate.description,
                       textAlign: TextAlign.left,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        _launchURL(certificate.fileUrl);
-                      },
-                      child: const Text(
-                        "Obrir Fitxer",
-                        style: TextStyle(color: Colors.blue),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            _launchURL(certificate.fileUrl);
+                          },
+                          child: const Text(
+                            "Abrir fichero",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              // Removemos el certificado tanto del provider como de la lista hardcoded.
+                              if (index < hardCodedCertificates.length) {
+                                hardCodedCertificates.removeAt(index);
+                              } else {
+                                certificateProvider.removeCertificate(certificate);
+                              }
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Certificado eliminado')),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -93,7 +115,7 @@ class _ListCertificatesState extends State<ListCertificates> {
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Enrere'),
+          child: const Text('Atrás'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green.shade200,
           ),

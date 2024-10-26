@@ -28,13 +28,13 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
 
   List<String> tipusActivitats = [
     'Higiene personal',
-    'Higiene de la llar',
-    'Suport emocional',
-    'Rehabilitació',
+    'Higiene del hogar',
+    'Soporte emocional',
+    'Rehabilitación',
     'Compra',
-    'Gestió',
-    'Activitat diària',
-    'Altres',
+    'Gestión',
+    'Actividad diaria',
+    'Otros',
   ];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -74,7 +74,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
               children: [
                 const SizedBox(height: 40.0),
                 const Text(
-                  'Registra l\'activitat',
+                  'Registra la actividad',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                 TextField(
                   controller: _titolController,
                   decoration: const InputDecoration(
-                    labelText: 'Títol',
+                    labelText: 'Título',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -95,7 +95,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                       child: TextField(
                         controller: _dataController,
                         decoration: InputDecoration(
-                          labelText: 'Data',
+                          labelText: 'Fecha',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(29.0),
                           ),
@@ -109,7 +109,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                       child: TextField(
                         controller: _horesController,
                         decoration: InputDecoration(
-                          labelText: 'Hores',
+                          labelText: 'Horas',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(29.0),
                           ),
@@ -138,7 +138,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                           ))
                       .toList(),
                   decoration: const InputDecoration(
-                    labelText: 'Tipus d\'activitat',
+                    labelText: 'Tipo de actividad',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -170,7 +170,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                 TextField(
                   controller: _descripcioController,
                   decoration: const InputDecoration(
-                    labelText: 'Detalls de l\'activitat',
+                    labelText: 'Detalles de la actividad',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -194,7 +194,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                           backgroundColor:
                               const Color.fromRGBO(255, 102, 102, 1),
                         ),
-                        child: const Text('Enrere',
+                        child: const Text('Atrás',
                             style: TextStyle(color: Colors.white)),
                       ),
                       ElevatedButton(
@@ -207,7 +207,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                               _descripcioController.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Omple tots els camps'),
+                                content: Text('Rellena todos los campos'),
                               ),
                             );
                             return;
@@ -215,7 +215,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                           if (int.tryParse(_horesController.text) == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Les hores han de ser un número'),
+                                content: Text('Las horas tienen que ser un número'),
                               ),
                             );
                             return;

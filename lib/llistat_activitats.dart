@@ -34,7 +34,7 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                   Row(
                     children: [
                       const Text(
-                        'Activitats registrades',
+                        'Actividades registradas',
                         style: TextStyle(
                             fontSize: 24.0, fontWeight: FontWeight.bold),
                       ),
@@ -62,7 +62,7 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                         return ListTile(
                           title: Text(user.personesDependents[index].nom),
                           subtitle: Text(
-                              'Té ${dependentsActivities.toString()} activitats'),
+                              'Té ${dependentsActivities.toString()} actividades'),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
                             Navigator.of(context).push(

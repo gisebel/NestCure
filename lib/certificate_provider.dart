@@ -21,4 +21,9 @@ class CertificateProvider with ChangeNotifier {
     _certificates.add(certificate);
     notifyListeners();
   }
+
+  void removeCertificate(Certificate certificate) {
+    _certificates.remove(certificate);
+    notifyListeners();
+  }
 }
