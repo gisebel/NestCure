@@ -60,7 +60,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
     List<String> personesCuidades = [];
 
     for (var persona in user.personesDependents) {
-      personesCuidades.add(persona.nom);
+      personesCuidades.add(persona.nombre);
     }
 
     return Scaffold(

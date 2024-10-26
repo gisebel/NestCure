@@ -6,22 +6,6 @@ import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class PersonaDependent {
-  final String nom;
-  final String descripcio;
-  final String depenDe;
-  final String gender;
-  final DateTime dataNaixement;
-
-  PersonaDependent({
-    required this.nom,
-    required this.descripcio,
-    required this.depenDe,
-    required this.gender,
-    required this.dataNaixement,
-  });
-}
-
 class PersonesDependentsWidget extends StatefulWidget {
   const PersonesDependentsWidget({super.key});
 
@@ -49,7 +33,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                   Row(
                     children: [
                       const Text(
-                        'Persones al càrrec',
+                        'Personas a cargo',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
@@ -72,26 +56,59 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                       itemCount: user.personesDependents.length,
                       itemBuilder: (context, index) {
                         var date = DateFormat('dd-MM-yyyy').format(
-                            user.personesDependents[index].dataNaixement);
+                            user.personesDependents[index].fechaNacimiento);
                         return Card(
                           margin: const EdgeInsets.all(8.0),
                           child: ListTile(
                             leading: Icon(
-                                user.personesDependents[index].gender == 'Dona'
+                                user.personesDependents[index].genero == 'Dona'
                                     ? Icons.woman
                                     : Icons.man,
                                 color: const Color.fromRGBO(45, 88, 133, 1)),
-                            title: Text(user.personesDependents[index].nom,
+                            title: Text(user.personesDependents[index].nombre,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Data de naixement: $date'),
+                                Text('Fecha de nacimiento: $date'),
                                 const SizedBox(height: 4.0),
                                 Text(
-                                    'Descripció: ${user.personesDependents[index].descripcio}'),
+                                    'Descripción: ${user.personesDependents[index].descripcion}'),
                               ],
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                // Mostrar un cuadro de diálogo de confirmación
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Eliminar persona'),
+                                    content: const Text(
+                                        '¿Estás seguro de que quieres eliminar esta persona?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(); // Cancelar
+                                        },
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            // Eliminar la persona dependiente de la lista
+                                            user.personesDependents.removeAt(index);
+                                          });
+                                          provider.setUsuari(user); // Actualizar el proveedor
+                                          Navigator.of(context).pop(); // Cerrar el diálogo
+                                        },
+                                        child: const Text('Eliminar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         );

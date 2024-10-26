@@ -108,7 +108,6 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navegamos a la pantalla de edición de perfil
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) {
                           return EditProfileScreen(user: user);

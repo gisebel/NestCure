@@ -55,14 +55,14 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                     child: ListView.builder(
                       itemCount: user.personesDependents.length,
                       itemBuilder: (context, index) {
-                        var userDependents = user.personesDependents[index].nom;
+                        var userDependents = user.personesDependents[index].nombre;
                         var dependentsActivities =
                             user.activitats[userDependents]!.length;
 
                         return ListTile(
-                          title: Text(user.personesDependents[index].nom),
+                          title: Text(user.personesDependents[index].nombre),
                           subtitle: Text(
-                              'Té ${dependentsActivities.toString()} actividades'),
+                              'Tiene ${dependentsActivities.toString()} actividades'),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
                             Navigator.of(context).push(
