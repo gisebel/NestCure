@@ -6,6 +6,32 @@ import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
 
+class PersonaDependent {
+  final String nombre;
+  final String dependeDe;
+  final String genero;
+  final DateTime fechaNacimiento;
+  final int edad;
+  final int telefono;
+  final String direccion;
+  final double peso;
+  final double altura;
+  final String descripcion;
+
+  PersonaDependent({
+    required this.nombre,
+    required this.dependeDe,
+    required this.genero,
+    required this.fechaNacimiento,
+    required this.edad,
+    required this.telefono,
+    required this.direccion,
+    required this.peso,
+    required this.altura,
+    required this.descripcion,
+  });
+}
+
 class PersonesDependentsWidget extends StatefulWidget {
   const PersonesDependentsWidget({super.key});
 
@@ -25,8 +51,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
         builder: (context, provider, child) {
           return Center(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -41,71 +66,66 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                       ),
                       const Spacer(),
                       IconButton(
-                          icon: const Icon(Icons.person_add),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) {
-                                return const AddPersonaDependentWidget();
-                              }),
-                            );
-                          })
+                        icon: const Icon(Icons.person_add),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return const AddPersonaDependentWidget();
+                            }),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   Expanded(
                     child: ListView.builder(
                       itemCount: user.personesDependents.length,
                       itemBuilder: (context, index) {
-                        var date = DateFormat('dd-MM-yyyy').format(
-                            user.personesDependents[index].fechaNacimiento);
+                        var persona = user.personesDependents[index];
+                        var date = DateFormat('dd-MM-yyyy').format(persona.fechaNacimiento);
+
                         return Card(
                           margin: const EdgeInsets.all(8.0),
                           child: ListTile(
                             leading: Icon(
-                                user.personesDependents[index].genero == 'Dona'
-                                    ? Icons.woman
-                                    : Icons.man,
-                                color: const Color.fromRGBO(45, 88, 133, 1)),
-                            title: Text(user.personesDependents[index].nombre,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
+                              persona.genero == 'Mujer'
+                                  ? Icons.woman
+                                  : persona.genero == 'Hombre'
+                                      ? Icons.man
+                                      : Icons.person,
+                              color: const Color.fromRGBO(45, 88, 133, 1),
+                            ),
+                            title: Text(persona.nombre,
+                                style: const TextStyle(fontWeight: FontWeight.bold)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Fecha de nacimiento: $date'),
                                 const SizedBox(height: 4.0),
-                                Text(
-                                    'Descripción: ${user.personesDependents[index].descripcion}'),
+                                Text('Edad: ${persona.edad} años'),
+                                const SizedBox(height: 4.0),
+                                Text('Teléfono: ${persona.telefono}'),
+                                const SizedBox(height: 4.0),
+                                Text('Dirección: ${persona.direccion}'),
+                                const SizedBox(height: 4.0),
+                                Text('Peso: ${persona.peso.toStringAsFixed(1)} kg'),
+                                const SizedBox(height: 4.0),
+                                Text('Altura: ${persona.altura.toStringAsFixed(2)} m'),
+                                const SizedBox(height: 4.0),
+                                Text('Descripción: ${persona.descripcion}'),
                               ],
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
-                                // Mostrar un cuadro de diálogo de confirmación
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Eliminar persona'),
-                                    content: const Text(
-                                        '¿Estás seguro de que quieres eliminar esta persona?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(); // Cancelar
-                                        },
-                                        child: const Text('Cancelar'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            // Eliminar la persona dependiente de la lista
-                                            user.personesDependents.removeAt(index);
-                                          });
-                                          provider.setUsuari(user); // Actualizar el proveedor
-                                          Navigator.of(context).pop(); // Cerrar el diálogo
-                                        },
-                                        child: const Text('Eliminar'),
-                                      ),
-                                    ],
+                                setState(() {
+                                  user.personesDependents.removeAt(index);
+                                  user.activitats.remove(persona.nombre);
+                                  provider.setUsuari(user);
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Persona eliminada correctamente.'),
                                   ),
                                 );
                               },

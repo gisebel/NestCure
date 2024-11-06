@@ -22,7 +22,7 @@ class Usuari {
     required this.personesDependents,
     required this.activitats,
   });
-  // Verificar si un correo electrónico ya está registrado
+
   static bool isEmailRegistered(String email, List<Usuari> users) {
     return users.any((usuari) => usuari.correu == email);
   }
@@ -39,7 +39,7 @@ final Usuari usuariHardcodeado = Usuari(
     personesDependents: [
       PersonaDependent(
         nombre: 'Paco Martinez',
-        descripcion: 'Amb problemes de desplaçament i necessita ajuda per les tasques de la casa',
+        descripcion: 'Con problemas de desplazamiento y necesita ayuda con las tareas del hogar',
         dependeDe: 'Gisela Beltran',
         genero: 'Home',
         fechaNacimiento: DateTime(1949, 7, 15),
@@ -51,9 +51,9 @@ final Usuari usuariHardcodeado = Usuari(
       ),
       PersonaDependent(
         nombre: 'Carme Diaz',
-        descripcion: 'Necessita més atenció per les matinades',
+        descripcion: 'Necessita más atención por las mañanas',
         dependeDe: 'Gisela Beltran',
-        genero: 'Dona',
+        genero: 'Mujer',
         fechaNacimiento: DateTime(1950, 3, 12),
         telefono: 987654321,
         direccion: 'Carrer de la Llibertat, 34',
@@ -65,32 +65,32 @@ final Usuari usuariHardcodeado = Usuari(
     activitats: {
       'Paco Martinez': [
         Activitat(
-          title: 'Companyia',
-          description: 'Conversació i realització de jocs de taula',
+          title: 'Compañia',
+          description: 'Conversación y realización de juegos de mesa',
           hours: 2,
           date: DateTime(2024, 6, 10),
-          type: 'Suport emocional',
+          type: 'Soporte emocional',
         ),
         Activitat(
             date: DateTime(2024, 6, 11),
             hours: 2,
-            description: 'Neteja de la cuina i del dormitori',
-            title: 'Neteja de la casa',
-            type: 'Higiene de la llar'),
+            description: 'Limpieza de la cocina y del dormitorio',
+            title: 'Limpieza de la casa',
+            type: 'Higiene del hogar'),
         Activitat(
           date: DateTime(2024, 6, 12),
           hours: 1,
           description:
-              'Exercicis de fisioteràpia per millorar la movilitat de les cames',
-          title: 'Fisioteràpia',
-          type: 'Rehabilitació',
+              'Ejercicios de fisioterapia para mejorar la movilidad de las piernas',
+          title: 'Fisioterapia',
+          type: 'Rehabilitación',
         ),
         Activitat(
           date: DateTime(2024, 6, 13),
           hours: 2,
           description:
-              'Planificació i ajuda en la compra setmanal al supermercat dels productes necessàris.',
-          title: 'Compra setmanal al supermercat',
+              'Planificación y ayuda en la compra semanal al supermercado de los productos necesarios.',
+          title: 'Compra semanal al supermercado',
           type: 'Compra',
         ),
       ],
@@ -98,31 +98,31 @@ final Usuari usuariHardcodeado = Usuari(
         Activitat(
           date: DateTime(2024, 6, 10),
           hours: 2,
-          description: 'Ajuda en la neteja diaria corporal i vestimenta',
+          description: 'Ayuda con la limpieza diaria corporal y vestimenta',
           title: 'Higiene personal',
           type: 'Higiene personal',
         ),
         Activitat(
           date: DateTime(2024, 6, 11),
           hours: 1,
-          description: 'Preparació de l\'esmorzar i rentat de roba',
-          title: 'Tasques de la llar',
-          type: 'Higiene de la llar',
+          description: 'Preparación del desayuno y lavadora de ropa sucia',
+          title: 'Tareas del hogar',
+          type: 'Higiene del hogar',
         ),
         Activitat(
           date: DateTime(2024, 6, 12),
           hours: 1,
           description:
-              'Gestió de la cita amb el metge i acompanyament a la consulta',
-          title: 'Gestió mèdica',
-          type: 'Gestió',
+              'Gestión de la cita con el médico y acompañamiento a la consulta',
+          title: 'Gestión médica',
+          type: 'Gestión',
         ),
         Activitat(
           date: DateTime(2024, 6, 13),
           hours: 1,
-          description: 'Acompanyar a passejar pel parc',
-          title: 'Passeig diari',
-          type: 'Activitat diària',
+          description: 'Acompañar a pasear por el parque',
+          title: 'Paseo diario',
+          type: 'Actividat diaria',
         ),
       ],
     });
