@@ -19,19 +19,18 @@ class IntermediateCommunicationSkillsTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Habilitats de Comunicació - $testLevel'),
+        title: Text('Test de habilidades de comunicación - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
-          // Procesa el resultado del test
           onCompleted();
           Navigator.of(context).pop();
         },
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +141,125 @@ class IntermediateCommunicationSkillsTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Habilitats de Comunicació Intermedi',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar les teves habilitats.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Habilidades de Comunicación Intermedia',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus habilidades.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Com podem assegurar-nos que hem entès correctament el missatge d\'algú?',
+          text: '¿Cómo podemos asegurarnos de que hemos entendido correctamente el mensaje de alguien?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Reflectint i parafrasejant el que han dit', value: 'correct'),
-              TextChoice(text: 'Interrompent per aclarir', value: 'wrong1'),
-              TextChoice(text: 'Respondent immediatament', value: 'wrong2'),
+              TextChoice(text: 'Reflejando y parafraseando lo que han dicho', value: 'correct'),
+              TextChoice(text: 'Interrumpiendo para aclarar', value: 'wrong1'),
+              TextChoice(text: 'Respondiendo inmediatamente', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Què és important tenir en compte en la comunicació intercultural?',
+          text: '¿Qué es importante tener en cuenta en la comunicación intercultural?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Respectar les diferències culturals', value: 'correct'),
-              TextChoice(text: 'Parlar només en la nostra llengua', value: 'wrong1'),
-              TextChoice(text: 'Assumir que tothom entén la nostra cultura', value: 'wrong2'),
+              TextChoice(text: 'Respetar las diferencias culturales', value: 'correct'),
+              TextChoice(text: 'Hablar solo en nuestro idioma', value: 'wrong1'),
+              TextChoice(text: 'Suponer que todos entienden nuestra cultura', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Com podem millorar la nostra capacitat d\'escolta activa?',
+          text: '¿Cómo podemos mejorar nuestra capacidad de escucha activa?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Donant tota la nostra atenció a l\'interlocutor', value: 'correct'),
-              TextChoice(text: 'Preparant la nostra resposta mentre escoltem', value: 'wrong1'),
-              TextChoice(text: 'Multitasca durant la conversa', value: 'wrong2'),
+              TextChoice(text: 'Prestando toda nuestra atención al interlocutor', value: 'correct'),
+              TextChoice(text: 'Preparando nuestra respuesta mientras escuchamos', value: 'wrong1'),
+              TextChoice(text: 'Multitarea durante la conversación', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Com podem demostrar empatia en una conversa?',
+          text: '¿Cómo podemos demostrar empatía en una conversación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Reconeguent els sentiments de l\'altre', value: 'correct'),
-              TextChoice(text: 'Parlant més de nosaltres mateixos', value: 'wrong1'),
-              TextChoice(text: 'Interrompent per donar consells', value: 'wrong2'),
+              TextChoice(text: 'Reconociendo los sentimientos del otro', value: 'correct'),
+              TextChoice(text: 'Hablando más de nosotros mismos', value: 'wrong1'),
+              TextChoice(text: 'Interrumpiendo para dar consejos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Quina és una tècnica per millorar la comunicació en un grup?',
+          text: '¿Cuál es una técnica para mejorar la comunicación en un grupo?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Establir normes clares de comunicació', value: 'correct'),
-              TextChoice(text: 'Parlar tots alhora', value: 'wrong1'),
-              TextChoice(text: 'Ignorar les aportacions dels altres', value: 'wrong2'),
+              TextChoice(text: 'Establecer normas claras de comunicación', value: 'correct'),
+              TextChoice(text: 'Hablar todos a la vez', value: 'wrong1'),
+              TextChoice(text: 'Ignorar las aportaciones de los demás', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què significa tenir una comunicació clara i concisa?',
+          text: '¿Qué significa tener una comunicación clara y concisa?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Expressar-se de manera breu i fàcil d\'entendre', value: 'correct'),
-              TextChoice(text: 'Parlar molt ràpid', value: 'wrong1'),
-              TextChoice(text: 'Utilitzar paraules complicades', value: 'wrong2'),
+              TextChoice(text: 'Expresarse de manera breve y fácil de entender', value: 'correct'),
+              TextChoice(text: 'Hablar muy rápido', value: 'wrong1'),
+              TextChoice(text: 'Usar palabras complicadas', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Com podem gestionar una conversa difícil?',
+          text: '¿Cómo podemos gestionar una conversación difícil?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Mantenint la calma i l\'objectivitat', value: 'correct'),
-              TextChoice(text: 'Elevant la veu per fer-nos entendre', value: 'wrong1'),
-              TextChoice(text: 'Evitant el tema completament', value: 'wrong2'),
+              TextChoice(text: 'Manteniendo la calma y la objetividad', value: 'correct'),
+              TextChoice(text: 'Elevando la voz para hacernos entender', value: 'wrong1'),
+              TextChoice(text: 'Evitando el tema completamente', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Com podem evitar malentesos en la comunicació escrita?',
+          text: '¿Cómo podemos evitar malentendidos en la comunicación escrita?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Revisant i clarificant el missatge', value: 'correct'),
-              TextChoice(text: 'Utilitzant moltes abreviatures', value: 'wrong1'),
-              TextChoice(text: 'Escrivint molt ràpid', value: 'wrong2'),
+              TextChoice(text: 'Revisando y aclarando el mensaje', value: 'correct'),
+              TextChoice(text: 'Usando muchas abreviaturas', value: 'wrong1'),
+              TextChoice(text: 'Escribiendo muy rápido', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és el feedback constructiu?',
+          text: '¿Qué es el feedback constructivo?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Comentaris positius i suggeriments per millorar', value: 'correct'),
-              TextChoice(text: 'Crítiques negatives sense solucions', value: 'wrong1'),
-              TextChoice(text: 'Ignorar els errors dels altres', value: 'wrong2'),
+              TextChoice(text: 'Comentarios positivos y sugerencias para mejorar', value: 'correct'),
+              TextChoice(text: 'Críticas negativas sin soluciones', value: 'wrong1'),
+              TextChoice(text: 'Ignorar los errores de los demás', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Què és important per mantenir una bona relació comunicativa?',
+          text: '¿Qué es importante para mantener una buena relación comunicativa?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Respectar i valorar l\'opinió de l\'altre', value: 'correct'),
-              TextChoice(text: 'Parlar més que l\'altre', value: 'wrong1'),
-              TextChoice(text: 'Estar d\'acord en tot', value: 'wrong2'),
+              TextChoice(text: 'Respetar y valorar la opinión del otro', value: 'correct'),
+              TextChoice(text: 'Hablar más que el otro', value: 'wrong1'),
+              TextChoice(text: 'Estar de acuerdo en todo', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

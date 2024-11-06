@@ -19,19 +19,18 @@ class IntermediateHealthKnowledgeTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Coneixements Salut - $testLevel'),
+        title: Text('Test de coneixementos de salud - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
-          // Procesa el resultado del test
           onCompleted();
           Navigator.of(context).pop();
         },
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,27 +141,27 @@ class IntermediateHealthKnowledgeTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Coneixements de Salut Intermedi',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Conocimientos de Salud Intermedio',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Què és l\'arítmia?',
+          text: '¿Qué es la arritmia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Batecs irregulars del cor', value: 'correct'),
-              TextChoice(text: 'Alta pressió sanguínia', value: 'wrong1'),
-              TextChoice(text: 'Dolor toràcic', value: 'wrong2'),
+              TextChoice(text: 'Latidos irregulares del corazón', value: 'correct'),
+              TextChoice(text: 'Alta presión sanguínea', value: 'wrong1'),
+              TextChoice(text: 'Dolor torácico', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Com es pot identificar un ictus?',
+          text: '¿Cómo se puede identificar un ictus?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Debilitat facial i dificultat per parlar', value: 'correct'),
+              TextChoice(text: 'Debilidad facial y dificultad para hablar', value: 'correct'),
               TextChoice(text: 'Dolor abdominal', value: 'wrong1'),
               TextChoice(text: 'Dolor lumbar', value: 'wrong2'),
             ],
@@ -170,97 +169,97 @@ class IntermediateHealthKnowledgeTestScreen extends StatelessWidget {
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Què és un anafilaxi?',
+          text: '¿Qué es una anafilaxia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Reacció al·lèrgica greu', value: 'correct'),
-              TextChoice(text: 'Infecció viral', value: 'wrong1'),
-              TextChoice(text: 'Trastorn mental', value: 'wrong2'),
+              TextChoice(text: 'Reacción alérgica grave', value: 'correct'),
+              TextChoice(text: 'Infección viral', value: 'wrong1'),
+              TextChoice(text: 'Trastorno mental', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Com es pot tractar una picada d\'abella?',
+          text: '¿Cómo se puede tratar una picadura de abeja?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Retirar el fibló i aplicar fred', value: 'correct'),
+              TextChoice(text: 'Retirar el aguijón y aplicar frío', value: 'correct'),
               TextChoice(text: 'Aplicar calor', value: 'wrong1'),
-              TextChoice(text: 'Utilitzar alcohol', value: 'wrong2'),
+              TextChoice(text: 'Utilizar alcohol', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Quin tipus de ferida necessita punts de sutura?',
+          text: '¿Qué tipo de herida necesita puntos de sutura?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Ferida profunda i oberta', value: 'correct'),
-              TextChoice(text: 'Ferida petita i superficial', value: 'wrong1'),
-              TextChoice(text: 'Rascada lleu', value: 'wrong2'),
+              TextChoice(text: 'Herida profunda y abierta', value: 'correct'),
+              TextChoice(text: 'Herida pequeña y superficial', value: 'wrong1'),
+              TextChoice(text: 'Rascadura leve', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què és la hipoglucèmia?',
+          text: '¿Qué es la hipoglucemia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Baix nivell de sucre en sang', value: 'correct'),
-              TextChoice(text: 'Alt nivell de sucre en sang', value: 'wrong1'),
-              TextChoice(text: 'Alt nivell de colesterol', value: 'wrong2'),
+              TextChoice(text: 'Bajo nivel de azúcar en sangre', value: 'correct'),
+              TextChoice(text: 'Alto nivel de azúcar en sangre', value: 'wrong1'),
+              TextChoice(text: 'Alto nivel de colesterol', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Què significa BLS en atenció mèdica?',
+          text: '¿Qué significa BLS en atención médica?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Suport Vital Bàsic', value: 'correct'),
-              TextChoice(text: 'Suport Vital Avançat', value: 'wrong1'),
-              TextChoice(text: 'Sistema de Vida Bàsica', value: 'wrong2'),
+              TextChoice(text: 'Soporte Vital Básico', value: 'correct'),
+              TextChoice(text: 'Soporte Vital Avanzado', value: 'wrong1'),
+              TextChoice(text: 'Sistema de Vida Básica', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Com es tracta una fractura òssia?',
+          text: '¿Cómo se trata una fractura ósea?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Immobilitzar i buscar atenció mèdica', value: 'correct'),
+              TextChoice(text: 'Inmovilizar y buscar atención médica', value: 'correct'),
               TextChoice(text: 'Aplicar calor', value: 'wrong1'),
-              TextChoice(text: 'Fer massatges a la zona', value: 'wrong2'),
+              TextChoice(text: 'Hacer masajes en la zona', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és l\'asistòlia?',
+          text: '¿Qué es la asistolia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Absència d\'activitat elèctrica al cor', value: 'correct'),
-              TextChoice(text: 'Ritme cardíac lent', value: 'wrong1'),
-              TextChoice(text: 'Contraccions ventricul·lars prematures', value: 'wrong2'),
+              TextChoice(text: 'Ausencia de actividad eléctrica en el corazón', value: 'correct'),
+              TextChoice(text: 'Ritmo cardíaco lento', value: 'wrong1'),
+              TextChoice(text: 'Contracciones ventriculares prematuras', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Quin és el primer pas en la reanimació cardiopulmonar (RCP)?',
+          text: '¿Cuál es el primer paso en la reanimación cardiopulmonar (RCP)?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Verificar si la persona respon', value: 'correct'),
-              TextChoice(text: 'Començar compressions toràciques', value: 'wrong1'),
-              TextChoice(text: 'Donar respiracions artificials', value: 'wrong2'),
+              TextChoice(text: 'Verificar si la persona responde', value: 'correct'),
+              TextChoice(text: 'Comenzar compresiones torácicas', value: 'wrong1'),
+              TextChoice(text: 'Dar respiraciones artificiales', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

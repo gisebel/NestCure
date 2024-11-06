@@ -19,7 +19,7 @@ class BasicCommunicationSkillsTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Habilitats de Comunicació - $testLevel'),
+        title: Text('Test de habilidades de comunicación - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class BasicCommunicationSkillsTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class BasicCommunicationSkillsTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Habilitats de Comunicació Bàsic',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar les teves habilitats.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Habilidades de Comunicación Básica',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus habilidades.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Quina és la tècnica de comunicació més efectiva?',
+          text: '¿Cuál es la técnica de comunicación más efectiva?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Escolta activa', value: 'correct'),
-              TextChoice(text: 'Parlar més alt', value: 'wrong1'),
-              TextChoice(text: 'Evitar el contacte visual', value: 'wrong2'),
+              TextChoice(text: 'Escucha activa', value: 'correct'),
+              TextChoice(text: 'Hablar más alto', value: 'wrong1'),
+              TextChoice(text: 'Evitar el contacto visual', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Com es pot millorar la comunicació verbal?',
+          text: '¿Cómo se puede mejorar la comunicación verbal?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Parlant clarament i pausadament', value: 'correct'),
-              TextChoice(text: 'Interrompent constantment', value: 'wrong1'),
-              TextChoice(text: 'Parlant molt ràpid', value: 'wrong2'),
+              TextChoice(text: 'Hablando claramente y pausadamente', value: 'correct'),
+              TextChoice(text: 'Interrumpiendo constantemente', value: 'wrong1'),
+              TextChoice(text: 'Hablando muy rápido', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Què és important en la comunicació no verbal?',
+          text: '¿Qué es importante en la comunicación no verbal?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Llenguatge corporal i expressió facial', value: 'correct'),
-              TextChoice(text: 'Parlar molt', value: 'wrong1'),
-              TextChoice(text: 'Escriure correctament', value: 'wrong2'),
+              TextChoice(text: 'Lenguaje corporal y expresión facial', value: 'correct'),
+              TextChoice(text: 'Hablar mucho', value: 'wrong1'),
+              TextChoice(text: 'Escribir correctamente', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Què és l\'empatia en la comunicació?',
+          text: '¿Qué es la empatía en la comunicación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Comprendre i compartir els sentiments dels altres', value: 'correct'),
-              TextChoice(text: 'Estar d\'acord amb tot', value: 'wrong1'),
-              TextChoice(text: 'Parlar més de nosaltres mateixos', value: 'wrong2'),
+              TextChoice(text: 'Comprender y compartir los sentimientos de los demás', value: 'correct'),
+              TextChoice(text: 'Estar de acuerdo con todo', value: 'wrong1'),
+              TextChoice(text: 'Hablar más de nosotros mismos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Com es pot millorar la comprensió en una conversa?',
+          text: '¿Cómo se puede mejorar la comprensión en una conversación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Parafrasejant el que diu l\'altra persona', value: 'correct'),
-              TextChoice(text: 'Parlant més ràpid', value: 'wrong1'),
-              TextChoice(text: 'Interrompent l\'altra persona', value: 'wrong2'),
+              TextChoice(text: 'Parafraseando lo que dice la otra persona', value: 'correct'),
+              TextChoice(text: 'Hablando más rápido', value: 'wrong1'),
+              TextChoice(text: 'Interrumpiendo a la otra persona', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què significa mantenir el contacte visual?',
+          text: '¿Qué significa mantener el contacto visual?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Mirar als ulls de l\'interlocutor', value: 'correct'),
-              TextChoice(text: 'Mirar cap a un altre costat', value: 'wrong1'),
+              TextChoice(text: 'Mirar a los ojos del interlocutor', value: 'correct'),
+              TextChoice(text: 'Mirar hacia otro lado', value: 'wrong1'),
               TextChoice(text: 'Evitar la mirada', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Quina és una barrera comuna en la comunicació?',
+          text: '¿Cuál es una barrera común en la comunicación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Sorolls ambientals', value: 'correct'),
-              TextChoice(text: 'Escoltar activament', value: 'wrong1'),
-              TextChoice(text: 'Parlar amb claredat', value: 'wrong2'),
+              TextChoice(text: 'Ruidos ambientales', value: 'correct'),
+              TextChoice(text: 'Escuchar activamente', value: 'wrong1'),
+              TextChoice(text: 'Hablar con claridad', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Com es pot mostrar interès durant una conversa?',
+          text: '¿Cómo se puede mostrar interés durante una conversación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Fent preguntes rellevants', value: 'correct'),
-              TextChoice(text: 'Mirant el mòbil', value: 'wrong1'),
-              TextChoice(text: 'Parlant d\'un altre tema', value: 'wrong2'),
+              TextChoice(text: 'Haciendo preguntas relevantes', value: 'correct'),
+              TextChoice(text: 'Mirando el móvil', value: 'wrong1'),
+              TextChoice(text: 'Hablando de otro tema', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és una comunicació assertiva?',
+          text: '¿Qué es una comunicación asertiva?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Expressar les opinions amb respecte i fermesa', value: 'correct'),
-              TextChoice(text: 'Evitar el conflicte', value: 'wrong1'),
-              TextChoice(text: 'Parlar sense parar', value: 'wrong2'),
+              TextChoice(text: 'Expresar las opiniones con respeto y firmeza', value: 'correct'),
+              TextChoice(text: 'Evitar el conflicto', value: 'wrong1'),
+              TextChoice(text: 'Hablar sin parar', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Com es pot millorar la comunicació escrita?',
+          text: '¿Cómo se puede mejorar la comunicación escrita?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Utilitzant un llenguatge clar i concís', value: 'correct'),
-              TextChoice(text: 'Escrivint llargues parrafades', value: 'wrong1'),
-              TextChoice(text: 'Utilitzant moltes abreviatures', value: 'wrong2'),
+              TextChoice(text: 'Utilizando un lenguaje claro y conciso', value: 'correct'),
+              TextChoice(text: 'Escribiendo largas parrafadas', value: 'wrong1'),
+              TextChoice(text: 'Utilizando muchas abreviaturas', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

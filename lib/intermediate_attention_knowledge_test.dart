@@ -19,7 +19,7 @@ class IntermediateAttentionKnowledgeTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Coneixements d\'Atenció - $testLevel'),
+        title: Text('Test de conocimientos de atención - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class IntermediateAttentionKnowledgeTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class IntermediateAttentionKnowledgeTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Coneixements d\'Atenció Intermedi',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Conocimientos de Atención Intermedia',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Quina és la funció principal d\'un metge de família?',
+          text: '¿Cuál es la función principal de un médico de familia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Proporcionar atenció integral i continuada', value: 'correct'),
-              TextChoice(text: 'Realitzar cirurgies', value: 'wrong1'),
-              TextChoice(text: 'Atendre només emergències', value: 'wrong2'),
+              TextChoice(text: 'Proporcionar atención integral y continuada', value: 'correct'),
+              TextChoice(text: 'Realizar cirugías', value: 'wrong1'),
+              TextChoice(text: 'Atender solo emergencias', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Què és una consulta multidisciplinària?',
+          text: '¿Qué es una consulta multidisciplinaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Atenció coordinada per diversos especialistes', value: 'correct'),
-              TextChoice(text: 'Consulta telefònica amb el metge', value: 'wrong1'),
-              TextChoice(text: 'Consulta per internet', value: 'wrong2'),
+              TextChoice(text: 'Atención coordinada por varios especialistas', value: 'correct'),
+              TextChoice(text: 'Consulta telefónica con el médico', value: 'wrong1'),
+              TextChoice(text: 'Consulta por internet', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Què és la telemedicina?',
+          text: '¿Qué es la telemedicina?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Proporcionar serveis mèdics a distància', value: 'correct'),
-              TextChoice(text: 'Atenció mèdica a la clínica', value: 'wrong1'),
-              TextChoice(text: 'Administrar medicaments', value: 'wrong2'),
+              TextChoice(text: 'Proporcionar servicios médicos a distancia', value: 'correct'),
+              TextChoice(text: 'Atención médica en la clínica', value: 'wrong1'),
+              TextChoice(text: 'Administrar medicamentos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Quina és la diferència entre atenció primària i atenció secundària?',
+          text: '¿Cuál es la diferencia entre atención primaria y atención secundaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'L\'atenció primària és la primera línia, l\'atenció secundària implica especialistes', value: 'correct'),
-              TextChoice(text: 'L\'atenció primària tracta malalties greus, l\'atenció secundària tracta malalties lleus', value: 'wrong1'),
-              TextChoice(text: 'L\'atenció primària és a l\'hospital, l\'atenció secundària és a casa', value: 'wrong2'),
+              TextChoice(text: 'La atención primaria es la primera línea, la atención secundaria implica especialistas', value: 'correct'),
+              TextChoice(text: 'La atención primaria trata enfermedades graves, la atención secundaria trata enfermedades leves', value: 'wrong1'),
+              TextChoice(text: 'La atención primaria es en el hospital, la atención secundaria es en casa', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Què és una unitat d\'atenció domiciliària?',
+          text: '¿Qué es una unidad de atención domiciliaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Equip mèdic que visita pacients a casa', value: 'correct'),
-              TextChoice(text: 'Servei d\'emergència', value: 'wrong1'),
-              TextChoice(text: 'Departament hospitalari', value: 'wrong2'),
+              TextChoice(text: 'Equipo médico que visita pacientes en casa', value: 'correct'),
+              TextChoice(text: 'Servicio de emergencia', value: 'wrong1'),
+              TextChoice(text: 'Departamento hospitalario', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què significa EHR?',
+          text: '¿Qué significa EHR?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Electronic Health Record (Historial de Salut Electrònic)', value: 'correct'),
-              TextChoice(text: 'Emergency Health Response (Resposta Sanitària d\'Emergència)', value: 'wrong1'),
-              TextChoice(text: 'Everyday Health Routine (Rutina de Salut Diària)', value: 'wrong2'),
+              TextChoice(text: 'Electronic Health Record (Historial de Salud Electrónico)', value: 'correct'),
+              TextChoice(text: 'Emergency Health Response (Respuesta Sanitaria de Emergencia)', value: 'wrong1'),
+              TextChoice(text: 'Everyday Health Routine (Rutina de Salud Diaria)', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Què és la gestió de casos?',
+          text: '¿Qué es la gestión de casos?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Coordinació de serveis per pacients amb necessitats complexes', value: 'correct'),
-              TextChoice(text: 'Registrar informació mèdica', value: 'wrong1'),
-              TextChoice(text: 'Realitzar proves diagnòstiques', value: 'wrong2'),
+              TextChoice(text: 'Coordinación de servicios para pacientes con necesidades complejas', value: 'correct'),
+              TextChoice(text: 'Registrar información médica', value: 'wrong1'),
+              TextChoice(text: 'Realizar pruebas diagnósticas', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Què és una consulta preventiva?',
+          text: '¿Qué es una consulta preventiva?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Visita per prevenir malalties', value: 'correct'),
-              TextChoice(text: 'Visita per tractar malalties', value: 'wrong1'),
-              TextChoice(text: 'Visita d\'emergència', value: 'wrong2'),
+              TextChoice(text: 'Visita para prevenir enfermedades', value: 'correct'),
+              TextChoice(text: 'Visita para tratar enfermedades', value: 'wrong1'),
+              TextChoice(text: 'Visita de emergencia', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és un triatge?',
+          text: '¿Qué es un triage?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Classificació dels pacients segons la gravetat', value: 'correct'),
-              TextChoice(text: 'Prova de laboratori', value: 'wrong1'),
-              TextChoice(text: 'Consulta amb el farmacèutic', value: 'wrong2'),
+              TextChoice(text: 'Clasificación de los pacientes según la gravedad', value: 'correct'),
+              TextChoice(text: 'Prueba de laboratorio', value: 'wrong1'),
+              TextChoice(text: 'Consulta con el farmacéutico', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Què és l\'educació per a la salut?',
+          text: '¿Qué es la educación para la salud?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Programes per ensenyar hàbits saludables', value: 'correct'),
-              TextChoice(text: 'Entrenament per a professionals mèdics', value: 'wrong1'),
+              TextChoice(text: 'Programas para enseñar hábitos saludables', value: 'correct'),
+              TextChoice(text: 'Entrenamiento para profesionales médicos', value: 'wrong1'),
               TextChoice(text: 'Cursos de medicina', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

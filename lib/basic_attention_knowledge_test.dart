@@ -19,7 +19,7 @@ class BasicAttentionKnowledgeTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Coneixements d\'Atenció - $testLevel'),
+        title: Text('Test de conocimientos de atención - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class BasicAttentionKnowledgeTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Seguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class BasicAttentionKnowledgeTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Coneixements d\'Atenció Bàsic',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Conocimientos de Atención Básica',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Què és l\'atenció primària?',
+          text: '¿Qué es la atención primaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Atenció mèdica inicial', value: 'correct'),
-              TextChoice(text: 'Atenció mèdica especialitzada', value: 'wrong1'),
-              TextChoice(text: 'Atenció mèdica d\'emergència', value: 'wrong2'),
+              TextChoice(text: 'Atención médica inicial', value: 'correct'),
+              TextChoice(text: 'Atención médica especializada', value: 'wrong1'),
+              TextChoice(text: 'Atención médica de emergencia', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Què és una visita domiciliària?',
+          text: '¿Qué es una visita domiciliaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Una visita a casa del pacient', value: 'correct'),
-              TextChoice(text: 'Una visita a l\'hospital', value: 'wrong1'),
-              TextChoice(text: 'Una consulta telefònica', value: 'wrong2'),
+              TextChoice(text: 'Una visita a casa del paciente', value: 'correct'),
+              TextChoice(text: 'Una visita al hospital', value: 'wrong1'),
+              TextChoice(text: 'Una consulta telefónica', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Quin professional sol fer el seguiment en l\'atenció primària?',
+          text: '¿Qué profesional realiza el seguimiento en la atención primaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Metge de família', value: 'correct'),
-              TextChoice(text: 'Cirurgià', value: 'wrong1'),
+              TextChoice(text: 'Médico de familia', value: 'correct'),
+              TextChoice(text: 'Cirujano', value: 'wrong1'),
               TextChoice(text: 'Especialista', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Què és un centre de salut?',
+          text: '¿Qué es un centro de salud?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Un lloc on es proporciona atenció mèdica bàsica', value: 'correct'),
-              TextChoice(text: 'Un hospital gran', value: 'wrong1'),
-              TextChoice(text: 'Un laboratori mèdic', value: 'wrong2'),
+              TextChoice(text: 'Un lugar donde se proporciona atención médica básica', value: 'correct'),
+              TextChoice(text: 'Un hospital grande', value: 'wrong1'),
+              TextChoice(text: 'Un laboratorio médico', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Quin és l\'objectiu principal de l\'atenció primària?',
+          text: '¿Cuál es el objetivo principal de la atención primaria?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Prevenir i tractar malalties comunes', value: 'correct'),
-              TextChoice(text: 'Realitzar cirurgies complexes', value: 'wrong1'),
-              TextChoice(text: 'Atendre emergències crítiques', value: 'wrong2'),
+              TextChoice(text: 'Prevenir y tratar enfermedades comunes', value: 'correct'),
+              TextChoice(text: 'Realizar cirugías complejas', value: 'wrong1'),
+              TextChoice(text: 'Atender emergencias críticas', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què és una consulta programada?',
+          text: '¿Qué es una consulta programada?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Una visita mèdica amb cita prèvia', value: 'correct'),
-              TextChoice(text: 'Una visita sense cita prèvia', value: 'wrong1'),
-              TextChoice(text: 'Una visita per emergència', value: 'wrong2'),
+              TextChoice(text: 'Una visita médica con cita previa', value: 'correct'),
+              TextChoice(text: 'Una visita sin cita previa', value: 'wrong1'),
+              TextChoice(text: 'Una visita por emergencia', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Què és una consulta d\'urgències?',
+          text: '¿Qué es una consulta de urgencias?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Una visita mèdica per problemes immediats', value: 'correct'),
-              TextChoice(text: 'Una visita de seguiment', value: 'wrong1'),
-              TextChoice(text: 'Una visita rutinària', value: 'wrong2'),
+              TextChoice(text: 'Una visita médica para problemas inmediatos', value: 'correct'),
+              TextChoice(text: 'Una visita de seguimiento', value: 'wrong1'),
+              TextChoice(text: 'Una visita rutinaria', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Què és un historial mèdic?',
+          text: '¿Qué es un historial médico?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Un registre de la salut del pacient', value: 'correct'),
-              TextChoice(text: 'Un llibre de medicina', value: 'wrong1'),
-              TextChoice(text: 'Una recepta mèdica', value: 'wrong2'),
+              TextChoice(text: 'Un registro de la salud del paciente', value: 'correct'),
+              TextChoice(text: 'Un libro de medicina', value: 'wrong1'),
+              TextChoice(text: 'Una receta médica', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és una derivació mèdica?',
+          text: '¿Qué es una derivación médica?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Enviar un pacient a un especialista', value: 'correct'),
-              TextChoice(text: 'Proporcionar una recepta', value: 'wrong1'),
-              TextChoice(text: 'Realitzar una prova diagnòstica', value: 'wrong2'),
+              TextChoice(text: 'Enviar un paciente a un especialista', value: 'correct'),
+              TextChoice(text: 'Proporcionar una receta', value: 'wrong1'),
+              TextChoice(text: 'Realizar una prueba diagnóstica', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Què és un metge generalista?',
+          text: '¿Qué es un médico generalista?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Un metge que tracta diverses malalties comunes', value: 'correct'),
-              TextChoice(text: 'Un metge especialitzat en un camp', value: 'wrong1'),
-              TextChoice(text: 'Un metge d\'urgències', value: 'wrong2'),
+              TextChoice(text: 'Un médico que trata diversas enfermedades comunes', value: 'correct'),
+              TextChoice(text: 'Un médico especializado en un campo', value: 'wrong1'),
+              TextChoice(text: 'Un médico de urgencias', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

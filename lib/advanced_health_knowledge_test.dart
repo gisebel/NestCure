@@ -19,7 +19,7 @@ class AdvancedHealthKnowledgeTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Coneixements Salut - $testLevel'),
+        title: Text('Test de conocimientos de salud - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class AdvancedHealthKnowledgeTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class AdvancedHealthKnowledgeTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Coneixements de Salut Avançat',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Conocimientos de Salud Avanzada',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Què és l\'edema pulmonar?',
+          text: '¿Qué es el edema pulmonar?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Acumulació de líquid als pulmons', value: 'correct'),
-              TextChoice(text: 'Infecció bacteriana dels pulmons', value: 'wrong1'),
-              TextChoice(text: 'Càncer de pulmó', value: 'wrong2'),
+              TextChoice(text: 'Acumulación de líquido en los pulmones', value: 'correct'),
+              TextChoice(text: 'Infección bacteriana de los pulmones', value: 'wrong1'),
+              TextChoice(text: 'Cáncer de pulmón', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Quin és el tractament inicial per a un infart agut de miocardi?',
+          text: '¿Cuál es el tratamiento inicial para un infarto agudo de miocardio?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
               TextChoice(text: 'Administrar aspirina', value: 'correct'),
-              TextChoice(text: 'Donar begudes calentes', value: 'wrong1'),
-              TextChoice(text: 'Aplicar gel', value: 'wrong2'),
+              TextChoice(text: 'Dar bebidas calientes', value: 'wrong1'),
+              TextChoice(text: 'Aplicar hielo', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Què és un pneumotòrax?',
+          text: '¿Qué es un neumotórax?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Presència d\'aire a la cavitat pleural', value: 'correct'),
-              TextChoice(text: 'Inflamació de la pleura', value: 'wrong1'),
-              TextChoice(text: 'Infecció pulmonar greu', value: 'wrong2'),
+              TextChoice(text: 'Presencia de aire en la cavidad pleural', value: 'correct'),
+              TextChoice(text: 'Inflamación de la pleura', value: 'wrong1'),
+              TextChoice(text: 'Infección pulmonar grave', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Quin medicament es fa servir habitualment per a tractar la diabetis tipus 2?',
+          text: '¿Qué medicamento se usa comúnmente para tratar la diabetes tipo 2?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
               TextChoice(text: 'Metformina', value: 'correct'),
               TextChoice(text: 'Insulina', value: 'wrong1'),
-              TextChoice(text: 'Amoxicil·lina', value: 'wrong2'),
+              TextChoice(text: 'Amoxicilina', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Quin és un símptoma comú de la insuficiència cardíaca congestiva?',
+          text: '¿Cuál es un síntoma común de la insuficiencia cardíaca congestiva?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Dificultat per respirar', value: 'correct'),
-              TextChoice(text: 'Dolor de cap', value: 'wrong1'),
-              TextChoice(text: 'Mal de coll', value: 'wrong2'),
+              TextChoice(text: 'Dificultad para respirar', value: 'correct'),
+              TextChoice(text: 'Dolor de cabeza', value: 'wrong1'),
+              TextChoice(text: 'Dolor de garganta', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què és la bradicàrdia?',
+          text: '¿Qué es la bradicardia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Ritme cardíac anormalment lent', value: 'correct'),
-              TextChoice(text: 'Ritme cardíac ràpid', value: 'wrong1'),
-              TextChoice(text: 'Absència de ritme cardíac', value: 'wrong2'),
+              TextChoice(text: 'Ritmo cardíaco anormalmente lento', value: 'correct'),
+              TextChoice(text: 'Ritmo cardíaco rápido', value: 'wrong1'),
+              TextChoice(text: 'Ausencia de ritmo cardíaco', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Quin és l\'objectiu principal de la teràpia amb anticoagulants?',
+          text: '¿Cuál es el objetivo principal de la terapia con anticoagulantes?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Prevenir la formació de coàguls', value: 'correct'),
-              TextChoice(text: 'Reduir el dolor', value: 'wrong1'),
-              TextChoice(text: 'Augmentar la pressió sanguínia', value: 'wrong2'),
+              TextChoice(text: 'Prevenir la formación de coágulos', value: 'correct'),
+              TextChoice(text: 'Reducir el dolor', value: 'wrong1'),
+              TextChoice(text: 'Aumentar la presión sanguínea', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Què és la fibril·lació auricular?',
+          text: '¿Qué es la fibrilación auricular?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Ritme cardíac ràpid i irregular', value: 'correct'),
-              TextChoice(text: 'Ritme cardíac lent i regular', value: 'wrong1'),
-              TextChoice(text: 'Absència de ritme cardíac', value: 'wrong2'),
+              TextChoice(text: 'Ritmo cardíaco rápido e irregular', value: 'correct'),
+              TextChoice(text: 'Ritmo cardíaco lento y regular', value: 'wrong1'),
+              TextChoice(text: 'Ausencia de ritmo cardíaco', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és la septicèmia?',
+          text: '¿Qué es la septicemia?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Infecció generalitzada a la sang', value: 'correct'),
-              TextChoice(text: 'Infecció localitzada a la pell', value: 'wrong1'),
-              TextChoice(text: 'Inflamació dels ganglis limfàtics', value: 'wrong2'),
+              TextChoice(text: 'Infección generalizada en la sangre', value: 'correct'),
+              TextChoice(text: 'Infección localizada en la piel', value: 'wrong1'),
+              TextChoice(text: 'Inflamación de los ganglios linfáticos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Quin és l\'efecte secundari més comú dels inhibidors de l\'ECA?',
+          text: '¿Cuál es el efecto secundario más común de los inhibidores de la ECA?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
               TextChoice(text: 'Tos seca', value: 'correct'),
-              TextChoice(text: 'Nàusees', value: 'wrong1'),
-              TextChoice(text: 'Marejos', value: 'wrong2'),
+              TextChoice(text: 'Náuseas', value: 'wrong1'),
+              TextChoice(text: 'Mareos', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

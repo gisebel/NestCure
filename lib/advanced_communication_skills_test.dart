@@ -19,7 +19,7 @@ class AdvancedCommunicationSkillsTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Habilitats de Comunicació - $testLevel'),
+        title: Text('Test de habilidades de comunicación - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class AdvancedCommunicationSkillsTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class AdvancedCommunicationSkillsTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Habilitats de Comunicació Avançat',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar les teves habilitats.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Habilidades de Comunicación Avanzada',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus habilidades.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
-  title: 'Pregunta 1',
-  text: 'Què és la comunicació assertiva?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Expressar-se amb confiança i respecte', value: 'correct'),
-      TextChoice(text: 'Evitar conflictes a tota costa', value: 'wrong1'),
-      TextChoice(text: 'Ser agressiu per fer-se entendre', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 2',
-  text: 'Com es pot fomentar la comunicació efectiva en un equip?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Promovent la col·laboració i la retroalimentació oberta', value: 'correct'),
-      TextChoice(text: 'Competint entre els membres', value: 'wrong1'),
-      TextChoice(text: 'Ignorant les opinions dels altres', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 3',
-  text: 'Què és la comunicació intercultural efectiva?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Adaptar-se i respectar les diferents cultures', value: 'correct'),
-      TextChoice(text: 'Assumir que tothom entén la nostra cultura', value: 'wrong1'),
-      TextChoice(text: 'Parlar només en la nostra llengua', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 4',
-  text: 'Com es pot gestionar un conflicte de manera efectiva?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Escoltant activament i buscant solucions', value: 'correct'),
-      TextChoice(text: 'Ignorant el problema', value: 'wrong1'),
-      TextChoice(text: 'Imposant la nostra opinió', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 5',
-  text: 'Quina és la importància de la retroalimentació en la comunicació?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Millora contínua i clarificació del missatge', value: 'correct'),
-      TextChoice(text: 'Criticar els altres', value: 'wrong1'),
-      TextChoice(text: 'Evitar la retroalimentació', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 6',
-  text: 'Què és la intel·ligència emocional en la comunicació?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Reconèixer i gestionar les pròpies emocions i les dels altres', value: 'correct'),
-      TextChoice(text: 'Evitar parlar de sentiments', value: 'wrong1'),
-      TextChoice(text: 'Expressar-se agressivament', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 7',
-  text: 'Com podem assegurar-nos que el nostre missatge ha estat entès correctament?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Demanejant una retroalimentació i aclariment', value: 'correct'),
-      TextChoice(text: 'Parlant més alt', value: 'wrong1'),
-      TextChoice(text: 'Assumint que han entès', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 8',
-  text: 'Com es pot millorar la comunicació en situacions d\'estrès?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Mantenint la calma i escoltant activament', value: 'correct'),
-      TextChoice(text: 'Parlant ràpidament', value: 'wrong1'),
-      TextChoice(text: 'Evitant la comunicació', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 9',
-  text: 'Què significa la comunicació bidireccional?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Intercanvi actiu d\'informació entre dues parts', value: 'correct'),
-      TextChoice(text: 'Una sola persona parla', value: 'wrong1'),
-      TextChoice(text: 'Escoltar sense respondre', value: 'wrong2'),
-    ],
-  ),
-),
-QuestionStep(
-  title: 'Pregunta 10',
-  text: 'Com podem evitar malentesos en la comunicació escrita professional?',
-  answerFormat: const SingleChoiceAnswerFormat(
-    textChoices: [
-      TextChoice(text: 'Revisant i clarificant el missatge abans d\'enviar-lo', value: 'correct'),
-      TextChoice(text: 'Utilitzant un llenguatge informal', value: 'wrong1'),
-      TextChoice(text: 'Escrivint de pressa', value: 'wrong2'),
-    ],
-  ),
-),
+          title: 'Pregunta 1',
+          text: '¿Qué es la comunicación asertiva?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Expresarse con confianza y respeto', value: 'correct'),
+              TextChoice(text: 'Evitar conflictos a toda costa', value: 'wrong1'),
+              TextChoice(text: 'Ser agresivo para hacerse entender', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 2',
+          text: '¿Cómo se puede fomentar la comunicación efectiva en un equipo?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Promoviendo la colaboración y la retroalimentación abierta', value: 'correct'),
+              TextChoice(text: 'Compitiendo entre los miembros', value: 'wrong1'),
+              TextChoice(text: 'Ignorando las opiniones de los demás', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 3',
+          text: '¿Qué es la comunicación intercultural efectiva?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Adaptarse y respetar las diferentes culturas', value: 'correct'),
+              TextChoice(text: 'Asumir que todos entienden nuestra cultura', value: 'wrong1'),
+              TextChoice(text: 'Hablar solo en nuestra lengua', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 4',
+          text: '¿Cómo se puede gestionar un conflicto de manera efectiva?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Escuchando activamente y buscando soluciones', value: 'correct'),
+              TextChoice(text: 'Ignorando el problema', value: 'wrong1'),
+              TextChoice(text: 'Imponiendo nuestra opinión', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 5',
+          text: '¿Cuál es la importancia de la retroalimentación en la comunicación?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Mejora continua y clarificación del mensaje', value: 'correct'),
+              TextChoice(text: 'Criticar a los demás', value: 'wrong1'),
+              TextChoice(text: 'Evitar la retroalimentación', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 6',
+          text: '¿Qué es la inteligencia emocional en la comunicación?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Reconocer y gestionar las propias emociones y las de los demás', value: 'correct'),
+              TextChoice(text: 'Evitar hablar de sentimientos', value: 'wrong1'),
+              TextChoice(text: 'Expresarse agresivamente', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 7',
+          text: '¿Cómo podemos asegurarnos de que nuestro mensaje ha sido entendido correctamente?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Solicitando retroalimentación y aclaración', value: 'correct'),
+              TextChoice(text: 'Hablando más alto', value: 'wrong1'),
+              TextChoice(text: 'Asumiendo que lo han entendido', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 8',
+          text: '¿Cómo se puede mejorar la comunicación en situaciones de estrés?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Manteniendo la calma y escuchando activamente', value: 'correct'),
+              TextChoice(text: 'Hablando rápidamente', value: 'wrong1'),
+              TextChoice(text: 'Evitando la comunicación', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 9',
+          text: '¿Qué significa la comunicación bidireccional?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Intercambio activo de información entre dos partes', value: 'correct'),
+              TextChoice(text: 'Una sola persona habla', value: 'wrong1'),
+              TextChoice(text: 'Escuchar sin responder', value: 'wrong2'),
+            ],
+          ),
+        ),
+        QuestionStep(
+          title: 'Pregunta 10',
+          text: '¿Cómo podemos evitar malentendidos en la comunicación escrita profesional?',
+          answerFormat: const SingleChoiceAnswerFormat(
+            textChoices: [
+              TextChoice(text: 'Revisando y aclarando el mensaje antes de enviarlo', value: 'correct'),
+              TextChoice(text: 'Usando un lenguaje informal', value: 'wrong1'),
+              TextChoice(text: 'Escribiendo rápidamente', value: 'wrong2'),
+            ],
+          ),
+        ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

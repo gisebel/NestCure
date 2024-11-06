@@ -19,7 +19,7 @@ class AdvancedAttentionKnowledgeTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Coneixements d\'Atenció - $testLevel'),
+        title: Text('Test de conocimientos de atención - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -30,8 +30,8 @@ class AdvancedAttentionKnowledgeTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -142,125 +142,125 @@ class AdvancedAttentionKnowledgeTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Coneixements d\'Atenció Avançat',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Conocimientos de Atención Avanzada',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
         QuestionStep(
           title: 'Pregunta 1',
-          text: 'Quina és la diferència principal entre atenció urgent i emergent?',
+          text: '¿Cuál es la diferencia principal entre atención urgente y emergente?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'L\'atenció urgent no és vital, l\'emergent és crítica', value: 'correct'),
-              TextChoice(text: 'L\'atenció urgent és immediata, l\'emergent pot esperar', value: 'wrong1'),
-              TextChoice(text: 'L\'atenció urgent es dona a casa, l\'emergent a l\'hospital', value: 'wrong2'),
+              TextChoice(text: 'La atención urgente no es vital, la emergente es crítica', value: 'correct'),
+              TextChoice(text: 'La atención urgente es inmediata, la emergente puede esperar', value: 'wrong1'),
+              TextChoice(text: 'La atención urgente se da en casa, la emergente en el hospital', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 2',
-          text: 'Quina és la finalitat de l\'atenció pal·liativa?',
+          text: '¿Cuál es el objetivo de la atención paliativa?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Millorar la qualitat de vida en malalties greus', value: 'correct'),
-              TextChoice(text: 'Curar malalties cròniques', value: 'wrong1'),
-              TextChoice(text: 'Proporcionar cures intensives', value: 'wrong2'),
+              TextChoice(text: 'Mejorar la calidad de vida en enfermedades graves', value: 'correct'),
+              TextChoice(text: 'Curar enfermedades crónicas', value: 'wrong1'),
+              TextChoice(text: 'Proporcionar cuidados intensivos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 3',
-          text: 'Què és la continuïtat assistencial?',
+          text: '¿Qué es la continuidad asistencial?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Proporcionar atenció consistent i coordinada al llarg del temps', value: 'correct'),
-              TextChoice(text: 'Atendre només consultes urgents', value: 'wrong1'),
-              TextChoice(text: 'Fer un únic tractament complet', value: 'wrong2'),
+              TextChoice(text: 'Proporcionar atención consistente y coordinada a lo largo del tiempo', value: 'correct'),
+              TextChoice(text: 'Atender solo consultas urgentes', value: 'wrong1'),
+              TextChoice(text: 'Hacer un único tratamiento completo', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 4',
-          text: 'Què és un pla de cures individualitzat?',
+          text: '¿Qué es un plan de cuidados individualizado?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Pla de tractament específic per a un pacient', value: 'correct'),
-              TextChoice(text: 'Manual general de cures', value: 'wrong1'),
-              TextChoice(text: 'Protocol d\'emergències', value: 'wrong2'),
+              TextChoice(text: 'Plan de tratamiento específico para un paciente', value: 'correct'),
+              TextChoice(text: 'Manual general de cuidados', value: 'wrong1'),
+              TextChoice(text: 'Protocolo de emergencias', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 5',
-          text: 'Quina és la funció d\'un gestor de casos?',
+          text: '¿Cuál es la función de un gestor de casos?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Coordinar atenció per pacients amb necessitats complexes', value: 'correct'),
-              TextChoice(text: 'Administrar medicaments', value: 'wrong1'),
-              TextChoice(text: 'Realitzar intervencions quirúrgiques', value: 'wrong2'),
+              TextChoice(text: 'Coordinar atención para pacientes con necesidades complejas', value: 'correct'),
+              TextChoice(text: 'Administrar medicamentos', value: 'wrong1'),
+              TextChoice(text: 'Realizar intervenciones quirúrgicas', value: 'wrong2'), 
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 6',
-          text: 'Què és una unitat de cures intensives?',
+          text: '¿Qué es una unidad de cuidados intensivos?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Àrea hospitalària per a pacients crítics', value: 'correct'),
-              TextChoice(text: 'Centre d\'atenció primària', value: 'wrong1'),
-              TextChoice(text: 'Departament de fisioteràpia', value: 'wrong2'),
+              TextChoice(text: 'Área hospitalaria para pacientes críticos', value: 'correct'),
+              TextChoice(text: 'Centro de atención primaria', value: 'wrong1'),
+              TextChoice(text: 'Departamento de fisioterapia', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 7',
-          text: 'Què és una visita de seguiment?',
+          text: '¿Qué es una visita de seguimiento?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Consulta posterior per revisar l\'estat del pacient', value: 'correct'),
-              TextChoice(text: 'Primera consulta mèdica', value: 'wrong1'),
-              TextChoice(text: 'Consulta d\'urgència', value: 'wrong2'),
+              TextChoice(text: 'Consulta posterior para revisar el estado del paciente', value: 'correct'),
+              TextChoice(text: 'Primera consulta médica', value: 'wrong1'),
+              TextChoice(text: 'Consulta de urgencia', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 8',
-          text: 'Què és una consulta a distància?',
+          text: '¿Qué es una consulta a distancia?', // 'Què és una consulta a distància?'
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Atenció mèdica proporcionada per telèfon o internet', value: 'correct'),
-              TextChoice(text: 'Visita mèdica presencial', value: 'wrong1'),
-              TextChoice(text: 'Consulta d\'emergència', value: 'wrong2'),
+              TextChoice(text: 'Atención médica proporcionada por teléfono o internet', value: 'correct'), // 'Atenció mèdica proporcionada per telèfon o internet'
+              TextChoice(text: 'Visita médica presencial', value: 'wrong1'), // 'Visita mèdica presencial'
+              TextChoice(text: 'Consulta de emergencia', value: 'wrong2'), // 'Consulta d\'emergència'
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 9',
-          text: 'Què és un programa de rehabilitació?',
+          text: '¿Qué es un programa de rehabilitación?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Programes per recuperar la funcionalitat després d\'una malaltia o lesió', value: 'correct'),
-              TextChoice(text: 'Proves diagnòstiques', value: 'wrong1'),
-              TextChoice(text: 'Procediments quirúrgics', value: 'wrong2'),
+              TextChoice(text: 'Programas para recuperar la funcionalidad después de una enfermedad o lesión', value: 'correct'),
+              TextChoice(text: 'Pruebas diagnósticas', value: 'wrong1'),
+              TextChoice(text: 'Procedimientos quirúrgicos', value: 'wrong2'),
             ],
           ),
         ),
         QuestionStep(
           title: 'Pregunta 10',
-          text: 'Què és una unitat de salut mental?',
+          text: '¿Qué es una unidad de salud mental?',
           answerFormat: const SingleChoiceAnswerFormat(
             textChoices: [
-              TextChoice(text: 'Departament que tracta trastorns mentals', value: 'correct'),
-              TextChoice(text: 'Servei d\'urgències', value: 'wrong1'),
-              TextChoice(text: 'Laboratori mèdic', value: 'wrong2'),
+              TextChoice(text: 'Departamento que trata trastornos mentales', value: 'correct'),
+              TextChoice(text: 'Servicio de urgencias', value: 'wrong1'),
+              TextChoice(text: 'Laboratorio médico', value: 'wrong2'),
             ],
           ),
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del test',
+          buttonText: 'Finalizar',
         ),
       ],
     );

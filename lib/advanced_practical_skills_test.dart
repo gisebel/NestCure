@@ -19,7 +19,7 @@ class AdvancedPracticalSkillsTestScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de Habilitats Pràctiques - $testLevel'),
+        title: Text('Test de habilitats prácticas - $testLevel'),
       ),
       body: SurveyKit(
         onResult: (SurveyResult result) {
@@ -29,8 +29,8 @@ class AdvancedPracticalSkillsTestScreen extends StatelessWidget {
         task: _getSampleSurveyTask(),
         showProgress: true,
         localizations: const {
-          'cancel': 'Cancel·lar',
-          'next': 'Següent',
+          'cancel': 'Cancelar',
+          'next': 'Siguiente',
         },
         themeData: Theme.of(context).copyWith(
           primaryColor: Colors.cyan,
@@ -141,11 +141,11 @@ class AdvancedPracticalSkillsTestScreen extends StatelessWidget {
       id: TaskIdentifier(),
       steps: [
         InstructionStep(
-          title: 'Benvingut al Test de Habilitats Pràctiques Avançat',
-          text: 'A continuació, realitzaràs una sèrie de preguntes per validar els teus coneixements.',
-          buttonText: 'Començar',
+          title: 'Bienvenido al Test de Habilidades Prácticas Avanzadas',
+          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
+          buttonText: 'Comenzar',
         ),
-       QuestionStep(
+        QuestionStep(
           title: 'Pregunta 1',
           text: '¿Cuáles son las diferencias principales entre la RCP básica y la avanzada?',
           answerFormat: const SingleChoiceAnswerFormat(
@@ -257,9 +257,9 @@ class AdvancedPracticalSkillsTestScreen extends StatelessWidget {
         ),
         CompletionStep(
           stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completat el test. Gràcies per la teva participació!',
-          title: 'Fi del Test',
-          buttonText: 'Finalitzar',
+          text: 'Has completado el test. ¡Gracias por tu participación!',
+          title: 'Fin del Test',
+          buttonText: 'Finalizar',
         ),
       ],
     );
