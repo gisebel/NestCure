@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:survey_kit/survey_kit.dart';
+import 'app_bar.dart';
 
-class AdvancedCommunicationSkillsTestScreen extends StatelessWidget {
+class AdvancedCommunicationSkillsTestScreen extends StatefulWidget {
   final String testType;
   final String testLevel;
   final VoidCallback onCompleted;
@@ -15,255 +14,240 @@ class AdvancedCommunicationSkillsTestScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de habilidades de comunicación - $testLevel'),
-      ),
-      body: SurveyKit(
-        onResult: (SurveyResult result) {
-          // Procesa el resultado del test
-          onCompleted();
-          Navigator.of(context).pop();
-        },
-        task: _getSampleSurveyTask(),
-        showProgress: true,
-        localizations: const {
-          'cancel': 'Cancelar',
-          'next': 'Siguiente',
-        },
-        themeData: Theme.of(context).copyWith(
-          primaryColor: Colors.cyan,
-          appBarTheme: const AppBarTheme(
-            color: Colors.white,
-            iconTheme: IconThemeData(
-              color: Colors.cyan,
-            ),
-            titleTextStyle: TextStyle(
-              color: Colors.cyan,
-            ),
+  _AdvancedCommunicationSkillsTestScreenState createState() =>
+      _AdvancedCommunicationSkillsTestScreenState();
+}
+
+class _AdvancedCommunicationSkillsTestScreenState
+    extends State<AdvancedCommunicationSkillsTestScreen> {
+  int correctAnswers = 0;
+  int currentQuestionIndex = 0;
+
+  final List<Question> questions = [
+    Question(
+      questionText: '¿Qué es la comunicación asertiva?',
+      choices: [
+        'Evitar conflictos a toda costa',
+        'Expresarse con confianza y respeto',
+        'Ser agresivo para hacerse entender',
+      ],
+      correctAnswerIndex: 1,
+    ),
+    Question(
+      questionText: '¿Cómo se puede fomentar la comunicación efectiva en un equipo?',
+      choices: [
+        'Compitiendo entre los miembros',
+        'Ignorando las opiniones de los demás',
+        'Promoviendo la colaboración y la retroalimentación abierta',
+      ],
+      correctAnswerIndex: 2,
+    ),
+    Question(
+      questionText: '¿Qué es la comunicación intercultural efectiva?',
+      choices: [
+        'Adaptarse y respetar las diferentes culturas',
+        'Asumir que todos entienden nuestra cultura',
+        'Hablar solo en nuestra lengua',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué es la escucha activa?',
+      choices: [
+        'Prestar atención y demostrar interés en lo que dice la otra persona',
+        'Escuchar sin responder',
+        'Juzgar rápidamente lo que dice el otro',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué significa la comunicación no verbal?',
+      choices: [
+        'Hablar sin palabras',
+        'La transmisión de mensajes a través del lenguaje corporal y expresiones',
+        'Escribir sin usar palabras',
+      ],
+      correctAnswerIndex: 1,
+    ),
+    Question(
+      questionText: '¿Cuál es la principal barrera en la comunicación efectiva?',
+      choices: [
+        'Los prejuicios y estereotipos',
+        'El uso de tecnología',
+        'El ruido ambiente',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué característica tiene un buen feedback?',
+      choices: [
+        'Es confuso y general',
+        'Es solo positivo, sin críticas',
+        'Es claro, específico y constructivo',
+      ],
+      correctAnswerIndex: 2,
+    ),
+    Question(
+      questionText: '¿Cómo se puede mejorar la empatía en la comunicación?',
+      choices: [
+        'Escuchando activamente y mostrando comprensión',
+        'Imponiendo nuestra opinión sobre los demás',
+        'Ignorando las emociones del otro',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué implica la comunicación persuasiva?',
+      choices: [
+        'Manipular a los demás para conseguir lo que queremos',
+        'Convencer a los demás de forma ética y efectiva',
+        'Imponer nuestras ideas sin considerar las de los demás',
+      ],
+      correctAnswerIndex: 1,
+    ),
+    Question(
+      questionText: '¿Por qué es importante el tono de voz en la comunicación?',
+      choices: [
+        'Porque puede cambiar el significado del mensaje',
+        'Porque es irrelevante en la mayoría de los casos',
+        'Porque define la duración del mensaje',
+      ],
+      correctAnswerIndex: 0,
+    ),
+  ];
+
+  void nextQuestion(int selectedIndex) {
+    if (selectedIndex == questions[currentQuestionIndex].correctAnswerIndex) {
+      correctAnswers++;
+    }
+
+    setState(() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+      } else {
+        widget.onCompleted();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CompletionScreen(correctAnswers: correctAnswers),
           ),
-          iconTheme: const IconThemeData(
-            color: Colors.cyan,
-          ),
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.cyan,
-            selectionColor: Colors.cyan,
-            selectionHandleColor: Colors.cyan,
-          ),
-          cupertinoOverrideTheme: const CupertinoThemeData(
-            primaryColor: Colors.cyan,
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all(
-                const Size(150.0, 60.0),
-              ),
-              side: MaterialStateProperty.resolveWith(
-                (Set<MaterialState> state) {
-                  if (state.contains(MaterialState.disabled)) {
-                    return const BorderSide(
-                      color: Colors.grey,
-                    );
-                  }
-                  return const BorderSide(
-                    color: Colors.cyan,
-                  );
-                },
-              ),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              textStyle: MaterialStateProperty.resolveWith(
-                (Set<MaterialState> state) {
-                  if (state.contains(MaterialState.disabled)) {
-                    return Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.grey,
-                        );
-                  }
-                  return Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Colors.cyan,
-                      );
-                },
-              ),
-            ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              textStyle: MaterialStateProperty.all(
-                Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Colors.cyan,
-                    ),
-              ),
-            ),
-          ),
-          textTheme: const TextTheme(
-            displayMedium: TextStyle(
-              fontSize: 28.0,
-              color: Colors.black,
-            ),
-            headlineSmall: TextStyle(
-              fontSize: 24.0,
-              color: Colors.black,
-            ),
-            bodyMedium: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-            titleMedium: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-          ),
-          inputDecorationTheme: const InputDecorationTheme(
-            labelStyle: TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.cyan,
-          ).copyWith(
-            onPrimary: Colors.white,
-            background: Colors.white,
-          ),
-        ),
-        surveyProgressbarConfiguration: SurveyProgressConfiguration(
-          backgroundColor: Colors.white,
-        ),
-      ),
-    );
+        );
+      }
+    });
   }
 
-  Task _getSampleSurveyTask() {
-    return NavigableTask(
-      id: TaskIdentifier(),
-      steps: [
-        InstructionStep(
-          title: 'Bienvenido al Test de Habilidades de Comunicación Avanzada',
-          text: 'A continuación, realizarás una serie de preguntas para validar tus habilidades.',
-          buttonText: 'Comenzar',
-        ),
-        QuestionStep(
-          title: 'Pregunta 1',
-          text: '¿Qué es la comunicación asertiva?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Expresarse con confianza y respeto', value: 'correct'),
-              TextChoice(text: 'Evitar conflictos a toda costa', value: 'wrong1'),
-              TextChoice(text: 'Ser agresivo para hacerse entender', value: 'wrong2'),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: customAppBar(context, true),
+      backgroundColor: const Color.fromARGB(255, 255, 251, 245),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'PREGUNTA ${currentQuestionIndex + 1}:',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Text(
+                questions[currentQuestionIndex].questionText,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Column(
+                children: questions[currentQuestionIndex]
+                    .choices
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                  int index = entry.key;
+                  String choice = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () => nextQuestion(index),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        choice,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
-        QuestionStep(
-          title: 'Pregunta 2',
-          text: '¿Cómo se puede fomentar la comunicación efectiva en un equipo?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Promoviendo la colaboración y la retroalimentación abierta', value: 'correct'),
-              TextChoice(text: 'Compitiendo entre los miembros', value: 'wrong1'),
-              TextChoice(text: 'Ignorando las opiniones de los demás', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 3',
-          text: '¿Qué es la comunicación intercultural efectiva?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Adaptarse y respetar las diferentes culturas', value: 'correct'),
-              TextChoice(text: 'Asumir que todos entienden nuestra cultura', value: 'wrong1'),
-              TextChoice(text: 'Hablar solo en nuestra lengua', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 4',
-          text: '¿Cómo se puede gestionar un conflicto de manera efectiva?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Escuchando activamente y buscando soluciones', value: 'correct'),
-              TextChoice(text: 'Ignorando el problema', value: 'wrong1'),
-              TextChoice(text: 'Imponiendo nuestra opinión', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 5',
-          text: '¿Cuál es la importancia de la retroalimentación en la comunicación?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Mejora continua y clarificación del mensaje', value: 'correct'),
-              TextChoice(text: 'Criticar a los demás', value: 'wrong1'),
-              TextChoice(text: 'Evitar la retroalimentación', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 6',
-          text: '¿Qué es la inteligencia emocional en la comunicación?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Reconocer y gestionar las propias emociones y las de los demás', value: 'correct'),
-              TextChoice(text: 'Evitar hablar de sentimientos', value: 'wrong1'),
-              TextChoice(text: 'Expresarse agresivamente', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 7',
-          text: '¿Cómo podemos asegurarnos de que nuestro mensaje ha sido entendido correctamente?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Solicitando retroalimentación y aclaración', value: 'correct'),
-              TextChoice(text: 'Hablando más alto', value: 'wrong1'),
-              TextChoice(text: 'Asumiendo que lo han entendido', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 8',
-          text: '¿Cómo se puede mejorar la comunicación en situaciones de estrés?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Manteniendo la calma y escuchando activamente', value: 'correct'),
-              TextChoice(text: 'Hablando rápidamente', value: 'wrong1'),
-              TextChoice(text: 'Evitando la comunicación', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 9',
-          text: '¿Qué significa la comunicación bidireccional?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Intercambio activo de información entre dos partes', value: 'correct'),
-              TextChoice(text: 'Una sola persona habla', value: 'wrong1'),
-              TextChoice(text: 'Escuchar sin responder', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 10',
-          text: '¿Cómo podemos evitar malentendidos en la comunicación escrita profesional?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Revisando y aclarando el mensaje antes de enviarlo', value: 'correct'),
-              TextChoice(text: 'Usando un lenguaje informal', value: 'wrong1'),
-              TextChoice(text: 'Escribiendo rápidamente', value: 'wrong2'),
-            ],
-          ),
-        ),
-        CompletionStep(
-          stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completado el test. ¡Gracias por tu participación!',
-          title: 'Fin del Test',
-          buttonText: 'Finalizar',
-        ),
-      ],
+      ),
     );
   }
 }
 
+class CompletionScreen extends StatelessWidget {
+  final int correctAnswers;
+
+  const CompletionScreen({super.key, required this.correctAnswers});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: customAppBar(context, false),
+      backgroundColor: const Color.fromARGB(255, 255, 251, 245),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Has completado el test. ¡Gracias por tu participación!',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Respuestas correctas: $correctAnswers/10',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16.0, // Texto más pequeño
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Finalizar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Question {
+  final String questionText;
+  final List<String> choices;
+  final int correctAnswerIndex;
+
+  Question({
+    required this.questionText,
+    required this.choices,
+    required this.correctAnswerIndex,
+  });
+}

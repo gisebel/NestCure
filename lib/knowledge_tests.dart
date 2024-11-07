@@ -22,76 +22,55 @@ class KnowledgeTestsScreen extends StatefulWidget {
 
 class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
   Map<String, Map<String, String>> testResults = {
-    'Coneixements Salut': {},
-    'Coneixements d\'atenció': {},
-    'Habilitats de comunicació': {},
-    'Habilitats pràctiques': {}, 
+    'Conocimientos de salud': {},
+    'Conocimientos de atención': {},
+    'Habilidades de comunicación': {},
+    'Habilidades prácticas': {}, 
   };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Image.asset(
-          'images/logo.jpg',
-          height: 50,
-          fit: BoxFit.cover,
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color.fromRGBO(194, 198, 203, 1),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.person, color: Color.fromRGBO(20, 39, 53, 1)),
-              onPressed: () {
-                // Acción para ir al perfil
-              },
-            ),
-          ),
-        ],
-        centerTitle: true,
-      ),
+      appBar: customAppBar(context, true),
       drawer: const NavigationDrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Tests de coneixement',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            _buildTestButton(
-              context,
-              testType: 'Coneixements Salut',
-              levels: ['Bàsic', 'Intermedi', 'Avançat'],
-            ),
-            const SizedBox(height: 16),
-            _buildTestButton(
-              context,
-              testType: 'Coneixements d\'atenció',
-              levels: ['Bàsic', 'Intermedi', 'Avançat'],
-            ),
-            const SizedBox(height: 16),
-            _buildTestButton(
-              context,
-              testType: 'Habilitats de comunicació',
-              levels: ['Bàsic', 'Intermedi', 'Avançat'],
-            ),
-            const SizedBox(height: 16),
-            _buildTestButton(
-              context,
-              testType: 'Habilitats pràctiques', 
-              levels: ['Bàsic', 'Intermedi', 'Avançat'], 
-            ),
-            const Spacer(),
-          ],
+        child: SingleChildScrollView( // <-- Añadir este widget
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Tests de conocimiento',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              _buildTestButton(
+                context,
+                testType: 'Conocimientos de salud',
+                levels: ['Básico', 'Intermedio', 'Avanzado'],
+              ),
+              const SizedBox(height: 16),
+              _buildTestButton(
+                context,
+                testType: 'Conocimientos de atención',
+                levels: ['Básico', 'Intermedio', 'Avanzado'],
+              ),
+              const SizedBox(height: 16),
+              _buildTestButton(
+                context,
+                testType: 'Habilidades de comunicación',
+                levels: ['Básico', 'Intermedio', 'Avanzado'],
+              ),
+              const SizedBox(height: 16),
+              _buildTestButton(
+                context,
+                testType: 'Habilidades prácticas',
+                levels: ['Básico', 'Intermedio', 'Avanzado'],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -107,9 +86,9 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
         return ListTile(
           title: Text(level),
           trailing: Text(
-            testResults[testType]?[level] ?? 'No completat',
+            testResults[testType]?[level] ?? 'No completado',
             style: TextStyle(
-              color: (testResults[testType]?[level] == 'Completat') ? Colors.green : Colors.black,
+              color: (testResults[testType]?[level] == 'Completado') ? Colors.green : Colors.black,
             ),
           ),
           onTap: () {
@@ -126,133 +105,133 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
 
   Widget _getTestScreen(String testType, String testLevel) {
     switch (testType) {
-      case 'Coneixements Salut':
-        if (testLevel == 'Bàsic') {
+      case 'Conocimientos de salud':
+        if (testLevel == 'Básico') {
           return HealthKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Intermedi') {
+        } else if (testLevel == 'Intermedio') {
           return IntermediateHealthKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Avançat') {
+        } else if (testLevel == 'Avanzado') {
           return AdvancedHealthKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
         }
         break;
-      case 'Coneixements d\'atenció':
-        if (testLevel == 'Bàsic') {
+      case 'Conocimientos de atención':
+        if (testLevel == 'Básico') {
           return BasicAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Intermedi') {
+        } else if (testLevel == 'Intermedio') {
           return IntermediateAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Avançat') {
+        } else if (testLevel == 'Avanzado') {
           return AdvancedAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
         }
         break;
-      case 'Habilitats de comunicació':
-        if (testLevel == 'Bàsic') {
+      case 'Habilidades de comunicación':
+        if (testLevel == 'Básico') {
           return BasicCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Intermedi') {
+        } else if (testLevel == 'Intermedio') {
           return IntermediateCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
-        } else if (testLevel == 'Avançat') {
+        } else if (testLevel == 'Avanzado') {
           return AdvancedCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {
               setState(() {
-                testResults[testType]?[testLevel] = 'Completat';
+                testResults[testType]?[testLevel] = 'Completado';
               });
             },
           );
         }
         break;
-      case 'Habilitats pràctiques': 
-        if (testLevel == 'Bàsic') { 
+      case 'Habilidades prácticas': 
+        if (testLevel == 'Básico') { 
           return BasicPracticalSkillsTestScreen( 
             testType: testType, 
             testLevel: testLevel, 
             onCompleted: () { 
               setState(() { 
-                testResults[testType]?[testLevel] = 'Completat'; 
+                testResults[testType]?[testLevel] = 'Completado'; 
               }); 
             }, 
           ); 
-        } else if (testLevel == 'Intermedi') { 
+        } else if (testLevel == 'Intermedio') { 
           return IntermediatePracticalSkillsTestScreen( 
             testType: testType, 
             testLevel: testLevel, 
             onCompleted: () { 
               setState(() { 
-                testResults[testType]?[testLevel] = 'Completat'; 
+                testResults[testType]?[testLevel] = 'Completado'; 
               }); 
             },  
           );   
-        } else if (testLevel == 'Avançat') { 
+        } else if (testLevel == 'Avanzado') { 
           return AdvancedPracticalSkillsTestScreen( 
             testType: testType, 
             testLevel: testLevel, 
             onCompleted: () { 
               setState(() { 
-                testResults[testType]?[testLevel] = 'Completat'; 
+                testResults[testType]?[testLevel] = 'Completado'; 
               }); 
             }, 
           ); 
@@ -261,22 +240,6 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
       default:
         return Container();
     }
-    return Container(); // En caso de que no haya coincidencia
+    return Container();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
