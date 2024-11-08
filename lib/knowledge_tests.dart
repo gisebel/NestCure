@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
-import 'health_knowledge_test.dart';
 import 'intermediate_health_knowledge_test.dart';
 import 'advanced_health_knowledge_test.dart';
 import 'basic_attention_knowledge_test.dart';
@@ -35,7 +34,7 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
       drawer: const NavigationDrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // <-- Añadir este widget
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -107,7 +106,7 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
     switch (testType) {
       case 'Conocimientos de salud':
         if (testLevel == 'Básico') {
-          return HealthKnowledgeTestScreen(
+          return BasicAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
             onCompleted: () {

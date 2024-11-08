@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:survey_kit/survey_kit.dart';
+import 'app_bar.dart';
 
-class BasicAttentionKnowledgeTestScreen extends StatelessWidget {
+class BasicAttentionKnowledgeTestScreen extends StatefulWidget {
   final String testType;
   final String testLevel;
   final VoidCallback onCompleted;
@@ -15,254 +14,237 @@ class BasicAttentionKnowledgeTestScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Test de conocimientos de atención - $testLevel'),
-      ),
-      body: SurveyKit(
-        onResult: (SurveyResult result) {
-          // Procesa el resultado del test
-          onCompleted();
-          Navigator.of(context).pop();
-        },
-        task: _getSampleSurveyTask(),
-        showProgress: true,
-        localizations: const {
-          'cancel': 'Cancelar',
-          'next': 'Seguiente',
-        },
-        themeData: Theme.of(context).copyWith(
-          primaryColor: Colors.cyan,
-          appBarTheme: const AppBarTheme(
-            color: Colors.white,
-            iconTheme: IconThemeData(
-              color: Colors.cyan,
-            ),
-            titleTextStyle: TextStyle(
-              color: Colors.cyan,
-            ),
+  _BasicAttentionKnowledgeTestScreenState createState() =>
+      _BasicAttentionKnowledgeTestScreenState();
+}
+
+class _BasicAttentionKnowledgeTestScreenState
+    extends State<BasicAttentionKnowledgeTestScreen> {
+  int correctAnswers = 0;
+  int currentQuestionIndex = 0;
+
+  final List<Question> questions = [
+    Question(
+      questionText: '¿Qué es la atención primaria?',
+      choices: [
+        'Atención médica especializada',
+        'Atención médica inicial',
+        'Atención médica de emergencia',
+      ],
+      correctAnswerIndex: 1,
+    ),
+    Question(
+      questionText: '¿Qué es una visita domiciliaria?',
+      choices: [
+        'Una visita a casa del paciente',
+        'Una visita al hospital',
+        'Una consulta telefónica',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué profesional realiza el seguimiento en la atención primaria?',
+      choices: [
+        'Cirujano',
+        'Especialista',
+        'Médico de familia',
+      ],
+      correctAnswerIndex: 2,
+    ),
+    Question(
+      questionText: '¿Qué es un centro de salud?',
+      choices: [
+        'Un lugar donde se proporciona atención médica básica',
+        'Un hospital grande',
+        'Un laboratorio médico',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Cuál es el objetivo principal de la atención primaria?',
+      choices: [
+        'Prevenir y tratar enfermedades comunes',
+        'Realizar cirugías complejas',
+        'Atender emergencias críticas',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué es una consulta programada?',
+      choices: [
+        'Una visita sin cita previa',
+        'Una visita por emergencia',
+        'Una visita médica con cita previa',
+      ],
+      correctAnswerIndex: 2,
+    ),
+    Question(
+      questionText: '¿Qué es una consulta de urgencias?',
+      choices: [
+        'Una visita de seguimiento',
+        'Una visita rutinaria',
+        'Una visita médica para problemas inmediatos',
+      ],
+      correctAnswerIndex: 2,
+    ),
+    Question(
+      questionText: '¿Qué es un historial médico?',
+      choices: [
+        'Un registro de la salud del paciente',
+        'Un libro de medicina',
+        'Una receta médica',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué es una derivación médica?',
+      choices: [
+        'Enviar un paciente a un especialista',
+        'Proporcionar una receta',
+        'Realizar una prueba diagnóstica',
+      ],
+      correctAnswerIndex: 0,
+    ),
+    Question(
+      questionText: '¿Qué es un médico generalista?',
+      choices: [
+        'Un médico especializado en un campo',
+        'Un médico que trata diversas enfermedades comunes',
+        'Un médico de urgencias',
+      ],
+      correctAnswerIndex: 1,
+    ),
+  ];
+
+  void nextQuestion(int selectedIndex) {
+    if (selectedIndex == questions[currentQuestionIndex].correctAnswerIndex) {
+      correctAnswers++;
+    }
+
+    setState(() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+      } else {
+        widget.onCompleted();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) =>
+                CompletionScreen(correctAnswers: correctAnswers),
           ),
-          iconTheme: const IconThemeData(
-            color: Colors.cyan,
-          ),
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.cyan,
-            selectionColor: Colors.cyan,
-            selectionHandleColor: Colors.cyan,
-          ),
-          cupertinoOverrideTheme: const CupertinoThemeData(
-            primaryColor: Colors.cyan,
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all(
-                const Size(150.0, 60.0),
-              ),
-              side: MaterialStateProperty.resolveWith(
-                (Set<MaterialState> state) {
-                  if (state.contains(MaterialState.disabled)) {
-                    return const BorderSide(
-                      color: Colors.grey,
-                    );
-                  }
-                  return const BorderSide(
-                    color: Colors.cyan,
-                  );
-                },
-              ),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              textStyle: MaterialStateProperty.resolveWith(
-                (Set<MaterialState> state) {
-                  if (state.contains(MaterialState.disabled)) {
-                    return Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.grey,
-                        );
-                  }
-                  return Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Colors.cyan,
-                      );
-                },
-              ),
-            ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              textStyle: MaterialStateProperty.all(
-                Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Colors.cyan,
-                    ),
-              ),
-            ),
-          ),
-          textTheme: const TextTheme(
-            displayMedium: TextStyle(
-              fontSize: 28.0,
-              color: Colors.black,
-            ),
-            headlineSmall: TextStyle(
-              fontSize: 24.0,
-              color: Colors.black,
-            ),
-            bodyMedium: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-            titleMedium: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-          ),
-          inputDecorationTheme: const InputDecorationTheme(
-            labelStyle: TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.cyan,
-          ).copyWith(
-            onPrimary: Colors.white,
-            background: Colors.white,
-          ),
-        ),
-        surveyProgressbarConfiguration: SurveyProgressConfiguration(
-          backgroundColor: Colors.white,
-        ),
-      ),
-    );
+        );
+      }
+    });
   }
 
-  Task _getSampleSurveyTask() {
-    return NavigableTask(
-      id: TaskIdentifier(),
-      steps: [
-        InstructionStep(
-          title: 'Bienvenido al Test de Conocimientos de Atención Básica',
-          text: 'A continuación, realizarás una serie de preguntas para validar tus conocimientos.',
-          buttonText: 'Comenzar',
-        ),
-        QuestionStep(
-          title: 'Pregunta 1',
-          text: '¿Qué es la atención primaria?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Atención médica inicial', value: 'correct'),
-              TextChoice(text: 'Atención médica especializada', value: 'wrong1'),
-              TextChoice(text: 'Atención médica de emergencia', value: 'wrong2'),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: customAppBar(context, true),
+      backgroundColor: const Color.fromARGB(255, 255, 251, 245),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'PREGUNTA ${currentQuestionIndex + 1}:',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Text(
+                questions[currentQuestionIndex].questionText,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Column(
+                children: questions[currentQuestionIndex]
+                    .choices
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                  int index = entry.key;
+                  String choice = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () => nextQuestion(index),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        choice,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
-        QuestionStep(
-          title: 'Pregunta 2',
-          text: '¿Qué es una visita domiciliaria?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Una visita a casa del paciente', value: 'correct'),
-              TextChoice(text: 'Una visita al hospital', value: 'wrong1'),
-              TextChoice(text: 'Una consulta telefónica', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 3',
-          text: '¿Qué profesional realiza el seguimiento en la atención primaria?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Médico de familia', value: 'correct'),
-              TextChoice(text: 'Cirujano', value: 'wrong1'),
-              TextChoice(text: 'Especialista', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 4',
-          text: '¿Qué es un centro de salud?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Un lugar donde se proporciona atención médica básica', value: 'correct'),
-              TextChoice(text: 'Un hospital grande', value: 'wrong1'),
-              TextChoice(text: 'Un laboratorio médico', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 5',
-          text: '¿Cuál es el objetivo principal de la atención primaria?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Prevenir y tratar enfermedades comunes', value: 'correct'),
-              TextChoice(text: 'Realizar cirugías complejas', value: 'wrong1'),
-              TextChoice(text: 'Atender emergencias críticas', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 6',
-          text: '¿Qué es una consulta programada?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Una visita médica con cita previa', value: 'correct'),
-              TextChoice(text: 'Una visita sin cita previa', value: 'wrong1'),
-              TextChoice(text: 'Una visita por emergencia', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 7',
-          text: '¿Qué es una consulta de urgencias?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Una visita médica para problemas inmediatos', value: 'correct'),
-              TextChoice(text: 'Una visita de seguimiento', value: 'wrong1'),
-              TextChoice(text: 'Una visita rutinaria', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 8',
-          text: '¿Qué es un historial médico?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Un registro de la salud del paciente', value: 'correct'),
-              TextChoice(text: 'Un libro de medicina', value: 'wrong1'),
-              TextChoice(text: 'Una receta médica', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 9',
-          text: '¿Qué es una derivación médica?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Enviar un paciente a un especialista', value: 'correct'),
-              TextChoice(text: 'Proporcionar una receta', value: 'wrong1'),
-              TextChoice(text: 'Realizar una prueba diagnóstica', value: 'wrong2'),
-            ],
-          ),
-        ),
-        QuestionStep(
-          title: 'Pregunta 10',
-          text: '¿Qué es un médico generalista?',
-          answerFormat: const SingleChoiceAnswerFormat(
-            textChoices: [
-              TextChoice(text: 'Un médico que trata diversas enfermedades comunes', value: 'correct'),
-              TextChoice(text: 'Un médico especializado en un campo', value: 'wrong1'),
-              TextChoice(text: 'Un médico de urgencias', value: 'wrong2'),
-            ],
-          ),
-        ),
-        CompletionStep(
-          stepIdentifier: StepIdentifier(id: 'completion'),
-          text: 'Has completado el test. ¡Gracias por tu participación!',
-          title: 'Fin del Test',
-          buttonText: 'Finalizar',
-        ),
-      ],
+      ),
     );
   }
+}
+
+class CompletionScreen extends StatelessWidget {
+  final int correctAnswers;
+
+  const CompletionScreen({super.key, required this.correctAnswers});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: customAppBar(context, false),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+              Text(
+                'Has completado el test. ¡Gracias por tu participación!',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Respuestas correctas: $correctAnswers/10',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16.0,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Finalizar'),
+              ),
+            ],
+        ),
+      ),
+    );
+  }
+}
+
+class Question {
+  final String questionText;
+  final List<String> choices;
+  final int correctAnswerIndex;
+
+  Question({
+    required this.questionText,
+    required this.choices,
+    required this.correctAnswerIndex,
+  });
 }
