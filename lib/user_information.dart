@@ -20,12 +20,11 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Informació Personal'),
+        title: const Text('Información personal'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              // Navegamos a la pantalla de edición de perfil
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
                   return EditProfileScreen(user: user);
@@ -44,7 +43,7 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Informació personal',
+                  'Información personal',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -59,40 +58,40 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Nom i cognoms'),
+                  title: const Text('Nombre y apellidos'),
                   subtitle: Text(user.nomCognoms),
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Data de naixement'),
+                  title: const Text('Fecha de nacimiento'),
                   subtitle: Text(
                       '${user.dataNaixement.day.toString()}-${user.dataNaixement.month.toString()}-${user.dataNaixement.year.toString()}'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Correu'),
+                  title: const Text('Correo'),
                   subtitle: Text(user.correu),
                   trailing: const Icon(Icons.arrow_forward_ios),
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Descripció'),
+                  title: const Text('Descripción'),
                   subtitle: Text(user.descripcio),
                   trailing: const Icon(Icons.arrow_forward_ios),
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Tipus de cuidadora'),
+                  title: const Text('Tipo de cuidadora'),
                   subtitle: user.esCuidadorPersonal
                       ? const Text('Cuidadora Personal')
                       : const Text('Cuidadora Professional'),
                 ),
                 const Divider(),
                 ListTile(
-                  title: const Text('Persones al càrrec'),
+                  title: const Text('Personas a cargo'),
                   subtitle:
-                      Text('${user.personesDependents.length} persones al càrrec'),
+                      Text('${user.personesDependents.length} personas a cargo'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
                     Navigator.of(context).push(
@@ -104,7 +103,6 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                 ),
                 const Divider(),
 
-                // Botón "Editar" al final de la página
                 Center(
                   child: ElevatedButton(
                     onPressed: () {

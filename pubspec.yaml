@@ -12,19 +12,23 @@ dependencies:
   image_picker: ^1.0.4
   http: ^0.13.3
   provider: ^6.0.3
-  url_launcher: ^6.0.9
-  path_provider: ^2.0.11
-  file_picker: ^4.0.4
-  permission_handler: ^9.1.0 
+  url_launcher: ^6.0.10
+  path_provider: ^2.0.15
+  file_picker: ^8.0.7
+  permission_handler: ^10.2.0
   intl: ^0.18.0
-
+  pdf: ^3.11.1
+  printing: ^5.10.0
+  open_filex: ^4.1.0
   cupertino_icons: ^1.0.6
   survey_kit: ^0.2.0
+  html: ^0.15.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  ffi: ^2.0.1
 
 flutter:
   uses-material-design: true

@@ -5,6 +5,7 @@ import 'package:nestcure/llistat_activitats.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_information.dart';
 import 'package:nestcure/login.dart';
+import 'package:nestcure/cv_generator.dart';
 
 class ProfileItem {
   final String name;
@@ -66,6 +67,15 @@ class ProfileWidget extends StatelessWidget {
         size: 28,
       ),
       page: const LlistaActivitats(),
+    ),
+    ProfileItem(
+      name: "Genera CV",
+      icon: const Icon(
+        Icons.create,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: const CvGenerator(),
     ),
   ];
 
@@ -184,7 +194,7 @@ class ProfileWidget extends StatelessWidget {
   void _logout(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => LoginPage()),
-      (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+      (Route<dynamic> route) => false,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -197,7 +207,7 @@ class ProfileWidget extends StatelessWidget {
   void _deleteAccount(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => LoginPage()),
-      (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+      (Route<dynamic> route) => false,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
