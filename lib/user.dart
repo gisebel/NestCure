@@ -3,14 +3,14 @@ import 'package:nestcure/persona_dependent.dart';
 
 class Usuari {
   String nomCognoms;
-   DateTime dataNaixement;
+  DateTime dataNaixement;
   String correu;
   String contrasena;
   bool esCuidadorPersonal;
   String descripcio;
-  final String fotoPerfil = 'images/avatar.png';
-  final List<PersonaDependent> personesDependents;
-  final Map<String, List<Activitat>> activitats;
+  String fotoPerfil;
+  List<PersonaDependent> personesDependents;
+  Map<String, List<Activitat>> activitats;
 
   Usuari({
     required this.nomCognoms,
@@ -19,15 +19,42 @@ class Usuari {
     required this.contrasena,
     required this.esCuidadorPersonal,
     required this.descripcio,
+    required this.fotoPerfil,
     required this.personesDependents,
     required this.activitats,
   });
 
-  static bool isEmailRegistered(String email, List<Usuari> users) {
-    return users.any((usuari) => usuari.correu == email);
+  factory Usuari.fromFirestore(Map<String, dynamic> firestoreData) {
+    var personesDependentsData = firestoreData['personesDependents'] as List;
+    List<PersonaDependent> personesDependents = personesDependentsData
+        .map((personaData) => PersonaDependent(
+              nombre: personaData['nombre'],
+              dependeDe: personaData['dependeDe'],
+              genero: personaData['genero'],
+              fechaNacimiento: DateTime.parse(personaData['fechaNacimiento']),
+              edad: personaData['edad'],
+              telefono: personaData['telefono'],
+              direccion: personaData['direccion'],
+              peso: personaData['peso'],
+              altura: personaData['altura'],
+              descripcion: personaData['descripcion'],
+            ))
+        .toList();
+
+    return Usuari(
+      nomCognoms: firestoreData['nomCognoms'],
+      dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
+      correu: firestoreData['correu'],
+      contrasena: firestoreData['contrasena'],
+      esCuidadorPersonal: firestoreData['esCuidadorPersonal'],
+      descripcio: firestoreData['descripcio'],
+      fotoPerfil: firestoreData['fotoPerfil'],
+      personesDependents: personesDependents,
+      activitats: Map<String, List<Activitat>>.from(firestoreData['activitats'] ?? {}),
+    );
   }
 }
-
+/*
 // Usuario hardcodeado
 final Usuari usuariHardcodeado = Usuari(
     nomCognoms: 'Gisela Beltran',
@@ -126,3 +153,4 @@ final Usuari usuariHardcodeado = Usuari(
         ),
       ],
     });
+*/

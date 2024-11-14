@@ -1,17 +1,64 @@
 import 'package:flutter/material.dart';
-import 'sign_in.dart';
-import 'user.dart';
-import 'package:nestcure/logged_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nestcure/main.dart';
+import 'package:nestcure/sign_in.dart'; // Asegúrate de que este archivo sea el correcto
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      // Verifica que ambos campos estén completos
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, ingresa el correo y la contraseña')),
+      );
+      return;
+    }
+
+    try {
+      // Verificación de usuario y contraseña con Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Si la autenticación es exitosa, navega a la página principal
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ),
+      );
+      print('Inicio de sesión exitoso');
+    } on FirebaseAuthException catch (e) {
+      // Si ocurre un error (como usuario o contraseña incorrectos)
+      String errorMessage = e.message ?? 'Error desconocido';
+
+      // Si el error es de credenciales incorrectas
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No hay ningún usuario registrado con este correo.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Contraseña incorrecta.';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    String usuariIngresado = '';
-    String contrasenaIngresada = '';
-
     return Scaffold(
       key: scaffoldKey,
       body: Container(
@@ -38,21 +85,17 @@ class LoginPage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextField(
-                    onChanged: (value) {
-                      usuariIngresado = value;
-                    },
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: 'Usuario',
+                      labelText: 'Correo electrónico',
                     ),
                   ),
                   SizedBox(height: 20.0),
                   TextField(
-                    onChanged: (value) {
-                      contrasenaIngresada = value;
-                    },
+                    controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
@@ -60,31 +103,11 @@ class LoginPage extends StatelessWidget {
                   ),
                   SizedBox(height: 20.0),
                   ElevatedButton(
-                    onPressed: () {
-                      // Verifica si las credenciales ingresadas coinciden con el usuari hardcodeado
-                      if (usuariIngresado == usuariHardcodeado.correu &&
-                          contrasenaIngresada == usuariHardcodeado.contrasena) {
-                        LoggedUsuari().login(usuariHardcodeado);
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const MyHomePage();
-                            },
-                          ),
-                        );
-                        print('Inicio de sessión exitosa');
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Usuario o contraseña incorrectas'),
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(217, 232, 176, 1),
                     ),
-                    child: Text('Iniciar Sessión'),
+                    child: Text('Iniciar sesión'),
                   ),
                   SizedBox(height: 15.0),
                   Row(
@@ -97,13 +120,14 @@ class LoginPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegisterPage()),
+                              builder: (context) => RegisterPage(),
+                            ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromRGBO(255, 255, 251, 245),
                         ),
-                        child: Text('Crear'),
+                        child: Text('Crear cuenta'),
                       ),
                     ],
                   ),

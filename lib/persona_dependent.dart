@@ -30,6 +30,40 @@ class PersonaDependent {
     required this.altura,
     required this.descripcion,
   });
+
+  // Método toMap para convertir a Map<String, dynamic>
+  Map<String, dynamic> toJson() {
+    return {
+      'nombre': nombre,
+      'dependeDe': dependeDe,
+      'genero': genero,
+      'fechaNacimiento': fechaNacimiento.toIso8601String(),
+      'edad': edad,
+      'telefono': telefono,
+      'direccion': direccion,
+      'peso': peso,
+      'altura': altura,
+      'descripcion': descripcion,
+    };
+  }
+
+  // Método fromMap para convertir Map<String, dynamic> a PersonaDependent
+  factory PersonaDependent.fromMap(Map<String, dynamic> map) {
+    return PersonaDependent(
+      nombre: map['nombre'] ?? '',
+      dependeDe: map['dependeDe'] ?? '',
+      genero: map['genero'] ?? '',
+      fechaNacimiento: map['fechaNacimiento'] != null
+          ? DateTime.parse(map['fechaNacimiento'])
+          : DateTime.now(),
+      edad: map['edad'] ?? 0,
+      telefono: map['telefono'] ?? 0,
+      direccion: map['direccion'] ?? '',
+      peso: map['peso']?.toDouble() ?? 0.0,
+      altura: map['altura']?.toDouble() ?? 0.0,
+      descripcion: map['descripcion'] ?? '',
+    );
+  }
 }
 
 class PersonesDependentsWidget extends StatefulWidget {

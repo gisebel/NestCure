@@ -1,22 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nestcure/user.dart'; // Asegúrate de tener la clase Usuari en user.dart
+import 'login.dart';  // Asegúrate de importar tu página de login
 
-class Usuari {
-  final String nomCognoms;
-  final DateTime dataNaixement;
-  final String correu;
-  final String contrasena;
-  final bool esCuidadorPersonal;
-  final String descripcio;
-
-  Usuari({
-    required this.nomCognoms,
-    required this.dataNaixement,
-    required this.correu,
-    required this.contrasena,
-    required this.esCuidadorPersonal,
-    required this.descripcio,
-  });
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Inicializar Firebase
+  runApp(MaterialApp(home: RegisterPage()));
 }
 
 class RegisterPage extends StatefulWidget {
@@ -33,9 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
-  // Lista de correos electrónicos registrados
-  List<String> _registeredEmails = [];
 
+  // Selección de fecha de nacimiento
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -48,6 +40,22 @@ class _RegisterPageState extends State<RegisterPage> {
         _selectedDate = picked;
         _dataNaixementController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
+    }
+  }
+
+  // Función para verificar si el correo ya está registrado
+  Future<bool> _isEmailRegistered(String email) async {
+    try {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .where('correu', isEqualTo: email)
+          .get();
+
+      // Si el resultado tiene documentos, significa que el correo ya está registrado
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      print('Error al verificar el correo: $e');
+      return false;
     }
   }
 
@@ -69,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(width: 10.0),
                 Text(
-                  'Registra\'t',
+                  'Regístrate',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -79,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: 20.0),
             Text(
-              'Dades personals',
+              'Datos personales',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -89,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextField(
               controller: _nomCognomsController,
               decoration: InputDecoration(
-                labelText: 'Nom i Cognoms',
+                labelText: 'Nombre y Apellidos',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -97,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextField(
               controller: _dataNaixementController,
               decoration: InputDecoration(
-                labelText: 'Data de Naixement',
+                labelText: 'Fecha de Nacimiento',
                 border: OutlineInputBorder(),
               ),
               readOnly: true,
@@ -107,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextField(
               controller: _correuController,
               decoration: InputDecoration(
-                labelText: 'Correu Electrònic',
+                labelText: 'Correo electrónico',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -115,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextField(
               controller: _contrasenaController,
               decoration: InputDecoration(
-                labelText: 'Contrasenya',
+                labelText: 'Contraseña',
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
@@ -138,14 +146,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     });
                   },
                 ),
-                Text('Cuidador professional'),
+                Text('Cuidador profesional'),
               ],
             ),
             SizedBox(height: 10.0),
             TextField(
               controller: _experienciaPreviaController,
               decoration: InputDecoration(
-                labelText: 'Experiència prèvia',
+                labelText: 'Experiencia previa',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -162,10 +170,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(255, 102, 102, 1),
                     ),
-                    child: Text('Cancel·lar'),
+                    child: Text('Cancelar'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       String nomCognoms = _nomCognomsController.text;
                       DateTime? dataNaixement = _selectedDate;
                       String correu = _correuController.text;
@@ -173,24 +181,61 @@ class _RegisterPageState extends State<RegisterPage> {
                       String experienciaPrevia = _experienciaPreviaController.text;
                       bool esCuidadorPersonal = _esCuidadorPersonal;
 
-                      if (_registeredEmails.contains(correu)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Aquest correu electrònic ja està registrat')),
-                        );
-                      } else if (nomCognoms.isNotEmpty &&
+                      if (nomCognoms.isNotEmpty &&
                           dataNaixement != null &&
                           correu.isNotEmpty &&
                           contrasena.isNotEmpty) {
-                        _registeredEmails.add(correu);
 
-                        print(
-                            'Registre correcte: $nomCognoms, $dataNaixement, $correu, $esCuidadorPersonal, $experienciaPrevia');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Usuari registrat correctament')),
-                        );
+                        // Verificar si el correo ya está registrado en Firebase Authentication
+                        try {
+                          // Registrar usuario con Firebase Authentication
+                          UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                            email: correu,
+                            password: contrasena,
+                          );
+
+                          // Crear objeto Usuari
+                          Usuari newUser = Usuari(
+                            nomCognoms: nomCognoms,
+                            dataNaixement: dataNaixement!,
+                            correu: correu,
+                            contrasena: contrasena,
+                            esCuidadorPersonal: esCuidadorPersonal,
+                            descripcio: experienciaPrevia,
+                            fotoPerfil: '',
+                            personesDependents: [],
+                            activitats: {},
+                          );
+
+                          // Guardar los datos adicionales en Firestore
+                          await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
+                            'nomCognoms': newUser.nomCognoms,
+                            'dataNaixement': newUser.dataNaixement.toIso8601String(),
+                            'correu': newUser.correu,
+                            'esCuidadorPersonal': newUser.esCuidadorPersonal,
+                            'descripcio': newUser.descripcio,
+                            'fotoPerfil': newUser.fotoPerfil,
+                            'personesDependents': [],
+                            'activitats': {},
+                          });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Usuario registrado correctamente')),
+                          );
+
+                          // Redirigir a la página de login
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error al registrar el usuario: $e')),
+                          );
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Has de completar tots els camps')),
+                          SnackBar(content: Text('Debes completar todos los campos')),
                         );
                       }
                     },
@@ -207,10 +252,4 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: RegisterPage(),
-  ));
 }
