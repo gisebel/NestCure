@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "110021199237",
+    "project_id": "nestcure-3e93b",
+    "storage_bucket": "nestcure-3e93b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110021199237:android:eda2420a223023843270ec",
+        "android_client_info": {
+          "package_name": "com.example.nestcure"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhfwkn5ru4A85jrtbF6gHYvHKSmDEW61c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +11,13 @@ import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -47,7 +55,6 @@ class MyApp extends StatelessWidget {
           '/validate': (context) => const ValidateCertificate(),
           '/list': (context) => const PersonesDependentsWidget(),
           '/list_certificates': (context) => const ListCertificates(),
-          //'/list_certificates_provided': (context) => CertificateProvider(),
           '/knowledge_tests': (context) => const KnowledgeTestsScreen(),
         },
       ),
@@ -141,31 +148,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     Icon(Icons.book),
                     SizedBox(width: 8),
                     Text('Els meus certificats'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/knowledge_tests');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  backgroundColor: Colors.lightGreen.shade200,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.how_to_reg),
-                    SizedBox(width: 8),
-                    Text('Valida la teva experiencia'),
                   ],
                 ),
               ),

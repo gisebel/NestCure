@@ -29,7 +29,7 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             Text(
-              'Inicia sessió',
+              'Inicia sesión',
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
                       usuariIngresado = value;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Usuari',
+                      labelText: 'Usuario',
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -55,7 +55,7 @@ class LoginPage extends StatelessWidget {
                     },
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Contrasenya',
+                      labelText: 'Contraseña',
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -72,11 +72,11 @@ class LoginPage extends StatelessWidget {
                             },
                           ),
                         );
-                        print('Inici de sessió exitós');
+                        print('Inicio de sessión exitosa');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Usuari o contrasenya incorrectes'),
+                            content: Text('Usuario o contraseña incorrectas'),
                           ),
                         );
                       }
@@ -84,13 +84,13 @@ class LoginPage extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(217, 232, 176, 1),
                     ),
-                    child: Text('Iniciar Sessió'),
+                    child: Text('Iniciar Sessión'),
                   ),
                   SizedBox(height: 15.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('No tens compte?'),
+                      Text('¿No tienes cuenta?'),
                       SizedBox(width: 10.0),
                       ElevatedButton(
                         onPressed: () {

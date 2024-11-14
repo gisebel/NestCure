@@ -10,24 +10,28 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.0.4
-  http: ^0.13.3
+  http: ^1.2.2
   provider: ^6.0.3
   url_launcher: ^6.0.10
   path_provider: ^2.0.15
   file_picker: ^8.0.7
-  permission_handler: ^10.2.0
-  intl: ^0.18.0
+  permission_handler: ^11.3.1
+  intl: ^0.19.0
   pdf: ^3.11.1
   printing: ^5.10.0
   open_filex: ^4.1.0
   cupertino_icons: ^1.0.6
-  survey_kit: ^0.2.0
+  survey_kit: ^1.0.0-dev.5
   html: ^0.15.5
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.3.3
+  cloud_firestore: ^5.4.0
+  firebase_storage: ^12.3.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   ffi: ^2.0.1
 
 flutter:
