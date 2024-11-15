@@ -59,6 +59,39 @@ class LoggedUsuari {
     }
   }
 
+  // Escuchar cambios en los datos del usuario en tiempo real
+  Stream<Usuari> get userStream {
+    return FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('Usuarios')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists) {
+          Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+
+          _usuari = Usuari(
+            nomCognoms: data['nomCognoms'] ?? '',
+            dataNaixement: (data['dataNaixement'] as Timestamp).toDate(),
+            correu: data['correu'] ?? '',
+            contrasena: '',
+            esCuidadorPersonal: data['esCuidadorPersonal'] ?? false,
+            descripcio: data['descripcio'] ?? '',
+            personesDependents: List<PersonaDependent>.from(
+              data['personesDependents']?.map((x) => PersonaDependent.fromMap(x)) ?? [],
+            ),
+            activitats: Map<String, List<Activitat>>.from(
+              data['activitats'] ?? {},
+            ),
+            fotoPerfil: data['fotoPerfil'] ?? 'images/avatar_predeterminado.png',
+          );
+        }
+      }
+      return _usuari;
+    });
+  }
+
   void logout() {
     _usuari = Usuari(
       nomCognoms: '',

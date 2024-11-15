@@ -13,7 +13,6 @@ import 'package:nestcure/list_certificates.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Asegúrate de que estés pasando las opciones correctas
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

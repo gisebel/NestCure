@@ -16,7 +16,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
-  late TextEditingController _emailController;
   late TextEditingController _descriptionController;
   late TextEditingController _passwordController;
   late DateTime _selectedDate;
@@ -27,7 +26,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.user.nomCognoms);
-    _emailController = TextEditingController(text: widget.user.correu);
     _descriptionController = TextEditingController(text: widget.user.descripcio);
     _passwordController = TextEditingController(text: widget.user.contrasena);
     _selectedDate = widget.user.dataNaixement;
@@ -37,7 +35,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _descriptionController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -72,12 +69,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 16.0),
               TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Correo electrónico'),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: 'Descripción'),
                 maxLines: 3,
@@ -100,24 +91,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _esCuidadorPersonal = newValue;
                     });
                   },
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: !_passwordVisible,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _passwordVisible = !_passwordVisible;
-                      });
-                    },
-                  ),
                 ),
               ),
               const SizedBox(height: 32.0),
@@ -155,7 +128,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // Guardar los cambios en la instancia local del usuario
         setState(() {
           widget.user.nomCognoms = _nameController.text;
-          widget.user.correu = _emailController.text;
           widget.user.descripcio = _descriptionController.text;
           widget.user.dataNaixement = _selectedDate;
           widget.user.contrasena = _passwordController.text;
@@ -165,7 +137,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // Actualizar la base de datos en Firestore
         await FirebaseFirestore.instance.collection('usuarios').doc(userId).update({
           'nomCognoms': widget.user.nomCognoms,
-          'correu': widget.user.correu,
           'descripcio': widget.user.descripcio,
           'dataNaixement': widget.user.dataNaixement,
           'contrasena': widget.user.contrasena,
@@ -177,7 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const SnackBar(content: Text('Perfil actualizado correctamente')),
         );
 
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       print('Error al actualizar el perfil: $e');

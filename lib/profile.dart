@@ -69,7 +69,7 @@ class ProfileWidget extends StatelessWidget {
       page: const LlistaActivitats(),
     ),
     ProfileItem(
-      name: "Genera CV",
+      name: "Generar CV",
       icon: const Icon(
         Icons.create,
         color: Color.fromRGBO(45, 88, 133, 1),
@@ -207,7 +207,6 @@ class ProfileWidget extends StatelessWidget {
   void _deleteAccount(BuildContext context) async {
     var loggedUser = LoggedUsuari();
 
-    // Mostrar un indicador de carga mientras se elimina la cuenta
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -219,18 +218,14 @@ class ProfileWidget extends StatelessWidget {
     );
 
     try {
-      // Llamar al método para eliminar la cuenta en Firebase
       await loggedUser.deleteAccount();
 
-      // Verificar si el contexto sigue siendo válido antes de realizar la navegación
       if (context.mounted) {
-        // Navegar a la pantalla de inicio de sesión
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginPage()),
           (Route<dynamic> route) => false,
         );
 
-        // Mostrar un mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Cuenta eliminada exitosamente"),
@@ -241,7 +236,6 @@ class ProfileWidget extends StatelessWidget {
       print("Error al eliminar la cuenta: $e");
 
       if (context.mounted) {
-        // Mostrar un mensaje de error si algo falla
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Error al eliminar la cuenta"),
@@ -249,7 +243,6 @@ class ProfileWidget extends StatelessWidget {
         );
       }
     } finally {
-      // Asegúrate de cerrar el diálogo de carga si sigue abierto
       if (Navigator.canPop(context)) {
         Navigator.of(context).pop();
       }
