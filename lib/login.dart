@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nestcure/main.dart';
-import 'package:nestcure/sign_in.dart'; // Asegúrate de que este archivo sea el correcto
+import 'package:nestcure/sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -19,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      // Verifica que ambos campos estén completos
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, ingresa el correo y la contraseña')),
       );
@@ -41,10 +40,8 @@ class _LoginPageState extends State<LoginPage> {
       );
       print('Inicio de sesión exitoso');
     } on FirebaseAuthException catch (e) {
-      // Si ocurre un error (como usuario o contraseña incorrectos)
       String errorMessage = e.message ?? 'Error desconocido';
 
-      // Si el error es de credenciales incorrectas
       if (e.code == 'user-not-found') {
         errorMessage = 'No hay ningún usuario registrado con este correo.';
       } else if (e.code == 'wrong-password') {

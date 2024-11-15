@@ -204,16 +204,55 @@ class ProfileWidget extends StatelessWidget {
     );
   }
 
-  void _deleteAccount(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (Route<dynamic> route) => false,
+  void _deleteAccount(BuildContext context) async {
+    var loggedUser = LoggedUsuari();
+
+    // Mostrar un indicador de carga mientras se elimina la cuenta
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Cuenta eliminada exitosamente"),
-      ),
-    );
+    try {
+      // Llamar al método para eliminar la cuenta en Firebase
+      await loggedUser.deleteAccount();
+
+      // Verificar si el contexto sigue siendo válido antes de realizar la navegación
+      if (context.mounted) {
+        // Navegar a la pantalla de inicio de sesión
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => LoginPage()),
+          (Route<dynamic> route) => false,
+        );
+
+        // Mostrar un mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Cuenta eliminada exitosamente"),
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error al eliminar la cuenta: $e");
+
+      if (context.mounted) {
+        // Mostrar un mensaje de error si algo falla
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error al eliminar la cuenta"),
+          ),
+        );
+      }
+    } finally {
+      // Asegúrate de cerrar el diálogo de carga si sigue abierto
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+    }
   }
 }

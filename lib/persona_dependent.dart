@@ -31,7 +31,6 @@ class PersonaDependent {
     required this.descripcion,
   });
 
-  // Método toMap para convertir a Map<String, dynamic>
   Map<String, dynamic> toJson() {
     return {
       'nombre': nombre,
@@ -47,7 +46,6 @@ class PersonaDependent {
     };
   }
 
-  // Método fromMap para convertir Map<String, dynamic> a PersonaDependent
   factory PersonaDependent.fromMap(Map<String, dynamic> map) {
     return PersonaDependent(
       nombre: map['nombre'] ?? '',

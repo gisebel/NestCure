@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nestcure/user.dart'; // Asegúrate de tener la clase Usuari en user.dart
-import 'login.dart';  // Asegúrate de importar tu página de login
+import 'package:nestcure/user.dart';
+import 'login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Inicializar Firebase
+  await Firebase.initializeApp();
   runApp(MaterialApp(home: RegisterPage()));
 }
 
@@ -27,7 +27,6 @@ class _RegisterPageState extends State<RegisterPage> {
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
 
-  // Selección de fecha de nacimiento
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -43,7 +42,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // Función para verificar si el correo ya está registrado
   Future<bool> _isEmailRegistered(String email) async {
     try {
       final QuerySnapshot result = await FirebaseFirestore.instance
@@ -51,7 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
           .where('correu', isEqualTo: email)
           .get();
 
-      // Si el resultado tiene documentos, significa que el correo ya está registrado
       return result.docs.isNotEmpty;
     } catch (e) {
       print('Error al verificar el correo: $e');
@@ -186,15 +183,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           correu.isNotEmpty &&
                           contrasena.isNotEmpty) {
 
-                        // Verificar si el correo ya está registrado en Firebase Authentication
                         try {
-                          // Registrar usuario con Firebase Authentication
                           UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                             email: correu,
                             password: contrasena,
                           );
 
-                          // Crear objeto Usuari
                           Usuari newUser = Usuari(
                             nomCognoms: nomCognoms,
                             dataNaixement: dataNaixement!,
@@ -207,7 +201,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             activitats: {},
                           );
 
-                          // Guardar los datos adicionales en Firestore
                           await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
                             'nomCognoms': newUser.nomCognoms,
                             'dataNaixement': newUser.dataNaixement.toIso8601String(),
@@ -223,7 +216,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             SnackBar(content: Text('Usuario registrado correctamente')),
                           );
 
-                          // Redirigir a la página de login
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),

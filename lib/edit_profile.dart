@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nestcure/user.dart';
+import 'package:nestcure/app_bar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Usuari user;
@@ -57,50 +60,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Perfil'),
-      ),
+      appBar: customAppBar(context, false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Añadimos scroll si el contenido es largo
+        child: SingleChildScrollView(
           child: Column(
             children: [
-              // Campo para editar el nombre
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nom i cognoms'),
+                decoration: const InputDecoration(labelText: 'Nombre y Apellidos'),
               ),
               const SizedBox(height: 16.0),
-              
-              // Campo para editar el correo
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Correu'),
+                decoration: const InputDecoration(labelText: 'Correo electrónico'),
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16.0),
-              
-              // Campo para editar la descripción
               TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Descripció'),
+                decoration: const InputDecoration(labelText: 'Descripción'),
                 maxLines: 3,
               ),
               const SizedBox(height: 16.0),
-
-              // Campo para editar la fecha de nacimiento
               ListTile(
-                title: const Text('Data de Naixement'),
+                title: const Text('Fecha de nacimiento'),
                 subtitle: Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
               ),
               const SizedBox(height: 16.0),
-
-              // Campo para editar esCuidadorPersonal
               ListTile(
-                title: const Text('Tipus de cuidadora'),
-                subtitle: Text(_esCuidadorPersonal ? 'Cuidadora Personal' : 'Cuidadora Professional'),
+                title: const Text('Rol del perfil'),
+                subtitle: Text(_esCuidadorPersonal ? 'Cuidador personal' : 'Cuidador professional'),
                 trailing: Switch(
                   value: _esCuidadorPersonal,
                   onChanged: (bool newValue) {
@@ -111,13 +103,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-
-              // Campo para editar la contraseña
               TextField(
                 controller: _passwordController,
-                obscureText: !_passwordVisible, // Control de visibilidad de la contraseña
+                obscureText: !_passwordVisible,
                 decoration: InputDecoration(
-                  labelText: 'Contrasenya',
+                  labelText: 'Contraseña',
                   suffixIcon: IconButton(
                     icon: Icon(
                       _passwordVisible ? Icons.visibility : Icons.visibility_off,
@@ -131,20 +121,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 32.0),
-              
-              // Botones de guardar o cancelar
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      _saveProfile();  // Lógica para guardar los cambios
+                      _saveProfile();
                     },
                     child: const Text('Guardar'),
                   ),
                   OutlinedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();  // Cerrar pantalla sin guardar
+                      Navigator.of(context).pop();
                     },
                     child: const Text('Cancelar'),
                   ),
@@ -157,17 +145,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  void _saveProfile() {
-    // Guardar los cambios en la instancia del usuario
-    setState(() {
-      widget.user.nomCognoms = _nameController.text;
-      widget.user.correu = _emailController.text;
-      widget.user.descripcio = _descriptionController.text;
-      widget.user.dataNaixement = _selectedDate;
-      widget.user.contrasena = _passwordController.text;  // Actualizamos la contraseña
-      widget.user.esCuidadorPersonal = _esCuidadorPersonal;  // Actualizamos el tipo de cuidador
-    });
+  Future<void> _saveProfile() async {
+    try {
+      // Obtener el ID del usuario autenticado
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final userId = user.uid;
 
-    Navigator.of(context).pop();  // Volver a la pantalla anterior
+        // Guardar los cambios en la instancia local del usuario
+        setState(() {
+          widget.user.nomCognoms = _nameController.text;
+          widget.user.correu = _emailController.text;
+          widget.user.descripcio = _descriptionController.text;
+          widget.user.dataNaixement = _selectedDate;
+          widget.user.contrasena = _passwordController.text;
+          widget.user.esCuidadorPersonal = _esCuidadorPersonal;
+        });
+
+        // Actualizar la base de datos en Firestore
+        await FirebaseFirestore.instance.collection('usuarios').doc(userId).update({
+          'nomCognoms': widget.user.nomCognoms,
+          'correu': widget.user.correu,
+          'descripcio': widget.user.descripcio,
+          'dataNaixement': widget.user.dataNaixement,
+          'contrasena': widget.user.contrasena,
+          'esCuidadorPersonal': widget.user.esCuidadorPersonal,
+        });
+
+        // Mostrar un mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Perfil actualizado correctamente')),
+        );
+
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      print('Error al actualizar el perfil: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al actualizar el perfil')),
+      );
+    }
   }
 }
