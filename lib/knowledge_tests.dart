@@ -31,17 +31,15 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(context, true),
-      drawer: const NavigationDrawerWidget(),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Tests de conocimiento',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               _buildTestButton(

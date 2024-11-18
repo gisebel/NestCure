@@ -153,22 +153,6 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Radio<String>(
-                            value: 'Otros',
-                            groupValue: _gender,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _gender = value!;
-                              });
-                            },
-                          ),
-                          const Text('Otros'),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 10.0),
@@ -237,7 +221,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
                       ),
                       elevation: 5,
                     ),
-                    child: const Text('Añadir',
+                    child: const Text('Crear',
                         style: TextStyle(color: Colors.white)),
                   ),
                 ),

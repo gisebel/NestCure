@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nestcure/knowledge_tests.dart';
-import 'package:nestcure/llistat_activitats.dart';
-import 'package:nestcure/main.dart';
-import 'package:nestcure/profile.dart';
-import 'package:nestcure/validate_certificate.dart';
-import 'package:nestcure/list_certificates.dart';
+import 'package:nestcure/login.dart';
 
 AppBar customAppBar(BuildContext context, bool canReturnBack) {
   return AppBar(
@@ -32,16 +27,8 @@ AppBar customAppBar(BuildContext context, bool canReturnBack) {
           color: Color.fromRGBO(194, 198, 203, 1),
         ),
         child: IconButton(
-          icon: const Icon(Icons.person, color: Color.fromRGBO(20, 39, 53, 1)),
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) {
-                  return ProfileWidget();
-                },
-              ),
-            );
-          },
+          icon: const Icon(Icons.logout, color: Color.fromRGBO(20, 39, 53, 1)),
+          onPressed: () => _logout(context),
         ),
       ),
     ],
@@ -49,109 +36,15 @@ AppBar customAppBar(BuildContext context, bool canReturnBack) {
   );
 }
 
-class NavigationDrawerWidget extends StatelessWidget {
-  const NavigationDrawerWidget({super.key});
+void _logout(BuildContext context) {
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => LoginPage()),
+    (Route<dynamic> route) => false,
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildMenuItems(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildMenuItems(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(24, 68, 24, 24),
-      child: Wrap(
-        runSpacing: 16,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const MyHomePage();
-                  },
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Perfil'),
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return ProfileWidget();
-                }),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.content_paste_search),
-            title: const Text('Les Meves activitats'),
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return const LlistaActivitats();
-                }),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.upload_file),
-            title: const Text('Valida Certificat'),
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return const ValidateCertificate();
-                }),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.list),
-            title: const Text('Els Meus Certificats'),
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return const ListCertificates();
-                }),
-              );
-            },
-          ),
-           ListTile(
-            leading: const Icon(Icons.quiz),
-            title: const Text('Tests de Coneixements'),
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return const KnowledgeTestsScreen();
-                }),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("Cierre de sesión exitoso"),
+    ),
+  );
 }

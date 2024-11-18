@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:nestcure/add_persona_dependent.dart';
 
 class PersonesCuidadesPage extends StatelessWidget {
   final List<Map<String, dynamic>> users = [
@@ -36,32 +37,57 @@ class PersonesCuidadesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Persones Cuidades'),
+      appBar: customAppBar(context, false),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40.0),
+            const Text(
+              'Personas cuidadas',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  final user = users[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      leading: Icon(
+                        user['gender'] == 'male' ? Icons.man : Icons.woman,
+                        color: Colors.blue,
+                      ),
+                      title: Text('${user['firstName']} ${user['lastName']}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Fecha de nacimiento: ${user['dob']}'),
+                          const SizedBox(height: 4),
+                          Text('Información adicional: ${user['additionalInfo']}'),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      body: ListView.builder(
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          final user = users[index];
-          return Card(
-            margin: EdgeInsets.all(8.0),
-            child: ListTile(
-              leading: Icon(
-                user['gender'] == 'male' ? Icons.man : Icons.woman,
-                color: Colors.blue,
-              ),
-              title: Text('${user['firstName']} ${user['lastName']}'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Data de naixement: ${user['dob']}'),
-                  SizedBox(height: 4),
-                  Text('Informació adiccional: ${user['additionalInfo']}'),
-                ],
-              ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const AddPersonaDependentWidget(),
             ),
           );
         },
+        backgroundColor: const Color.fromRGBO(180, 205, 96, 1),
+        child: const Icon(Icons.add),
       ),
     );
   }

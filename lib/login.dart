@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nestcure/main.dart';
+import 'package:nestcure/profile.dart';
 import 'package:nestcure/sign_in.dart';
 
 class LoginPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       // Si la autenticación es exitosa, navega a la página principal
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => MyHomePage(),
+          builder: (context) => ProfileWidget(),
         ),
       );
       print('Inicio de sesión exitoso');

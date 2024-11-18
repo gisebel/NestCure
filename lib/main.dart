@@ -4,7 +4,6 @@ import 'firebase_options.dart';
 import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:provider/provider.dart';
-import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:nestcure/certificate_provider.dart';
@@ -54,130 +53,8 @@ class MyApp extends StatelessWidget {
           '/list': (context) => const PersonesDependentsWidget(),
           '/list_certificates': (context) => const ListCertificates(),
           '/knowledge_tests': (context) => const KnowledgeTestsScreen(),
+          '/persones_cuidades': (context) => const PersonesDependentsWidget(),
         },
-      ),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: customAppBar(context, false),
-      drawer: const NavigationDrawerWidget(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/list');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  backgroundColor: Colors.lightBlue.shade200,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.people),
-                    SizedBox(width: 8),
-                    Text('Persones cuidades'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/validate');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  backgroundColor: Colors.lightBlue.shade200,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.checklist),
-                    SizedBox(width: 8),
-                    Text('Valida Certificats'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/list_certificates');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  backgroundColor: Colors.lightBlue.shade200,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.book),
-                    SizedBox(width: 8),
-                    Text('Els meus certificats'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Aquí maneja la navegación para registrar lo que has hecho
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  backgroundColor: Colors.lightGreen.shade200,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.refresh_outlined),
-                    Icon(Icons.calendar_month),
-                    SizedBox(width: 8),
-                    Text('Registra el que has fet'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

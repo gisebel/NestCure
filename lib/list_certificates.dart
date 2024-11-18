@@ -44,7 +44,7 @@ class _ListCertificatesState extends State<ListCertificates> {
 
     return Scaffold(
       appBar: customAppBar(context, false),
-      drawer: const NavigationDrawerWidget(),
+      //drawer: const NavigationDrawerWidget(),
       body: ListView.builder(
         itemCount: certificates.length,
         itemBuilder: (context, index) {

@@ -6,6 +6,8 @@ import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_information.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/cv_generator.dart';
+import 'package:nestcure/persones_cuidades.dart';
+import 'package:nestcure/knowledge_tests.dart';
 
 class ProfileItem {
   final String name;
@@ -33,15 +35,6 @@ class ProfileWidget extends StatelessWidget {
       page: const UserInformationWidget(),
     ),
     ProfileItem(
-      name: "Notificaciones",
-      icon: const Icon(
-        Icons.notifications,
-        color: Color.fromRGBO(45, 87, 133, 1),
-        size: 28,
-      ),
-      page: const Scaffold(),
-    ),
-    ProfileItem(
       name: "Certificados",
       icon: const Icon(
         Icons.book,
@@ -49,15 +42,6 @@ class ProfileWidget extends StatelessWidget {
         size: 28,
       ),
       page: const ListCertificates(),
-    ),
-    ProfileItem(
-      name: "Tareas y horas dedicadas",
-      icon: const Icon(
-        Icons.volunteer_activism,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const Scaffold(),
     ),
     ProfileItem(
       name: "Resgistro de actividades",
@@ -69,13 +53,31 @@ class ProfileWidget extends StatelessWidget {
       page: const LlistaActivitats(),
     ),
     ProfileItem(
-      name: "Generar CV",
+      name: "Generar currículum vitae",
       icon: const Icon(
         Icons.create,
         color: Color.fromRGBO(45, 88, 133, 1),
         size: 28,
       ),
       page: const CvGenerator(),
+    ),
+    ProfileItem(
+      name: "Personas cuidadas",
+      icon: const Icon(
+        Icons.people,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: PersonesCuidadesPage(),
+    ),
+    ProfileItem(
+      name: "Tests de conocimientos",
+      icon: const Icon(
+        Icons.assessment,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: const KnowledgeTestsScreen(),
     ),
   ];
 
@@ -86,7 +88,6 @@ class ProfileWidget extends StatelessWidget {
 
     return Scaffold(
       appBar: customAppBar(context, false),
-      drawer: const NavigationDrawerWidget(),
       body: Center(
         child: Column(
           children: [
@@ -119,16 +120,6 @@ class ProfileWidget extends StatelessWidget {
                   if (index == profileItems.length) {
                     return ListTile(
                       contentPadding: const EdgeInsets.only(left: 30),
-                      title: const Text("Cerrar sesión"),
-                      leading: const Icon(
-                        Icons.logout,
-                        color: Colors.blueGrey,
-                      ),
-                      onTap: () => _logout(context),
-                    );
-                  } else if (index == profileItems.length + 1) {
-                    return ListTile(
-                      contentPadding: const EdgeInsets.only(left: 30),
                       title: const Text(
                         "Eliminar cuenta",
                         style: TextStyle(color: Colors.red),
@@ -140,7 +131,9 @@ class ProfileWidget extends StatelessWidget {
                       onTap: () => _confirmDeleteAccount(context),
                     );
                   }
-
+                  if (index == profileItems.length + 1) {
+                    return const Divider();
+                  }
                   return ListTile(
                     contentPadding: const EdgeInsets.only(left: 30),
                     title: Text(profileItems[index].name),
