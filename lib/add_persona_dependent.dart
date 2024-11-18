@@ -5,6 +5,8 @@ import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddPersonaDependentWidget extends StatefulWidget {
   const AddPersonaDependentWidget({super.key});
@@ -42,7 +44,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
     }
   }
 
-  void _addPersonaDependent(UserProvider provider, LoggedUsuari user) {
+  void _addPersonaDependent(UserProvider provider, LoggedUsuari user) async {
     if (_nomController.text.isEmpty ||
         _descripcioController.text.isEmpty ||
         _dataNaixement == null ||
@@ -57,6 +59,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       return;
     }
 
+    // Crear la nueva persona dependiente
     final nuevaPersona = PersonaDependent(
       nombre: _nomController.text,
       dependeDe: user.usuari.nomCognoms,
@@ -70,12 +73,43 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       descripcion: _descripcioController.text,
     );
 
-    user.usuari.personesDependents.add(nuevaPersona);
-    user.usuari.activitats[_nomController.text] = [];
-    provider.setUsuari(user.usuari);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const PersonesDependentsWidget()),
-    );
+    // Obtener el documento del usuario logueado
+    final userDoc = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(FirebaseAuth.instance.currentUser?.uid);
+
+    try {
+      // Obtener el documento para ver si ya existe
+      final docSnapshot = await userDoc.get();
+      if (!docSnapshot.exists) {
+        // Si no existe, lo creamos
+        await userDoc.set({
+          'nombre': FirebaseAuth.instance.currentUser?.displayName ?? 'Usuario',
+          'email': FirebaseAuth.instance.currentUser?.email ?? 'No disponible',
+          'personesDependents': [nuevaPersona.toJson()],
+          // Puedes añadir más campos si es necesario
+        });
+      } else {
+        // Si existe, actualizamos la lista de personesDependents
+        await userDoc.update({
+          'personesDependents': FieldValue.arrayUnion([nuevaPersona.toJson()]),
+        });
+      }
+
+      // Actualizar el estado del provider para reflejar los cambios
+      user.usuari.personesDependents.add(nuevaPersona);  // Actualizar el objeto local
+      provider.setUsuari(user.usuari);
+
+      // Navegar al listado de personas dependientes
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const PersonesDependentsWidget()),
+      );
+    } catch (e) {
+      print("Error al guardar persona dependiente en Firebase: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hubo un error al guardar la persona dependiente.')),
+      );
+    }
   }
 
   @override

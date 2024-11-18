@@ -5,6 +5,7 @@ import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart'; // Importar Firebase Realtime Database
 
 class PersonaDependent {
   final String nombre;
@@ -73,6 +74,42 @@ class PersonesDependentsWidget extends StatefulWidget {
 }
 
 class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
+  List<PersonaDependent> _personesDependents = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPersonasDependientes();
+  }
+
+  // Método para cargar personas dependientes desde Firebase
+  void _loadPersonasDependientes() {
+    final DatabaseReference ref = FirebaseDatabase.instance.ref('personas_dependientes');
+
+    // Escuchar cambios en tiempo real
+    ref.onValue.listen((DatabaseEvent event) {
+      final snapshot = event.snapshot;
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+
+        List<PersonaDependent> loadedPersones = [];
+        data.forEach((key, value) {
+          loadedPersones.add(PersonaDependent.fromMap(Map<String, dynamic>.from(value)));
+        });
+
+        setState(() {
+          _personesDependents = loadedPersones;
+        });
+      } else {
+        print("No hay datos disponibles");
+        setState(() {
+          _personesDependents = []; // Si no hay datos, vaciar la lista
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var user = LoggedUsuari().usuari;
@@ -111,9 +148,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: user.personesDependents.length,
+                      itemCount: _personesDependents.length,
                       itemBuilder: (context, index) {
-                        var persona = user.personesDependents[index];
+                        var persona = _personesDependents[index];
                         var date = DateFormat('dd-MM-yyyy').format(persona.fechaNacimiento);
 
                         return Card(
@@ -151,8 +188,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
                                 setState(() {
-                                  user.personesDependents.removeAt(index);
-                                  user.activitats.remove(persona.nombre);
+                                  _personesDependents.removeAt(index);
                                   provider.setUsuari(user);
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(

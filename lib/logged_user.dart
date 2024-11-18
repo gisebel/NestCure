@@ -59,7 +59,7 @@ class LoggedUsuari {
     }
   }
 
-  // Escuchar cambios en los datos del usuario en tiempo real
+  // Código existente en logged_user.dart para obtener el usuario
   Stream<Usuari> get userStream {
     return FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
       if (user != null) {
@@ -108,18 +108,14 @@ class LoggedUsuari {
 
   Usuari get usuari => _usuari;
 
-  // Método para eliminar la cuenta del usuario
   Future<void> deleteAccount() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Eliminar datos del usuario en Firestore
         await FirebaseFirestore.instance
             .collection('Usuarios')
             .doc(user.uid)
             .delete();
-
-        // Eliminar el usuario de Firebase Auth
         await user.delete();
         print("Cuenta eliminada exitosamente.");
       }

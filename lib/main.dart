@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
         home: LoginPage(),
         routes: {
           '/validate': (context) => const ValidateCertificate(),
-          '/list': (context) => const PersonesDependentsWidget(),
           '/list_certificates': (context) => const ListCertificates(),
           '/knowledge_tests': (context) => const KnowledgeTestsScreen(),
           '/persones_cuidades': (context) => const PersonesDependentsWidget(),
