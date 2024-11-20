@@ -28,8 +28,8 @@ class Usuari {
     var personesDependentsData = firestoreData['personesDependents'] as List;
     List<PersonaDependent> personesDependents = personesDependentsData
         .map((personaData) => PersonaDependent(
+              id: personaData['id'],
               nombre: personaData['nombre'],
-              dependeDe: personaData['dependeDe'],
               genero: personaData['genero'],
               fechaNacimiento: DateTime.parse(personaData['fechaNacimiento']),
               edad: personaData['edad'],

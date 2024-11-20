@@ -7,6 +7,7 @@ import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class AddPersonaDependentWidget extends StatefulWidget {
   const AddPersonaDependentWidget({super.key});
@@ -59,10 +60,11 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       return;
     }
 
-    // Crear la nueva persona dependiente
+    final String uniqueId = const Uuid().v4();
+
     final nuevaPersona = PersonaDependent(
+      id: uniqueId,
       nombre: _nomController.text,
-      dependeDe: user.usuari.nomCognoms,
       genero: _gender!,
       fechaNacimiento: _dataNaixement!,
       edad: int.parse(_edadController.text),
@@ -73,34 +75,27 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       descripcion: _descripcioController.text,
     );
 
-    // Obtener el documento del usuario logueado
     final userDoc = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(FirebaseAuth.instance.currentUser?.uid);
 
     try {
-      // Obtener el documento para ver si ya existe
       final docSnapshot = await userDoc.get();
       if (!docSnapshot.exists) {
-        // Si no existe, lo creamos
         await userDoc.set({
           'nombre': FirebaseAuth.instance.currentUser?.displayName ?? 'Usuario',
           'email': FirebaseAuth.instance.currentUser?.email ?? 'No disponible',
           'personesDependents': [nuevaPersona.toJson()],
-          // Puedes añadir más campos si es necesario
         });
       } else {
-        // Si existe, actualizamos la lista de personesDependents
         await userDoc.update({
           'personesDependents': FieldValue.arrayUnion([nuevaPersona.toJson()]),
         });
       }
 
-      // Actualizar el estado del provider para reflejar los cambios
-      user.usuari.personesDependents.add(nuevaPersona);  // Actualizar el objeto local
+      user.usuari.personesDependents.add(nuevaPersona);
       provider.setUsuari(user.usuari);
 
-      // Navegar al listado de personas dependientes
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const PersonesDependentsWidget()),
       );

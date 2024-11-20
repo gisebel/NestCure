@@ -5,11 +5,12 @@ import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_database/firebase_database.dart'; // Importar Firebase Realtime Database
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PersonaDependent {
+  final String id;
   final String nombre;
-  final String dependeDe;
   final String genero;
   final DateTime fechaNacimiento;
   final int edad;
@@ -20,8 +21,8 @@ class PersonaDependent {
   final String descripcion;
 
   PersonaDependent({
+    required this.id,
     required this.nombre,
-    required this.dependeDe,
     required this.genero,
     required this.fechaNacimiento,
     required this.edad,
@@ -34,8 +35,8 @@ class PersonaDependent {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'nombre': nombre,
-      'dependeDe': dependeDe,
       'genero': genero,
       'fechaNacimiento': fechaNacimiento.toIso8601String(),
       'edad': edad,
@@ -49,8 +50,8 @@ class PersonaDependent {
 
   factory PersonaDependent.fromMap(Map<String, dynamic> map) {
     return PersonaDependent(
+      id: map['id'] ?? '',
       nombre: map['nombre'] ?? '',
-      dependeDe: map['dependeDe'] ?? '',
       genero: map['genero'] ?? '',
       fechaNacimiento: map['fechaNacimiento'] != null
           ? DateTime.parse(map['fechaNacimiento'])
@@ -82,32 +83,31 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
     _loadPersonasDependientes();
   }
 
-  // Método para cargar personas dependientes desde Firebase
-  void _loadPersonasDependientes() {
-    final DatabaseReference ref = FirebaseDatabase.instance.ref('personas_dependientes');
+  void _loadPersonasDependientes() async {
+    final userDoc = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(FirebaseAuth.instance.currentUser?.uid);
 
-    // Escuchar cambios en tiempo real
-    ref.onValue.listen((DatabaseEvent event) {
-      final snapshot = event.snapshot;
+    try {
+      final docSnapshot = await userDoc.get();
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        if (data != null && data['personesDependents'] != null) {
+          final List<dynamic> dependentsData = data['personesDependents'];
+          List<PersonaDependent> loadedPersones = dependentsData.map((dependent) {
+            return PersonaDependent.fromMap(Map<String, dynamic>.from(dependent));
+          }).toList();
 
-      if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
-
-        List<PersonaDependent> loadedPersones = [];
-        data.forEach((key, value) {
-          loadedPersones.add(PersonaDependent.fromMap(Map<String, dynamic>.from(value)));
-        });
-
-        setState(() {
-          _personesDependents = loadedPersones;
-        });
+          setState(() {
+            _personesDependents = loadedPersones;
+          });
+        }
       } else {
-        print("No hay datos disponibles");
-        setState(() {
-          _personesDependents = []; // Si no hay datos, vaciar la lista
-        });
+        print("No se encontró el documento del usuario.");
       }
-    });
+    } catch (e) {
+      print("Error al cargar personas dependientes desde Firestore: $e");
+    }
   }
 
   @override
@@ -186,16 +186,37 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
+                              onPressed: () async {
+                                final personaToRemove = _personesDependents[index];
+
+                                print('Eliminando persona: ${personaToRemove.toJson()}');
+
                                 setState(() {
                                   _personesDependents.removeAt(index);
-                                  provider.setUsuari(user);
                                 });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Persona eliminada correctamente.'),
-                                  ),
-                                );
+
+                                try {
+                                  final userDoc = FirebaseFirestore.instance
+                                      .collection('usuarios')
+                                      .doc(FirebaseAuth.instance.currentUser?.uid);
+
+                                  await userDoc.update({
+                                    'personesDependents': FieldValue.arrayRemove([personaToRemove.toJson()])
+                                  });
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Persona eliminada correctamente.')),
+                                  );
+                                } catch (e) {
+                                  setState(() {
+                                    _personesDependents.insert(index, personaToRemove);
+                                  });
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Error al eliminar persona.')),
+                                  );
+                                  print('Error al eliminar persona de Firestore: $e');
+                                }
                               },
                             ),
                           ),
