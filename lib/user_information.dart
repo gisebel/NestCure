@@ -18,7 +18,9 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
   @override
   void initState() {
     super.initState();
-    loggedUser.loginWithFirebase();
+    loggedUser.loginWithFirebase().then((_) {
+      setState(() {});
+    });
   }
 
   @override
@@ -37,6 +39,7 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
           }
 
           final user = snapshot.data!;
+          print("User: $user");
 
           return SingleChildScrollView(
             child: Padding(
@@ -97,7 +100,6 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                   const Divider(),
                   ListTile(
                     title: const Text('Personas a cargo'),
-                    subtitle: Text('${user.personesDependents.length} personas a cargo'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       Navigator.of(context).push(

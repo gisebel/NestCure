@@ -30,16 +30,17 @@ class LoggedUsuari {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('Usuarios')
-            .doc(user.uid)
-            .get();
-
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
         if (userDoc.exists) {
           Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
 
           _usuari = Usuari(
             nomCognoms: data['nomCognoms'] ?? '',
-            dataNaixement: (data['dataNaixement'] as Timestamp).toDate(),
+            dataNaixement: data['dataNaixement'] is Timestamp
+                ? (data['dataNaixement'] as Timestamp).toDate()
+                : DateTime.parse(data['dataNaixement']),
             correu: data['correu'] ?? '',
             contrasena: '',
             esCuidadorPersonal: data['esCuidadorPersonal'] ?? false,
@@ -59,7 +60,6 @@ class LoggedUsuari {
     }
   }
 
-  // Código existente en logged_user.dart para obtener el usuario
   Stream<Usuari> get userStream {
     return FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
       if (user != null) {

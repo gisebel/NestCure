@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nestcure/add_persona_dependent.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/list_certificates.dart';
 import 'package:nestcure/llistat_activitats.dart';

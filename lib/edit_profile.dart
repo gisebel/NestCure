@@ -120,12 +120,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _saveProfile() async {
     try {
-      // Obtener el ID del usuario autenticado
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final userId = user.uid;
 
-        // Guardar los cambios en la instancia local del usuario
         setState(() {
           widget.user.nomCognoms = _nameController.text;
           widget.user.descripcio = _descriptionController.text;
@@ -134,7 +132,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           widget.user.esCuidadorPersonal = _esCuidadorPersonal;
         });
 
-        // Actualizar la base de datos en Firestore
         await FirebaseFirestore.instance.collection('usuarios').doc(userId).update({
           'nomCognoms': widget.user.nomCognoms,
           'descripcio': widget.user.descripcio,
@@ -143,7 +140,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'esCuidadorPersonal': widget.user.esCuidadorPersonal,
         });
 
-        // Mostrar un mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Perfil actualizado correctamente')),
         );

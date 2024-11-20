@@ -24,6 +24,11 @@ class Usuari {
     required this.activitats,
   });
 
+  @override
+  String toString() {
+    return 'Usuari(nomCognoms: $nomCognoms, dataNaixement: $dataNaixement, correu: $correu, descripcio: $descripcio)';
+  }
+
   factory Usuari.fromFirestore(Map<String, dynamic> firestoreData) {
     var personesDependentsData = firestoreData['personesDependents'] as List;
     List<PersonaDependent> personesDependents = personesDependentsData
