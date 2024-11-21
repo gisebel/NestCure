@@ -242,7 +242,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             return;
                           }
 
-                          // Crear la actividad
                           final String uniqueId = const Uuid().v4();
                           final actividad = Activitat(
                             id: uniqueId,
@@ -253,19 +252,16 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             type: selectedTipusActivitat!,
                           );
 
-                          // Encontrar la persona cuidada seleccionada
                           var persona = user.personesDependents.firstWhere(
                               (persona) => persona.nombre == selectedPersonaCuidada);
 
-                          // Agregar la actividad al array de actividades de la persona
                           try {
                             final userRef = FirebaseFirestore.instance
                                 .collection('usuarios')
                                 .doc(FirebaseAuth.instance.currentUser?.uid);
 
-                            // Agregar la actividad al campo "activitats" de la persona
                             await userRef.update({
-                              'personesDependents.${user.personesDependents.indexOf(persona)}.activitats': FieldValue.arrayUnion([actividad.toJson()])
+                              '${user.personesDependents.indexOf(persona)}.activitats': FieldValue.arrayUnion([actividad.toJson()])
                             });
 
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -274,7 +270,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                               ),
                             );
 
-                            // Limpiar los campos
                             _titolController.clear();
                             _descripcioController.clear();
                             _horesController.clear();

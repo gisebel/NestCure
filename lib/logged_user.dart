@@ -86,7 +86,7 @@ class LoggedUsuari {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await FirebaseFirestore.instance
-            .collection('Usuarios')
+            .collection('usuarios')
             .doc(user.uid)
             .delete();
         await user.delete();

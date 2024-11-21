@@ -93,17 +93,25 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
       if (docSnapshot.exists) {
         final data = docSnapshot.data();
         if (data != null && data['personesDependents'] != null) {
-          final List<dynamic> dependentsData = data['personesDependents'];
+          final personesDependentsData = data['personesDependents'];
 
-          print("Datos de personesDependents: $dependentsData");
+          // Check if 'personesDependents' is a Map
+          if (personesDependentsData is Map<String, dynamic>) {
+            // Convert the Map to a List of PersonaDependent objects
+            List<PersonaDependent> loadedPersones = [];
+            
+            // Loop through each entry in the map
+            personesDependentsData.forEach((key, value) {
+              // Convert each map entry (value) into a PersonaDependent object
+              loadedPersones.add(PersonaDependent.fromMap(Map<String, dynamic>.from(value)));
+            });
 
-          List<PersonaDependent> loadedPersones = dependentsData.map((dependent) {
-            return PersonaDependent.fromMap(Map<String, dynamic>.from(dependent));
-          }).toList();
-
-          setState(() {
-            _personesDependents = loadedPersones;
-          });
+            setState(() {
+              _personesDependents = loadedPersones;
+            });
+          } else {
+            print("El campo 'personesDependents' no es un mapa válido.");
+          }
         } else {
           print("El campo 'personesDependents' no está definido en Firestore.");
         }

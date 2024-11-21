@@ -27,13 +27,11 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      // Verificación de usuario y contraseña con Firebase Authentication
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Si la autenticación es exitosa, navega a la página principal
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => ProfileWidget(),
