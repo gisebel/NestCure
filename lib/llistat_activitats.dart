@@ -5,6 +5,9 @@ import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/registre_activitat.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nestcure/activitat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LlistaActivitats extends StatefulWidget {
   const LlistaActivitats({super.key});
@@ -14,17 +17,23 @@ class LlistaActivitats extends StatefulWidget {
 }
 
 class _LlistaActivitatsState extends State<LlistaActivitats> {
+  late LoggedUsuari user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = LoggedUsuari();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var user = LoggedUsuari().usuari;
     return Scaffold(
       appBar: customAppBar(context, false),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return Center(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -32,8 +41,7 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                     children: [
                       const Text(
                         'Actividades registradas',
-                        style: TextStyle(
-                            fontSize: 24.0, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       IconButton(
@@ -49,31 +57,43 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                     ],
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: user.personesDependents.length,
-                      itemBuilder: (context, index) {
-                        var userDependents = user.personesDependents[index].nombre;
-                        var dependentsActivities =
-                            user.activitats[userDependents]!.length;
+                    child: FutureBuilder(
+                      // Realizamos una consulta para obtener las actividades de Firestore
+                      future: _getActivities(user),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
 
-                        return ListTile(
-                          title: Text(user.personesDependents[index].nombre),
-                          subtitle: Text(
-                              'Tiene ${dependentsActivities.toString()} actividades'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) {
-                                if (user.activitats[userDependents] != null) {
-                                  return LlistaActivitatsDetall(
-                                      activitats:
-                                          user.activitats[userDependents]!,
-                                      nom: userDependents);
-                                } else {
-                                  return const LlistaActivitatsDetall(
-                                      activitats: [], nom: '');
-                                }
-                              }),
+                        if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('No hay actividades registradas.'));
+                        }
+
+                        var dependentsActivities = snapshot.data as Map<String, List<Activitat>>;
+                        return ListView.builder(
+                          itemCount: user.usuari.personesDependents.length,
+                          itemBuilder: (context, index) {
+                            var dependent = user.usuari.personesDependents[index];
+                            var activities = dependentsActivities[dependent.nombre] ?? [];
+
+                            return ListTile(
+                              title: Text(dependent.nombre),
+                              subtitle: Text('Tiene ${activities.length} actividades'),
+                              trailing: const Icon(Icons.arrow_forward_ios),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) {
+                                    return LlistaActivitatsDetall(
+                                      activitats: activities,
+                                      nom: dependent.nombre,
+                                    );
+                                  }),
+                                );
+                              },
                             );
                           },
                         );
@@ -88,29 +108,36 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
       ),
     );
   }
-}
 
-void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => UserProvider(),
-      ),
-    ],
-    child: MaterialApp(
-      title: 'NestCure',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 251, 245),
-          background: const Color.fromARGB(255, 255, 251, 245),
-        ),
-        textTheme: const TextTheme(
-            bodyLarge: TextStyle(fontSize: 17),
-            titleMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        useMaterial3: true,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const LlistaActivitats(),
-    ),
-  ));
+  // Función para obtener las actividades de Firestore
+  Future<Map<String, List<Activitat>>> _getActivities(LoggedUsuari user) async {
+    final Map<String, List<Activitat>> activitiesMap = {};
+
+    // Obtenemos las actividades de Firestore
+    try {
+      for (var dependent in user.usuari.personesDependents) {
+        final activitiesSnapshot = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(FirebaseAuth.instance.currentUser?.uid)
+            .collection('activitats')
+            .doc(dependent.nombre) // Usamos el nombre del dependiente como clave
+            .get();
+
+        if (activitiesSnapshot.exists) {
+          List<Activitat> activities = [];
+          var activitiesData = activitiesSnapshot.data()?['activitats'] ?? {};
+          activitiesData.forEach((key, value) {
+            activities.add(Activitat.fromMap(value));
+          });
+
+          activitiesMap[dependent.nombre] = activities;
+        } else {
+          activitiesMap[dependent.nombre] = [];
+        }
+      }
+    } catch (e) {
+      print("Error fetching activities: $e");
+    }
+    return activitiesMap;
+  }
 }

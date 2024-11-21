@@ -4,8 +4,10 @@ import 'package:nestcure/activitat.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
-//import 'package:nestcure/usuari.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class RegistreActivitatPage extends StatefulWidget {
   const RegistreActivitatPage({super.key});
@@ -21,9 +23,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
   final TextEditingController _descripcioController = TextEditingController();
 
   DateTime? _selectedDate;
-
   String? selectedPersonaCuidada;
-
   String? selectedTipusActivitat;
 
   List<String> tipusActivitats = [
@@ -36,6 +36,17 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
     'Actividad diaria',
     'Otros',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    await LoggedUsuari().loginWithFirebase();
+    setState(() {});
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -55,12 +66,22 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
   @override
   Widget build(BuildContext context) {
     var user = LoggedUsuari().usuari;
-    //var user = usuariHardcodeado;
+    print("Usuario cargado: ${user.nomCognoms}");
+    print("Lista de personas dependientes: ${user.personesDependents}");
 
     List<String> personesCuidades = [];
 
-    for (var persona in user.personesDependents) {
-      personesCuidades.add(persona.nombre);
+    if (user.personesDependents.isEmpty) {
+      print("No hay personas dependientes. Lista vacía.");
+    } else {
+      for (var persona in user.personesDependents) {
+        if (persona.nombre.isEmpty) {
+          print("Persona sin nombre detectada.");
+        } else {
+          print("Persona cuidada detectada: ${persona.nombre}");
+          personesCuidades.add(persona.nombre);
+        }
+      }
     }
 
     return Scaffold(
@@ -198,7 +219,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             style: TextStyle(color: Colors.white)),
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (selectedPersonaCuidada == null ||
                               _selectedDate == null ||
                               selectedTipusActivitat == null ||
@@ -220,31 +241,67 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             );
                             return;
                           }
-                          user.activitats[selectedPersonaCuidada]!.add(
-                            Activitat(
-                              title: _titolController.text,
-                              description: _descripcioController.text,
-                              hours: int.parse(_horesController.text),
-                              date: _selectedDate!,
-                              type: selectedTipusActivitat!,
-                            ),
+
+                          // Crear la actividad
+                          final String uniqueId = const Uuid().v4();
+                          final actividad = Activitat(
+                            id: uniqueId,
+                            title: _titolController.text,
+                            description: _descripcioController.text,
+                            hours: int.parse(_horesController.text),
+                            date: _selectedDate!,
+                            type: selectedTipusActivitat!,
                           );
-                          provider.setUsuari(user);
-                          Navigator.pop(context);
+
+                          // Encontrar la persona cuidada seleccionada
+                          var persona = user.personesDependents.firstWhere(
+                              (persona) => persona.nombre == selectedPersonaCuidada);
+
+                          // Agregar la actividad al array de actividades de la persona
+                          try {
+                            final userRef = FirebaseFirestore.instance
+                                .collection('usuarios')
+                                .doc(FirebaseAuth.instance.currentUser?.uid);
+
+                            // Agregar la actividad al campo "activitats" de la persona
+                            await userRef.update({
+                              'personesDependents.${user.personesDependents.indexOf(persona)}.activitats': FieldValue.arrayUnion([actividad.toJson()])
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Actividad registrada correctamente'),
+                              ),
+                            );
+
+                            // Limpiar los campos
+                            _titolController.clear();
+                            _descripcioController.clear();
+                            _horesController.clear();
+                            _dataController.clear();
+                            setState(() {
+                              selectedPersonaCuidada = null;
+                              selectedTipusActivitat = null;
+                            });
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error al registrar la actividad'),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          side:
-                              const BorderSide(color: Colors.white, width: 2.0),
-                          backgroundColor:
-                              const Color.fromRGBO(180, 205, 96, 1),
+                          side: const BorderSide(color: Colors.white, width: 2.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           elevation: 5,
+                          backgroundColor: const Color.fromRGBO(69, 159, 144, 1),
                         ),
-                        child: const Text('Crear',
-                            style: TextStyle(color: Colors.white)),
+                        child: const Text('Registrar actividad', style: TextStyle(color: Colors.white)),
                       ),
+
                     ],
                   ),
                 ),
@@ -255,29 +312,4 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => UserProvider(),
-      ),
-    ],
-    child: MaterialApp(
-      title: 'NestCure',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromRGBO(45, 88, 133, 1),
-          background: const Color.fromARGB(255, 255, 251, 245),
-        ),
-        textTheme: const TextTheme(
-            bodyLarge: TextStyle(fontSize: 17),
-            titleMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        useMaterial3: true,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const RegistreActivitatPage(),
-    ),
-  ));
 }

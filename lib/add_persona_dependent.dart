@@ -68,7 +68,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       genero: _gender!,
       fechaNacimiento: _dataNaixement!,
       edad: int.parse(_edadController.text),
-      telefono: int.parse(_telefonoController.text),
+      telefono: _telefonoController.text,
       direccion: _direccionController.text,
       peso: double.parse(_pesoController.text),
       altura: double.parse(_alturaController.text),

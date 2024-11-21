@@ -135,7 +135,7 @@ class CvGenerator extends StatelessWidget {
             ),
             pw.SizedBox(height: 20),
 
-            // Sección de Actividades
+            //Sección de Actividades
             if (user.activitats.isNotEmpty)
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -145,36 +145,37 @@ class CvGenerator extends StatelessWidget {
                     style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
                   ),
                   pw.SizedBox(height: 10),
-                  ...user.activitats.entries.map((entry) {
+                  ...user.activitats.map((entry) {
                     return pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
+                      /*children: [
                         pw.Text('- ${entry.key}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                        ...entry.value.map((actividad) => pw.Text('   • ${actividad.title}: ${actividad.description} (${actividad.hours} horas)')),
-                      ],
+                        ...entry.map((actividad) => pw.Text('   • ${actividad.title}: ${actividad.description} (${actividad.hours} horas)')),
+                      ],*/
                     );
                   }).toList(),
                 ],
               ),
             
-            // Sección de Conocimientos
+            /*Sección de Conocimientos
             pw.SizedBox(height: 20),
             pw.Text(
               'Conocimientos',
               style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
             ),
-            ...user.activitats['Conocimientos']?.map((conocimiento) {
+            ...user.activitats['Conocimientos'].map((conocimiento) {
               return pw.Text('• ${conocimiento.title}', style: pw.TextStyle(fontSize: 14));
             }) ?? [],
 
-            pw.SizedBox(height: 20),
+            pw.SizedBox(height: 20),*/
 
-            // Sección de Certificados
+            /* Sección de Certificados
             if (user.activitats['Certificados'] != null)
               pw.Text(
                 'Certificados',
                 style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
               ),
+              */
           ],
         );
       },

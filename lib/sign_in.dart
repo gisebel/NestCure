@@ -198,7 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             descripcio: experienciaPrevia,
                             fotoPerfil: '',
                             personesDependents: [],
-                            activitats: {},
+                            activitats: [],
                           );
 
                           await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({

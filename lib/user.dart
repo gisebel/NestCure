@@ -10,7 +10,7 @@ class Usuari {
   String descripcio;
   String fotoPerfil;
   List<PersonaDependent> personesDependents;
-  Map<String, List<Activitat>> activitats;
+  List<Activitat> activitats;
 
   Usuari({
     required this.nomCognoms,
@@ -30,32 +30,24 @@ class Usuari {
   }
 
   factory Usuari.fromFirestore(Map<String, dynamic> firestoreData) {
-    var personesDependentsData = firestoreData['personesDependents'] as List;
-    List<PersonaDependent> personesDependents = personesDependentsData
-        .map((personaData) => PersonaDependent(
-              id: personaData['id'],
-              nombre: personaData['nombre'],
-              genero: personaData['genero'],
-              fechaNacimiento: DateTime.parse(personaData['fechaNacimiento']),
-              edad: personaData['edad'],
-              telefono: personaData['telefono'],
-              direccion: personaData['direccion'],
-              peso: personaData['peso'],
-              altura: personaData['altura'],
-              descripcion: personaData['descripcion'],
-            ))
-        .toList();
+    var personesDependents = (firestoreData['personesDependents'] as List<dynamic>?)
+        ?.map((e) => PersonaDependent.fromMap(e))
+        .toList() ?? [];
+
+    var activitats = (firestoreData['activitats'] as List<dynamic>?)
+      ?.map((e) => Activitat.fromMap(e))
+            .toList() ?? [];
 
     return Usuari(
-      nomCognoms: firestoreData['nomCognoms'],
+      nomCognoms: firestoreData['nomCognoms'] ?? '',
       dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
-      correu: firestoreData['correu'],
-      contrasena: firestoreData['contrasena'],
-      esCuidadorPersonal: firestoreData['esCuidadorPersonal'],
-      descripcio: firestoreData['descripcio'],
-      fotoPerfil: firestoreData['fotoPerfil'],
+      correu: firestoreData['correu'] ?? '',
+      contrasena: firestoreData['contrasena'] ?? '',
+      esCuidadorPersonal: firestoreData['esCuidadorPersonal'] ?? false,
+      descripcio: firestoreData['descripcio'] ?? '',
+      fotoPerfil: firestoreData['fotoPerfil'] ?? '',
       personesDependents: personesDependents,
-      activitats: Map<String, List<Activitat>>.from(firestoreData['activitats'] ?? {}),
+      activitats: activitats,
     );
   }
 }

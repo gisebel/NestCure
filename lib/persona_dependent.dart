@@ -14,7 +14,7 @@ class PersonaDependent {
   final String genero;
   final DateTime fechaNacimiento;
   final int edad;
-  final int telefono;
+  final String telefono;
   final String direccion;
   final double peso;
   final double altura;
@@ -48,20 +48,20 @@ class PersonaDependent {
     };
   }
 
-  factory PersonaDependent.fromMap(Map<String, dynamic> map) {
+  factory PersonaDependent.fromMap(Map<String, dynamic> data) {
     return PersonaDependent(
-      id: map['id'] ?? '',
-      nombre: map['nombre'] ?? '',
-      genero: map['genero'] ?? '',
-      fechaNacimiento: map['fechaNacimiento'] != null
-          ? DateTime.parse(map['fechaNacimiento'])
-          : DateTime.now(),
-      edad: map['edad'] ?? 0,
-      telefono: map['telefono'] ?? 0,
-      direccion: map['direccion'] ?? '',
-      peso: map['peso']?.toDouble() ?? 0.0,
-      altura: map['altura']?.toDouble() ?? 0.0,
-      descripcion: map['descripcion'] ?? '',
+      id: data['id'] ?? '',
+      nombre: data['nombre'] ?? '',
+      direccion: data['direccion'] ?? '',
+      genero: data['genero'] ?? '',
+      descripcion: data['descripcion'] ?? '',
+      edad: data['edad'] ?? 0,
+      peso: (data['peso'] ?? 0).toDouble(),
+      altura: (data['altura'] ?? 0).toDouble(),
+      telefono: data['telefono']?.toString() ?? '',
+      fechaNacimiento: data['fechaNacimiento'] is Timestamp
+          ? (data['fechaNacimiento'] as Timestamp).toDate()
+          : DateTime.parse(data['fechaNacimiento']),
     );
   }
 }
@@ -94,6 +94,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
         final data = docSnapshot.data();
         if (data != null && data['personesDependents'] != null) {
           final List<dynamic> dependentsData = data['personesDependents'];
+
+          print("Datos de personesDependents: $dependentsData");
+
           List<PersonaDependent> loadedPersones = dependentsData.map((dependent) {
             return PersonaDependent.fromMap(Map<String, dynamic>.from(dependent));
           }).toList();
@@ -101,6 +104,8 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
           setState(() {
             _personesDependents = loadedPersones;
           });
+        } else {
+          print("El campo 'personesDependents' no está definido en Firestore.");
         }
       } else {
         print("No se encontró el documento del usuario.");

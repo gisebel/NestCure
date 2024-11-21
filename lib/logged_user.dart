@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'user.dart';
-import 'package:nestcure/activitat.dart';
-import 'package:nestcure/persona_dependent.dart';
+import 'package:nestcure/user.dart';
 
 class LoggedUsuari {
   static final LoggedUsuari _instance = LoggedUsuari._internal();
@@ -16,43 +14,26 @@ class LoggedUsuari {
     descripcio: '',
     fotoPerfil: '',
     personesDependents: [],
-    activitats: {},
+    activitats: [],
   );
 
   LoggedUsuari._internal();
 
-  factory LoggedUsuari() {
-    return _instance;
-  }
+  factory LoggedUsuari() => _instance;
+
+  Usuari get usuari => _usuari;
 
   Future<void> loginWithFirebase() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(user.uid)
-          .get();
-        if (userDoc.exists) {
-          Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+            .collection('usuarios')
+            .doc(user.uid)
+            .get();
 
-          _usuari = Usuari(
-            nomCognoms: data['nomCognoms'] ?? '',
-            dataNaixement: data['dataNaixement'] is Timestamp
-                ? (data['dataNaixement'] as Timestamp).toDate()
-                : DateTime.parse(data['dataNaixement']),
-            correu: data['correu'] ?? '',
-            contrasena: '',
-            esCuidadorPersonal: data['esCuidadorPersonal'] ?? false,
-            descripcio: data['descripcio'] ?? '',
-            personesDependents: List<PersonaDependent>.from(
-              data['personesDependents']?.map((x) => PersonaDependent.fromMap(x)) ?? [],
-            ),
-            activitats: Map<String, List<Activitat>>.from(
-              data['activitats'] ?? {},
-            ),
-            fotoPerfil: data['fotoPerfil'] ?? 'images/avatar_predeterminado.png',
-          );
+        if (userDoc.exists) {
+          _usuari = Usuari.fromFirestore(userDoc.data() as Map<String, dynamic>);
         }
       }
     } catch (e) {
@@ -60,36 +41,30 @@ class LoggedUsuari {
     }
   }
 
-  Stream<Usuari> get userStream {
-    return FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
-      if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('Usuarios')
-            .doc(user.uid)
-            .get();
-
-        if (userDoc.exists) {
-          Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-
-          _usuari = Usuari(
-            nomCognoms: data['nomCognoms'] ?? '',
-            dataNaixement: (data['dataNaixement'] as Timestamp).toDate(),
-            correu: data['correu'] ?? '',
-            contrasena: '',
-            esCuidadorPersonal: data['esCuidadorPersonal'] ?? false,
-            descripcio: data['descripcio'] ?? '',
-            personesDependents: List<PersonaDependent>.from(
-              data['personesDependents']?.map((x) => PersonaDependent.fromMap(x)) ?? [],
-            ),
-            activitats: Map<String, List<Activitat>>.from(
-              data['activitats'] ?? {},
-            ),
-            fotoPerfil: data['fotoPerfil'] ?? 'images/avatar_predeterminado.png',
-          );
+  Stream<Usuari> get userStream async* {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      yield* FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .snapshots()
+          .map((snapshot) {
+        if (snapshot.exists) {
+          return Usuari.fromFirestore(snapshot.data() as Map<String, dynamic>);
         }
-      }
-      return _usuari;
-    });
+        return Usuari(
+          nomCognoms: '',
+          dataNaixement: DateTime.now(),
+          correu: '',
+          contrasena: '',
+          esCuidadorPersonal: false,
+          descripcio: '',
+          fotoPerfil: '',
+          personesDependents: [],
+          activitats: [],
+        );
+      });
+    }
   }
 
   void logout() {
@@ -102,11 +77,9 @@ class LoggedUsuari {
       descripcio: '',
       fotoPerfil: '',
       personesDependents: [],
-      activitats: {},
+      activitats: [],
     );
   }
-
-  Usuari get usuari => _usuari;
 
   Future<void> deleteAccount() async {
     try {
