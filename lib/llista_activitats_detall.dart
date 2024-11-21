@@ -3,6 +3,7 @@ import 'package:nestcure/activitat.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LlistaActivitatsDetall extends StatefulWidget {
   final List<Activitat> activitats;
@@ -15,6 +16,40 @@ class LlistaActivitatsDetall extends StatefulWidget {
 }
 
 class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
+  // Lista de actividades que se cargará desde Firestore
+  List<Activitat> _activitats = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActivitats(); // Cargar actividades cuando el widget se inicialice
+  }
+
+  // Método para cargar las actividades desde Firestore
+  void _loadActivitats() async {
+    try {
+      // Suponemos que las actividades están en la colección 'actividades'
+      final activitiesSnapshot = await FirebaseFirestore.instance
+          .collection('actividades') // La colección en Firestore
+          .get();
+
+      // Mapeamos los documentos de Firestore a objetos Activitat
+      final List<Activitat> loadedActivitats = activitiesSnapshot.docs.map((doc) {
+        return Activitat.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      // Actualizamos el estado con la lista de actividades cargadas
+      setState(() {
+        _activitats = loadedActivitats;
+      });
+    } catch (e) {
+      print("Error al cargar actividades desde Firestore: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al cargar actividades.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +66,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                     fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16.0),
-              widget.activitats.isEmpty
+              _activitats.isEmpty
                   ? const Text(
                       'No hay actividades registradas.',
                       style: TextStyle(fontSize: 15.0),
@@ -39,14 +74,14 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                   : Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: widget.activitats.length,
+                        itemCount: _activitats.length,
                         itemBuilder: (context, index) {
-                          var activitat = widget.activitats[index];
+                          var activitat = _activitats[index];
                           return ActivityCard(
                             activitat: activitat,
                             onDelete: () {
                               setState(() {
-                                widget.activitats.removeAt(index);
+                                _activitats.removeAt(index);
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -64,6 +99,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     );
   }
 }
+
 
 class ActivityCard extends StatelessWidget {
   final Activitat activitat;

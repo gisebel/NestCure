@@ -48,20 +48,20 @@ class PersonaDependent {
     };
   }
 
-  factory PersonaDependent.fromMap(Map<String, dynamic> data) {
+  factory PersonaDependent.fromMap(Map<String, dynamic> map) {
     return PersonaDependent(
-      id: data['id'] ?? '',
-      nombre: data['nombre'] ?? '',
-      direccion: data['direccion'] ?? '',
-      genero: data['genero'] ?? '',
-      descripcion: data['descripcion'] ?? '',
-      edad: data['edad'] ?? 0,
-      peso: (data['peso'] ?? 0).toDouble(),
-      altura: (data['altura'] ?? 0).toDouble(),
-      telefono: data['telefono']?.toString() ?? '',
-      fechaNacimiento: data['fechaNacimiento'] is Timestamp
-          ? (data['fechaNacimiento'] as Timestamp).toDate()
-          : DateTime.parse(data['fechaNacimiento']),
+      id: map['id'] ?? '',
+      nombre: map['nombre'] ?? '',
+      genero: map['genero'] ?? '',
+      fechaNacimiento: map['fechaNacimiento'] != null
+          ? DateTime.parse(map['fechaNacimiento'])
+          : DateTime.now(),
+      edad: map['edad'] ?? 0,
+      telefono: map['telefono'] ?? 0,
+      direccion: map['direccion'] ?? '',
+      peso: map['peso']?.toDouble() ?? 0.0,
+      altura: map['altura']?.toDouble() ?? 0.0,
+      descripcion: map['descripcion'] ?? '',
     );
   }
 }
@@ -92,28 +92,28 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
       final docSnapshot = await userDoc.get();
       if (docSnapshot.exists) {
         final data = docSnapshot.data();
-        if (data != null && data['personesDependents'] != null) {
-          final personesDependentsData = data['personesDependents'];
+        if (data != null && data['personesDependents'] is List) {
+          // Si es una lista, simplemente convertimos directamente
+          final dependentsData = List<Map<String, dynamic>>.from(data['personesDependents']);
+          List<PersonaDependent> loadedPersones = dependentsData.map((dependent) {
+            return PersonaDependent.fromMap(dependent);
+          }).toList();
 
-          // Check if 'personesDependents' is a Map
-          if (personesDependentsData is Map<String, dynamic>) {
-            // Convert the Map to a List of PersonaDependent objects
-            List<PersonaDependent> loadedPersones = [];
-            
-            // Loop through each entry in the map
-            personesDependentsData.forEach((key, value) {
-              // Convert each map entry (value) into a PersonaDependent object
-              loadedPersones.add(PersonaDependent.fromMap(Map<String, dynamic>.from(value)));
-            });
+          setState(() {
+            _personesDependents = loadedPersones;
+          });
+        } else if (data != null && data['personesDependents'] is Map) {
+          // Si es un mapa, conviértelo en lista (esto generalmente no debería ocurrir)
+          final dependentsData = [Map<String, dynamic>.from(data['personesDependents'])];
+          List<PersonaDependent> loadedPersones = dependentsData.map((dependent) {
+            return PersonaDependent.fromMap(dependent);
+          }).toList();
 
-            setState(() {
-              _personesDependents = loadedPersones;
-            });
-          } else {
-            print("El campo 'personesDependents' no es un mapa válido.");
-          }
+          setState(() {
+            _personesDependents = loadedPersones;
+          });
         } else {
-          print("El campo 'personesDependents' no está definido en Firestore.");
+          print("El campo 'personesDependents' no es una lista ni un mapa válido.");
         }
       } else {
         print("No se encontró el documento del usuario.");
