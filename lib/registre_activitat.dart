@@ -241,7 +241,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             );
                             return;
                           }
-
                           final String uniqueId = const Uuid().v4();
                           final actividad = Activitat(
                             id: uniqueId,
@@ -261,7 +260,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                                 .doc(FirebaseAuth.instance.currentUser?.uid);
 
                             await userRef.update({
-                              '${user.personesDependents.indexOf(persona)}.activitats': FieldValue.arrayUnion([actividad.toJson()])
+                              'activitats': FieldValue.arrayUnion([actividad.toJson()])
                             });
 
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -269,7 +268,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                                 content: Text('Actividad registrada correctamente'),
                               ),
                             );
-
                             _titolController.clear();
                             _descripcioController.clear();
                             _horesController.clear();
@@ -296,7 +294,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                         ),
                         child: const Text('Registrar actividad', style: TextStyle(color: Colors.white)),
                       ),
-
                     ],
                   ),
                 ),

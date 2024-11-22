@@ -26,15 +26,25 @@ class LoggedUsuari {
   Future<void> loginWithFirebase() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('usuarios')
-            .doc(user.uid)
-            .get();
+      if (user == null) {
+        print("No hay ningún usuario autenticado.");
+        return;
+      }
 
-        if (userDoc.exists) {
-          _usuari = Usuari.fromFirestore(userDoc.data() as Map<String, dynamic>);
-        }
+      print("Usuario autenticado: ${user.uid}");
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists) {
+        print("Documento del usuario encontrado en Firestore.");
+        print("Datos recuperados: ${userDoc.data()}");
+        _usuari = Usuari.fromFirestore(userDoc.data() as Map<String, dynamic>);
+        print("Usuario cargado correctamente: $_usuari");
+      } else {
+        print("El documento del usuario no existe en Firestore.");
       }
     } catch (e) {
       print("Error al obtener los datos del usuario desde Firestore: $e");
