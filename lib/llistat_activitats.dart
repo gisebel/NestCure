@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nestcure/activitat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 
 class LlistaActivitats extends StatefulWidget {
   const LlistaActivitats({super.key});
@@ -57,9 +58,9 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                     ],
                   ),
                   Expanded(
-                    child: FutureBuilder(
-                      // Realizamos una consulta para obtener las actividades de Firestore
-                      future: _getActivities(user),
+                    child: StreamBuilder(
+                      // Escucha las actividades de cada dependiente
+                      stream: _getActivitiesStream(user),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
@@ -109,35 +110,55 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
     );
   }
 
-  // Función para obtener las actividades de Firestore
-  Future<Map<String, List<Activitat>>> _getActivities(LoggedUsuari user) async {
+  // Función para obtener las actividades desde Firestore
+  Stream<Map<String, List<Activitat>>> _getActivitiesStream(LoggedUsuari user) {
+    final StreamController<Map<String, List<Activitat>>> controller = StreamController();
+    
+    // Inicializamos un mapa para almacenar las actividades por dependiente
     final Map<String, List<Activitat>> activitiesMap = {};
 
-    // Obtenemos las actividades de Firestore
-    try {
-      for (var dependent in user.usuari.personesDependents) {
-        final activitiesSnapshot = await FirebaseFirestore.instance
-            .collection('usuarios')
-            .doc(FirebaseAuth.instance.currentUser?.uid)
-            .collection('activitats')
-            .doc(dependent.nombre) // Usamos el nombre del dependiente como clave
-            .get();
-
-        if (activitiesSnapshot.exists) {
-          List<Activitat> activities = [];
-          var activitiesData = activitiesSnapshot.data()?['activitats'] ?? {};
-          activitiesData.forEach((key, value) {
-            activities.add(Activitat.fromMap(value));
-          });
-
-          activitiesMap[dependent.nombre] = activities;
-        } else {
-          activitiesMap[dependent.nombre] = [];
-        }
-      }
-    } catch (e) {
-      print("Error fetching activities: $e");
+    // Verificamos que el usuario esté autenticado
+    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (currentUserId.isEmpty) {
+      print('No user is authenticated');
+      controller.close();
+      return controller.stream;
     }
-    return activitiesMap;
+
+    // Escuchamos cambios en las actividades de los dependientes
+    FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(currentUserId)
+      .collection('activitats')
+      .snapshots()
+      .listen((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          print("Datos recibidos de Firestore: ${snapshot.docs.length} documentos");
+
+          // Iteramos sobre los documentos de actividades y las asignamos a los dependientes
+          for (var doc in snapshot.docs) {
+            var activitiesData = doc.data()['activitats'] ?? [];
+            for (var activityData in activitiesData) {
+              String dependantName = activityData['dependantName'];
+              if (dependantName.isNotEmpty) {
+                // Creamos el objeto de actividad
+                Activitat activity = Activitat.fromMap(activityData);
+
+                // Agregamos la actividad al mapa correspondiente
+                if (!activitiesMap.containsKey(dependantName)) {
+                  activitiesMap[dependantName] = [];
+                }
+                activitiesMap[dependantName]?.add(activity);
+              }
+            }
+          }
+        } else {
+          print("No hay actividades registradas.");
+        }
+        // Actualizamos el stream con el mapa de actividades
+        controller.add(Map.from(activitiesMap));
+      });
+
+    return controller.stream;
   }
 }

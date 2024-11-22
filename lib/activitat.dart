@@ -7,6 +7,7 @@ class Activitat {
   final int hours;
   final DateTime date;
   final String type;
+  final String dependantName;
 
   Activitat({
     required this.id,
@@ -15,6 +16,7 @@ class Activitat {
     required this.hours,
     required this.date,
     required this.type,
+    required this.dependantName,
   });
 
   factory Activitat.fromMap(Map<String, dynamic> data) {
@@ -27,6 +29,7 @@ class Activitat {
           ? (data['date'] as Timestamp).toDate()
           : DateTime.parse(data['date']),
       type: data['type'] ?? '',
+      dependantName: data['dependantName'] ?? '',
     );
   }
 
@@ -38,6 +41,7 @@ class Activitat {
       'hours': hours,
       'date': Timestamp.fromDate(date),
       'type': type,
+      'dependantName': dependantName,
     };
   }
 }
