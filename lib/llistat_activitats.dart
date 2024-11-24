@@ -58,8 +58,7 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                     ],
                   ),
                   Expanded(
-                    child: StreamBuilder(
-                      // Escucha las actividades de cada dependiente
+                    child: StreamBuilder<Map<String, List<Activitat>>>(
                       stream: _getActivitiesStream(user),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -74,7 +73,7 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                           return const Center(child: Text('No hay actividades registradas.'));
                         }
 
-                        var dependentsActivities = snapshot.data as Map<String, List<Activitat>>;
+                        var dependentsActivities = snapshot.data!;
                         return ListView.builder(
                           itemCount: user.usuari.personesDependents.length,
                           itemBuilder: (context, index) {
@@ -111,47 +110,27 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
   }
 
   Stream<Map<String, List<Activitat>>> _getActivitiesStream(LoggedUsuari user) {
-    final StreamController<Map<String, List<Activitat>>> controller = StreamController();
-
-    // Verificamos que el usuario esté autenticado
-    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    if (currentUserId.isEmpty) {
-      print('No user is authenticated');
-      controller.close();
-      return controller.stream;
-    }
-
-    FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection('usuarios')
-        .doc(currentUserId)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .snapshots()
-        .listen((snapshot) {
+        .map((snapshot) {
           final Map<String, List<Activitat>> activitiesMap = {};
 
           if (snapshot.exists) {
-            // Obtenemos la lista de actividades del documento Firestore
             final activitatsData = snapshot.data()?['activitats'] ?? [];
-
             for (var activitatData in activitatsData) {
               String dependantName = activitatData['dependantName'] ?? '';
               if (dependantName.isNotEmpty) {
-                // Creamos el objeto de actividad
                 Activitat activity = Activitat.fromMap(activitatData);
-
-                // Agregamos la actividad al mapa correspondiente
                 if (!activitiesMap.containsKey(dependantName)) {
                   activitiesMap[dependantName] = [];
                 }
                 activitiesMap[dependantName]?.add(activity);
               }
             }
-          } else {
-            print("No hay actividades registradas.");
           }
-
-          controller.add(Map.from(activitiesMap));
+          return activitiesMap;
         });
-
-    return controller.stream;
   }
 }

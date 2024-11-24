@@ -95,15 +95,11 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
         if (data != null && data['personesDependents'] != null) {
           final personesDependentsData = data['personesDependents'];
 
-          // Check if 'personesDependents' is an array (list)
           if (personesDependentsData is List) {
-            // Convert the List to a List of PersonaDependent objects
             List<PersonaDependent> loadedPersones = [];
             
-            // Loop through each entry in the list
             for (var item in personesDependentsData) {
               if (item is Map<String, dynamic>) {
-                // Convert each map entry into a PersonaDependent object
                 loadedPersones.add(PersonaDependent.fromMap(item));
               }
             }
@@ -202,9 +198,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
                                 final personaToRemove = _personesDependents[index];
-
                                 print('Eliminando persona: ${personaToRemove.toJson()}');
-
                                 setState(() {
                                   _personesDependents.removeAt(index);
                                 });

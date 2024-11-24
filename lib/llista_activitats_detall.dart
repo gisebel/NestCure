@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/activitat.dart';
 import 'package:nestcure/app_bar.dart';
-import 'package:nestcure/user_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LlistaActivitatsDetall extends StatefulWidget {
@@ -16,19 +14,16 @@ class LlistaActivitatsDetall extends StatefulWidget {
 }
 
 class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
-  // Lista de actividades cargadas desde Firestore
   List<Activitat> _activitats = [];
 
   @override
   void initState() {
     super.initState();
-    _loadActivitats(); // Cargar actividades al iniciar
+    _loadActivitats();
   }
 
-  // Método para cargar actividades desde Firestore
   void _loadActivitats() async {
     try {
-      // Recuperamos las actividades desde la colección Firestore
       final activitiesSnapshot = await FirebaseFirestore.instance
           .collection('usuarios')
           .where('activitats', isNotEqualTo: null)
@@ -36,7 +31,6 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
 
       final List<Activitat> loadedActivitats = [];
 
-      // Filtrar las actividades por el nombre del dependiente
       for (var doc in activitiesSnapshot.docs) {
         final activitatsData = doc.data()['activitats'] ?? [];
 
@@ -46,7 +40,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
           }
         }
       }
-
+      loadedActivitats.sort((a, b) => a.date.compareTo(b.date));
       setState(() {
         _activitats = loadedActivitats;
       });
@@ -56,6 +50,59 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
         const SnackBar(content: Text('Error al cargar actividades.')),
       );
     }
+  }
+
+  Future<void> _deleteActivity(Activitat activitat) async {
+    try {
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .where('activitats', isNotEqualTo: null)
+          .get();
+
+      for (var userDoc in userSnapshot.docs) {
+        var activitatsData = List<Map<String, dynamic>>.from(userDoc['activitats'] ?? []);
+        activitatsData.removeWhere((element) => element['id'] == activitat.id);
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(userDoc.id)
+            .update({'activitats': activitatsData});
+        break;
+      }
+      setState(() {
+        _activitats.removeWhere((a) => a.id == activitat.id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Actividad eliminada exitosamente.')),
+      );
+    } catch (e) {
+      print("Error al eliminar la actividad: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al eliminar la actividad.')),
+      );
+    }
+  }
+
+  void _confirmDelete(Activitat activitat) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Confirmar eliminación"),
+        content: const Text("¿Estás seguro de que quieres eliminar esta actividad?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _deleteActivity(activitat);
+            },
+            child: const Text("Eliminar"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -84,14 +131,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                         var activitat = _activitats[index];
                         return ActivityCard(
                           activitat: activitat,
-                          onDelete: () {
-                            setState(() {
-                              _activitats.removeAt(index);
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Actividad eliminada')),
-                            );
-                          },
+                          onDelete: () => _confirmDelete(activitat),
                         );
                       },
                     ),
@@ -106,6 +146,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
 class ActivityCard extends StatelessWidget {
   final Activitat activitat;
   final VoidCallback onDelete;
+
   ActivityCard({super.key, required this.activitat, required this.onDelete});
 
   final Map<String, IconData> activityIcons = {
@@ -122,6 +163,7 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
@@ -129,38 +171,39 @@ class ActivityCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(activityIcons[activitat.type]),
+                Icon(
+                  activityIcons[activitat.type],
+                  color: const Color.fromRGBO(167, 207, 57, 1), // Color verde
+                ),
                 const SizedBox(width: 8.0),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              activitat.title,
-                              style: const TextStyle(
-                                  fontSize: 15.0, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                        ],
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                          '${activitat.date.day}-${activitat.date.month}-${activitat.date.year}'),
-                    ],
+                  child: Text(
+                    activitat.title,
+                    style: const TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Text(
                   '${activitat.hours} h',
                   style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(45, 88, 133, 1)),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(45, 88, 133, 1),
+                  ),
                 ),
-                const SizedBox(width: 8.0),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${activitat.date.day}-${activitat.date.month}-${activitat.date.year}',
+                    style: const TextStyle(fontSize: 14.0),
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: onDelete,
@@ -170,8 +213,10 @@ class ActivityCard extends StatelessWidget {
             const SizedBox(height: 10.0),
             Row(
               children: [
-                const Text('Tipo: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Tipo: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(activitat.type),
               ],
             ),
@@ -179,13 +224,16 @@ class ActivityCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Descripción: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Descripción: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Expanded(
-                    child: Text(
-                  activitat.description,
-                  overflow: TextOverflow.visible,
-                )),
+                  child: Text(
+                    activitat.description,
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
               ],
             ),
           ],

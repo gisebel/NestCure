@@ -67,8 +67,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
   @override
   Widget build(BuildContext context) {
     var user = LoggedUsuari().usuari;
-    print("Usuario cargado: ${user.nomCognoms}");
-    print("Lista de personas dependientes: ${user.personesDependents}");
 
     List<String> personesCuidades = [];
 
@@ -242,10 +240,7 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             );
                             return;
                           }
-
                           final String uniqueId = const Uuid().v4();
-
-                          // Crear la actividad con el nombre de la persona cuidada
                           final actividad = Activitat(
                             id: uniqueId,
                             title: _titolController.text,
@@ -253,29 +248,22 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             hours: int.parse(_horesController.text),
                             date: _selectedDate!,
                             type: selectedTipusActivitat!,
-                            dependantName: selectedPersonaCuidada!,  // Usar el nombre de la persona cuidada
+                            dependantName: selectedPersonaCuidada!,
                           );
-
                           var persona = user.personesDependents.firstWhere(
                               (persona) => persona.nombre == selectedPersonaCuidada);
-
                           try {
                             final userRef = FirebaseFirestore.instance
                                 .collection('usuarios')
                                 .doc(FirebaseAuth.instance.currentUser?.uid);
-
-                            // Actualizar Firestore con la nueva actividad
                             await userRef.update({
                               'activitats': FieldValue.arrayUnion([actividad.toJson()]),
                             });
-
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Actividad registrada correctamente'),
                               ),
                             );
-
-                            // Limpiar los campos después de registrar la actividad
                             _titolController.clear();
                             _descripcioController.clear();
                             _horesController.clear();
@@ -284,7 +272,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                               selectedPersonaCuidada = null;
                               selectedTipusActivitat = null;
                             });
-
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
