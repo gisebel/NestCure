@@ -11,6 +11,7 @@ class Usuari {
   String fotoPerfil;
   List<PersonaDependent> personesDependents;
   List<Activitat> activitats;
+  Map<String, bool> tests;
 
   Usuari({
     required this.nomCognoms,
@@ -22,7 +23,20 @@ class Usuari {
     required this.fotoPerfil,
     required this.personesDependents,
     required this.activitats,
-  });
+    required Map<String, bool>? tests,
+  }) : tests = tests ?? {
+      'basicAttentionKnowledgeTest': false,
+      'intermediateHealthKnowledgeTest': false,
+      'advancedHealthKnowledgeTest': false,
+      'basicCommunicationSkillsTest': false,
+      'intermediateAttentionKnowledgeTest': false,
+      'advancedAttentionKnowledgeTest': false,
+      'basicPracticalSkillsTest': false,
+      'intermediateCommunicationSkillsTest': false,
+      'advancedCommunicationSkillsTest': false,
+      'intermediatePracticalSkillsTest': false,
+      'advancedPracticalSkillsTest': false,
+  };
 
   @override
   String toString() {
@@ -42,6 +56,22 @@ class Usuari {
             .toList()
         : <Activitat>[];
 
+    var tests = (firestoreData['tests'] is Map<String, dynamic>)
+        ? Map<String, bool>.from(firestoreData['tests'])
+        : {
+            'basicAttentionKnowledgeTest': false,
+            'intermediateHealthKnowledgeTest': false,
+            'advancedHealthKnowledgeTest': false,
+            'basicCommunicationSkillsTest': false,
+            'intermediateAttentionKnowledgeTest': false,
+            'advancedAttentionKnowledgeTest': false,
+            'basicPracticalSkillsTest': false,
+            'intermediateCommunicationSkillsTest': false,
+            'advancedCommunicationSkillsTest': false,
+            'intermediatePracticalSkillsTest': false,
+            'advancedPracticalSkillsTest': false,
+          };
+
     return Usuari(
       nomCognoms: firestoreData['nomCognoms'] ?? '',
       dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
@@ -52,6 +82,7 @@ class Usuari {
       fotoPerfil: firestoreData['fotoPerfil'] ?? '',
       personesDependents: personesDependents,
       activitats: activitats,
+      tests: tests,
     );
   }
 }

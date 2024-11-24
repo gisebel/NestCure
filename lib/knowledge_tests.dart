@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'basic_attention_knowledge_test.dart';
 import 'intermediate_health_knowledge_test.dart';
 import 'advanced_health_knowledge_test.dart';
-import 'basic_attention_knowledge_test.dart';
+import 'basic_communication_skills_test.dart';
 import 'intermediate_attention_knowledge_test.dart';
 import 'advanced_attention_knowledge_test.dart';
-import 'basic_communication_skills_test.dart';
+import 'basic_practical_skills_test.dart'; 
 import 'intermediate_communication_skills_test.dart';
 import 'advanced_communication_skills_test.dart';
-import 'basic_practical_skills_test.dart'; 
 import 'intermediate_practical_skills_test.dart'; 
 import 'advanced_practical_skills_test.dart'; 
 
@@ -107,31 +109,19 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
           return BasicAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Intermedio') {
           return IntermediateHealthKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Avanzado') {
           return AdvancedHealthKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         }
         break;
@@ -140,31 +130,19 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
           return BasicAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Intermedio') {
           return IntermediateAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Avanzado') {
           return AdvancedAttentionKnowledgeTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         }
         break;
@@ -173,70 +151,94 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
           return BasicCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Intermedio') {
           return IntermediateCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         } else if (testLevel == 'Avanzado') {
           return AdvancedCommunicationSkillsTestScreen(
             testType: testType,
             testLevel: testLevel,
-            onCompleted: () {
-              setState(() {
-                testResults[testType]?[testLevel] = 'Completado';
-              });
-            },
+            onCompleted: () => _onCompleted(testType, testLevel),
           );
         }
         break;
-      case 'Habilidades prácticas': 
-        if (testLevel == 'Básico') { 
-          return BasicPracticalSkillsTestScreen( 
-            testType: testType, 
-            testLevel: testLevel, 
-            onCompleted: () { 
-              setState(() { 
-                testResults[testType]?[testLevel] = 'Completado'; 
-              }); 
-            }, 
-          ); 
-        } else if (testLevel == 'Intermedio') { 
-          return IntermediatePracticalSkillsTestScreen( 
-            testType: testType, 
-            testLevel: testLevel, 
-            onCompleted: () { 
-              setState(() { 
-                testResults[testType]?[testLevel] = 'Completado'; 
-              }); 
-            },  
-          );   
-        } else if (testLevel == 'Avanzado') { 
-          return AdvancedPracticalSkillsTestScreen( 
-            testType: testType, 
-            testLevel: testLevel, 
-            onCompleted: () { 
-              setState(() { 
-                testResults[testType]?[testLevel] = 'Completado'; 
-              }); 
-            }, 
-          ); 
-        } 
-        break; 
+      case 'Habilidades prácticas':
+        if (testLevel == 'Básico') {
+          return BasicPracticalSkillsTestScreen(
+            testType: testType,
+            testLevel: testLevel,
+            onCompleted: () => _onCompleted(testType, testLevel),
+          );
+        } else if (testLevel == 'Intermedio') {
+          return IntermediatePracticalSkillsTestScreen(
+            testType: testType,
+            testLevel: testLevel,
+            onCompleted: () => _onCompleted(testType, testLevel),
+          );
+        } else if (testLevel == 'Avanzado') {
+          return AdvancedPracticalSkillsTestScreen(
+            testType: testType,
+            testLevel: testLevel,
+            onCompleted: () => _onCompleted(testType, testLevel),
+          );
+        }
+        break;
       default:
         return Container();
     }
     return Container();
+  }
+
+  Future<void> _onCompleted(String testType, String testLevel) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+      try {
+        // Actualizamos el estado del test en Firestore
+        await userRef.update({
+          'tests.${_getTestKey(testType, testLevel)}': true,  // Actualizamos el test específico
+        });
+
+        // También actualizamos el estado local
+        setState(() {
+          testResults[testType]?[testLevel] = 'Completado';
+        });
+      } catch (e) {
+        print('Error al actualizar el estado del test: $e');
+      }
+    }
+  }
+
+  // Esta función genera la clave correspondiente para el test y nivel
+  String _getTestKey(String testType, String testLevel) {
+    // Dependiendo del tipo de test y nivel, se genera la clave correspondiente
+    switch (testType) {
+      case 'Conocimientos de salud':
+        if (testLevel == 'Básico') return 'basicHealthKnowledgeTest';
+        if (testLevel == 'Intermedio') return 'intermediateHealthKnowledgeTest';
+        if (testLevel == 'Avanzado') return 'advancedHealthKnowledgeTest';
+        break;
+      case 'Conocimientos de atención':
+        if (testLevel == 'Básico') return 'basicAttentionKnowledgeTest';
+        if (testLevel == 'Intermedio') return 'intermediateAttentionKnowledgeTest';
+        if (testLevel == 'Avanzado') return 'advancedAttentionKnowledgeTest';
+        break;
+      case 'Habilidades de comunicación':
+        if (testLevel == 'Básico') return 'basicCommunicationSkillsTest';
+        if (testLevel == 'Intermedio') return 'intermediateCommunicationSkillsTest';
+        if (testLevel == 'Avanzado') return 'advancedCommunicationSkillsTest';
+        break;
+      case 'Habilidades prácticas':
+        if (testLevel == 'Básico') return 'basicPracticalSkillsTest';
+        if (testLevel == 'Intermedio') return 'intermediatePracticalSkillsTest';
+        if (testLevel == 'Avanzado') return 'advancedPracticalSkillsTest';
+        break;
+    }
+    return '';
   }
 }

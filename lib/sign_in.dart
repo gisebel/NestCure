@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nestcure/user.dart';
-import 'login.dart';
+import 'package:nestcure/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -199,6 +199,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             fotoPerfil: '',
                             personesDependents: [],
                             activitats: [],
+                            tests: {},
                           );
 
                           await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
@@ -210,6 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             'fotoPerfil': newUser.fotoPerfil,
                             'personesDependents': [],
                             'activitats': {},
+                            'tests': {},
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(

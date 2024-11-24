@@ -15,6 +15,7 @@ class LoggedUsuari {
     fotoPerfil: '',
     personesDependents: [],
     activitats: [],
+    tests: {},
   );
 
   LoggedUsuari._internal();
@@ -72,6 +73,7 @@ class LoggedUsuari {
           fotoPerfil: '',
           personesDependents: [],
           activitats: [],
+          tests: {},
         );
       });
     }
@@ -88,6 +90,7 @@ class LoggedUsuari {
       fotoPerfil: '',
       personesDependents: [],
       activitats: [],
+      tests: {},
     );
   }
 

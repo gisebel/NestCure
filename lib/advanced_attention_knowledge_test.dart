@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_bar.dart';
+import 'package:nestcure/app_bar.dart';
 
 class AdvancedAttentionKnowledgeTestScreen extends StatefulWidget {
   final String testType;
@@ -196,6 +196,7 @@ class _AdvancedAttentionKnowledgeTestScreenState
   }
 }
 
+// Completion Screen
 class CompletionScreen extends StatelessWidget {
   final int correctAnswers;
 
@@ -206,7 +207,7 @@ class CompletionScreen extends StatelessWidget {
     return Scaffold(
       appBar: customAppBar(context, false),
       backgroundColor: const Color.fromARGB(255, 255, 251, 245),
-      body: Center( // Centrado del contenido final
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
