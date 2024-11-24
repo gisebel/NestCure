@@ -16,29 +16,37 @@ class LlistaActivitatsDetall extends StatefulWidget {
 }
 
 class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
-  // Lista de actividades que se cargará desde Firestore
+  // Lista de actividades cargadas desde Firestore
   List<Activitat> _activitats = [];
 
   @override
   void initState() {
     super.initState();
-    _loadActivitats(); // Cargar actividades cuando el widget se inicialice
+    _loadActivitats(); // Cargar actividades al iniciar
   }
 
-  // Método para cargar las actividades desde Firestore
+  // Método para cargar actividades desde Firestore
   void _loadActivitats() async {
     try {
-      // Suponemos que las actividades están en la colección 'actividades'
+      // Recuperamos las actividades desde la colección Firestore
       final activitiesSnapshot = await FirebaseFirestore.instance
-          .collection('actividades') // La colección en Firestore
+          .collection('usuarios')
+          .where('activitats', isNotEqualTo: null)
           .get();
 
-      // Mapeamos los documentos de Firestore a objetos Activitat
-      final List<Activitat> loadedActivitats = activitiesSnapshot.docs.map((doc) {
-        return Activitat.fromMap(doc.data() as Map<String, dynamic>);
-      }).toList();
+      final List<Activitat> loadedActivitats = [];
 
-      // Actualizamos el estado con la lista de actividades cargadas
+      // Filtrar las actividades por el nombre del dependiente
+      for (var doc in activitiesSnapshot.docs) {
+        final activitatsData = doc.data()['activitats'] ?? [];
+
+        for (var activitatData in activitatsData) {
+          if (activitatData['dependantName'] == widget.nom) {
+            loadedActivitats.add(Activitat.fromMap(activitatData));
+          }
+        }
+      }
+
       setState(() {
         _activitats = loadedActivitats;
       });
@@ -54,52 +62,46 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(context, true),
-      body: Consumer<UserProvider>(builder: (context, provider, child) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Actividades registradas de ${widget.nom}',
-                style: const TextStyle(
-                    fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16.0),
-              _activitats.isEmpty
-                  ? const Text(
-                      'No hay actividades registradas.',
-                      style: TextStyle(fontSize: 15.0),
-                    )
-                  : Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _activitats.length,
-                        itemBuilder: (context, index) {
-                          var activitat = _activitats[index];
-                          return ActivityCard(
-                            activitat: activitat,
-                            onDelete: () {
-                              setState(() {
-                                _activitats.removeAt(index);
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Actividad eliminada')),
-                              );
-                            },
-                          );
-                        },
-                      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Actividades registradas de ${widget.nom}',
+              style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16.0),
+            _activitats.isEmpty
+                ? const Text(
+                    'No hay actividades registradas.',
+                    style: TextStyle(fontSize: 15.0),
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: _activitats.length,
+                      itemBuilder: (context, index) {
+                        var activitat = _activitats[index];
+                        return ActivityCard(
+                          activitat: activitat,
+                          onDelete: () {
+                            setState(() {
+                              _activitats.removeAt(index);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Actividad eliminada')),
+                            );
+                          },
+                        );
+                      },
                     ),
-            ],
-          ),
-        );
-      }),
+                  ),
+          ],
+        ),
+      ),
     );
   }
 }
-
 
 class ActivityCard extends StatelessWidget {
   final Activitat activitat;

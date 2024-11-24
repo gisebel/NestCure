@@ -110,12 +110,8 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
     );
   }
 
-  // Función para obtener las actividades desde Firestore
   Stream<Map<String, List<Activitat>>> _getActivitiesStream(LoggedUsuari user) {
     final StreamController<Map<String, List<Activitat>>> controller = StreamController();
-    
-    // Inicializamos un mapa para almacenar las actividades por dependiente
-    final Map<String, List<Activitat>> activitiesMap = {};
 
     // Verificamos que el usuario esté autenticado
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -125,24 +121,22 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
       return controller.stream;
     }
 
-    // Escuchamos cambios en las actividades de los dependientes
     FirebaseFirestore.instance
-      .collection('usuarios')
-      .doc(currentUserId)
-      .collection('activitats')
-      .snapshots()
-      .listen((snapshot) {
-        if (snapshot.docs.isNotEmpty) {
-          print("Datos recibidos de Firestore: ${snapshot.docs.length} documentos");
+        .collection('usuarios')
+        .doc(currentUserId)
+        .snapshots()
+        .listen((snapshot) {
+          final Map<String, List<Activitat>> activitiesMap = {};
 
-          // Iteramos sobre los documentos de actividades y las asignamos a los dependientes
-          for (var doc in snapshot.docs) {
-            var activitiesData = doc.data()['activitats'] ?? [];
-            for (var activityData in activitiesData) {
-              String dependantName = activityData['dependantName'];
+          if (snapshot.exists) {
+            // Obtenemos la lista de actividades del documento Firestore
+            final activitatsData = snapshot.data()?['activitats'] ?? [];
+
+            for (var activitatData in activitatsData) {
+              String dependantName = activitatData['dependantName'] ?? '';
               if (dependantName.isNotEmpty) {
                 // Creamos el objeto de actividad
-                Activitat activity = Activitat.fromMap(activityData);
+                Activitat activity = Activitat.fromMap(activitatData);
 
                 // Agregamos la actividad al mapa correspondiente
                 if (!activitiesMap.containsKey(dependantName)) {
@@ -151,13 +145,12 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                 activitiesMap[dependantName]?.add(activity);
               }
             }
+          } else {
+            print("No hay actividades registradas.");
           }
-        } else {
-          print("No hay actividades registradas.");
-        }
-        // Actualizamos el stream con el mapa de actividades
-        controller.add(Map.from(activitiesMap));
-      });
+
+          controller.add(Map.from(activitiesMap));
+        });
 
     return controller.stream;
   }
