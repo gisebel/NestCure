@@ -212,7 +212,6 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
     return Container();
   }
 
-
   Future<void> _onCompleted(String testType, String testLevel) async {
     final user = FirebaseAuth.instance.currentUser;
     String testKey = _getTestKey(testType, testLevel);
@@ -220,22 +219,13 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
     if (user != null) {
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
 
-      try {
-        final snapshot = await userRef.get();
-        if (!snapshot.exists) {
-          await userRef.set({
-            "tests": {
-              testKey: true,
-            },
-          }, SetOptions(merge: true));
-        } else {
-          await userRef.update({
-            'tests.$testKey': true,
-          });
-        }
-      } catch (e) {
-        print('Error al actualizar el estado del test: $e');
-      }
+      final testsRef = userRef.collection('tests');
+      final testRef = testsRef.doc(testKey);
+
+      await testRef.set({
+        'completed': true,
+        'date': Timestamp.now(),
+      }, SetOptions(merge: true));
     }
   }
 
@@ -267,62 +257,21 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
 }
 
 class TestCompletedScreen extends StatelessWidget {
-  const TestCompletedScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(context, false),
-      backgroundColor: const Color.fromARGB(255, 255, 251, 245),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Ícono que refuerza el mensaje de completado
-              Icon(
-                Icons.check_circle_outline,
-                size: 80.0,
-                color: Colors.green,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '¡Ya has realizado este test!',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'No puedes volver a realizarlo. ¡Bien hecho!',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[700],
-                  fontSize: 16.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pop(context); // Regresa a la pantalla anterior
-                },
-                child: Text(
-                  'Volver',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 100),
+            const SizedBox(height: 20),
+            const Text(
+              '¡Felicidades! Ya has completado este test.',
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
         ),
       ),
     );
