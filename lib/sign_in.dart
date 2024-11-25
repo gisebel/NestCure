@@ -199,7 +199,20 @@ class _RegisterPageState extends State<RegisterPage> {
                             fotoPerfil: '',
                             personesDependents: [],
                             activitats: [],
-                            tests: {},
+                            tests: {
+                              'basicAttentionKnowledgeTest': false,
+                              'intermediateHealthKnowledgeTest': false,
+                              'advancedHealthKnowledgeTest': false,
+                              'basicCommunicationSkillsTest': false,
+                              'intermediateAttentionKnowledgeTest': false,
+                              'advancedAttentionKnowledgeTest': false,
+                              'basicPracticalSkillsTest': false,
+                              'intermediateCommunicationSkillsTest': false,
+                              'advancedCommunicationSkillsTest': false,
+                              'intermediatePracticalSkillsTest': false,
+                              'advancedPracticalSkillsTest': false,
+                              'basicHealthKnowledgeTest': false,
+                            },
                           );
 
                           await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
@@ -210,8 +223,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             'descripcio': newUser.descripcio,
                             'fotoPerfil': newUser.fotoPerfil,
                             'personesDependents': [],
-                            'activitats': {},
-                            'tests': {},
+                            'activitats': [],
+                            'tests': newUser.tests,
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(

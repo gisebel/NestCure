@@ -222,7 +222,7 @@ class CompletionScreen extends StatelessWidget {
               Text(
                 'Respuestas correctas: $correctAnswers/10',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16.0, // Texto más pequeño
+                      fontSize: 16.0,
                     ),
                 textAlign: TextAlign.center,
               ),

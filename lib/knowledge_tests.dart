@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'basic_attention_knowledge_test.dart';
-import 'intermediate_health_knowledge_test.dart';
-import 'advanced_health_knowledge_test.dart';
-import 'basic_communication_skills_test.dart';
-import 'intermediate_attention_knowledge_test.dart';
-import 'advanced_attention_knowledge_test.dart';
-import 'basic_practical_skills_test.dart'; 
-import 'intermediate_communication_skills_test.dart';
-import 'advanced_communication_skills_test.dart';
-import 'intermediate_practical_skills_test.dart'; 
-import 'advanced_practical_skills_test.dart'; 
+import 'package:nestcure/basic_attention_knowledge_test.dart';
+import 'package:nestcure/intermediate_health_knowledge_test.dart';
+import 'package:nestcure/advanced_health_knowledge_test.dart';
+import 'package:nestcure/basic_communication_skills_test.dart';
+import 'package:nestcure/intermediate_attention_knowledge_test.dart';
+import 'package:nestcure/advanced_attention_knowledge_test.dart';
+import 'package:nestcure/basic_practical_skills_test.dart'; 
+import 'package:nestcure/intermediate_communication_skills_test.dart';
+import 'package:nestcure/advanced_communication_skills_test.dart';
+import 'package:nestcure/intermediate_practical_skills_test.dart'; 
+import 'package:nestcure/advanced_practical_skills_test.dart'; 
+import 'package:nestcure/basic_health_knowledge_test.dart';
 
 class KnowledgeTestsScreen extends StatefulWidget {
   const KnowledgeTestsScreen({super.key});
@@ -22,12 +23,6 @@ class KnowledgeTestsScreen extends StatefulWidget {
 }
 
 class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
-  Map<String, Map<String, String>> testResults = {
-    'Conocimientos de salud': {},
-    'Conocimientos de atención': {},
-    'Habilidades de comunicación': {},
-    'Habilidades prácticas': {}, 
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +77,24 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
       ),
       children: levels.map((level) {
+        final testKey = _getTestKey(testType, level);
+
         return ListTile(
           title: Text(level),
-          trailing: Text(
-            testResults[testType]?[level] ?? 'No completado',
-            style: TextStyle(
-              color: (testResults[testType]?[level] == 'Completado') ? Colors.green : Colors.black,
-            ),
+          trailing: StreamBuilder<DocumentSnapshot>(
+            stream: _getTestStatusStream(testKey),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Text('Cargando...');
+              }
+              final testStatus = snapshot.data?.get('tests.$testKey') ?? false;
+              return Text(
+                testStatus ? 'Completado' : 'No completado',
+                style: TextStyle(
+                  color: testStatus ? Colors.green : Colors.red,
+                ),
+              );
+            },
           ),
           onTap: () {
             Navigator.of(context).push(
@@ -102,121 +108,138 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
     );
   }
 
+  Stream<DocumentSnapshot> _getTestStatusStream(String testKey) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+      return userRef.snapshots();
+    } else {
+      return Stream.empty();
+    }
+  }
+
   Widget _getTestScreen(String testType, String testLevel) {
+    final testKey = _getTestKey(testType, testLevel);
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _getTestStatusStream(testKey),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        final testStatus = snapshot.data?.get('tests.$testKey') ?? false;
+
+        if (testStatus) {
+          return TestCompletedScreen();
+        } else {
+          return _getTestWidget(testType, testLevel);
+        }
+      },
+    );
+  }
+
+  Widget _getTestWidget(String testType, String testLevel) {
     switch (testType) {
       case 'Conocimientos de salud':
-        if (testLevel == 'Básico') {
-          return BasicAttentionKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Intermedio') {
-          return IntermediateHealthKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Avanzado') {
-          return AdvancedHealthKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        }
+        if (testLevel == 'Básico') return BasicHealthKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Intermedio') return IntermediateHealthKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Avanzado') return AdvancedHealthKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
         break;
       case 'Conocimientos de atención':
-        if (testLevel == 'Básico') {
-          return BasicAttentionKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Intermedio') {
-          return IntermediateAttentionKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Avanzado') {
-          return AdvancedAttentionKnowledgeTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        }
+        if (testLevel == 'Básico') return BasicAttentionKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Intermedio') return IntermediateAttentionKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Avanzado') return AdvancedAttentionKnowledgeTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
         break;
       case 'Habilidades de comunicación':
-        if (testLevel == 'Básico') {
-          return BasicCommunicationSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Intermedio') {
-          return IntermediateCommunicationSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Avanzado') {
-          return AdvancedCommunicationSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        }
+        if (testLevel == 'Básico') return BasicCommunicationSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Intermedio') return IntermediateCommunicationSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Avanzado') return AdvancedCommunicationSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
         break;
       case 'Habilidades prácticas':
-        if (testLevel == 'Básico') {
-          return BasicPracticalSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Intermedio') {
-          return IntermediatePracticalSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        } else if (testLevel == 'Avanzado') {
-          return AdvancedPracticalSkillsTestScreen(
-            testType: testType,
-            testLevel: testLevel,
-            onCompleted: () => _onCompleted(testType, testLevel),
-          );
-        }
+        if (testLevel == 'Básico') return BasicPracticalSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Intermedio') return IntermediatePracticalSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
+        if (testLevel == 'Avanzado') return AdvancedPracticalSkillsTestScreen(
+          testType: testType,
+          testLevel: testLevel,
+          onCompleted: () => _onCompleted(testType, testLevel),
+        );
         break;
-      default:
-        return Container();
     }
     return Container();
   }
 
+
   Future<void> _onCompleted(String testType, String testLevel) async {
     final user = FirebaseAuth.instance.currentUser;
+    String testKey = _getTestKey(testType, testLevel);
+
     if (user != null) {
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
-      try {
-        // Actualizamos el estado del test en Firestore
-        await userRef.update({
-          'tests.${_getTestKey(testType, testLevel)}': true,  // Actualizamos el test específico
-        });
 
-        // También actualizamos el estado local
-        setState(() {
-          testResults[testType]?[testLevel] = 'Completado';
-        });
+      try {
+        final snapshot = await userRef.get();
+        if (!snapshot.exists) {
+          await userRef.set({
+            "tests": {
+              testKey: true,
+            },
+          }, SetOptions(merge: true));
+        } else {
+          await userRef.update({
+            'tests.$testKey': true,
+          });
+        }
       } catch (e) {
         print('Error al actualizar el estado del test: $e');
       }
     }
   }
 
-  // Esta función genera la clave correspondiente para el test y nivel
   String _getTestKey(String testType, String testLevel) {
-    // Dependiendo del tipo de test y nivel, se genera la clave correspondiente
     switch (testType) {
       case 'Conocimientos de salud':
         if (testLevel == 'Básico') return 'basicHealthKnowledgeTest';
@@ -240,5 +263,68 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
         break;
     }
     return '';
+  }
+}
+
+class TestCompletedScreen extends StatelessWidget {
+  const TestCompletedScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: customAppBar(context, false),
+      backgroundColor: const Color.fromARGB(255, 255, 251, 245),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Ícono que refuerza el mensaje de completado
+              Icon(
+                Icons.check_circle_outline,
+                size: 80.0,
+                color: Colors.green,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '¡Ya has realizado este test!',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'No puedes volver a realizarlo. ¡Bien hecho!',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.grey[700],
+                  fontSize: 16.0,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context); // Regresa a la pantalla anterior
+                },
+                child: Text(
+                  'Volver',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

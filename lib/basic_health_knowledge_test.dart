@@ -205,10 +205,7 @@ class CompletionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text('Resultados del Test'),
-      ),
+      appBar: customAppBar(context, false),
       backgroundColor: const Color.fromARGB(255, 255, 251, 245),
       body: Center(
         child: Padding(

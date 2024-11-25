@@ -70,6 +70,7 @@ class Usuari {
             'advancedCommunicationSkillsTest': false,
             'intermediatePracticalSkillsTest': false,
             'advancedPracticalSkillsTest': false,
+            'basicHealthKnowledgeTest': false,
           };
 
     return Usuari(

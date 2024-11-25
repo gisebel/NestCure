@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_bar.dart';
+import 'package:nestcure/app_bar.dart';
 
 class AdvancedCommunicationSkillsTestScreen extends StatefulWidget {
   final String testType;
@@ -221,7 +221,7 @@ class CompletionScreen extends StatelessWidget {
               Text(
                 'Respuestas correctas: $correctAnswers/10',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16.0, // Texto más pequeño
+                      fontSize: 16.0,
                     ),
                 textAlign: TextAlign.center,
               ),
