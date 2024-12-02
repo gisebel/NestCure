@@ -16,6 +16,7 @@ class LoggedUsuari {
     personesDependents: [],
     activitats: [],
     tests: {},
+    certificats: [],
   );
 
   LoggedUsuari._internal();
@@ -74,6 +75,7 @@ class LoggedUsuari {
           personesDependents: [],
           activitats: [],
           tests: {},
+          certificats: [],
         );
       });
     }
@@ -91,6 +93,7 @@ class LoggedUsuari {
       personesDependents: [],
       activitats: [],
       tests: {},
+      certificats: [],
     );
   }
 

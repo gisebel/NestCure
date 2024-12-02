@@ -1,5 +1,6 @@
 import 'package:nestcure/activitat.dart';
 import 'package:nestcure/persona_dependent.dart';
+import 'package:nestcure/certificate_provider.dart';
 
 class Usuari {
   String nomCognoms;
@@ -12,6 +13,7 @@ class Usuari {
   List<PersonaDependent> personesDependents;
   List<Activitat> activitats;
   Map<String, bool> tests;
+  List<Certificate> certificats;
 
   Usuari({
     required this.nomCognoms,
@@ -23,6 +25,7 @@ class Usuari {
     required this.fotoPerfil,
     required this.personesDependents,
     required this.activitats,
+    required this.certificats,
     required Map<String, bool>? tests,
   }) : tests = tests ?? {
       'basicAttentionKnowledgeTest': false,
@@ -73,6 +76,12 @@ class Usuari {
             'basicHealthKnowledgeTest': false,
           };
 
+    var certificats = (firestoreData['certificats'] is List<dynamic>)
+        ? (firestoreData['certificats'] as List<dynamic>)
+            .map((e) => Certificate.fromMap(e))
+            .toList()
+        : <Certificate>[];
+
     return Usuari(
       nomCognoms: firestoreData['nomCognoms'] ?? '',
       dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
@@ -84,6 +93,7 @@ class Usuari {
       personesDependents: personesDependents,
       activitats: activitats,
       tests: tests,
+      certificats: certificats,
     );
   }
 }

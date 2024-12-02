@@ -213,6 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               'advancedPracticalSkillsTest': false,
                               'basicHealthKnowledgeTest': false,
                             },
+                            certificats: [],
                           );
 
                           await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
@@ -225,6 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             'personesDependents': [],
                             'activitats': [],
                             'tests': newUser.tests,
+                            'certificats': [],
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nestcure/main.dart';
 import 'package:nestcure/profile.dart';
 import 'package:nestcure/sign_in.dart';
 

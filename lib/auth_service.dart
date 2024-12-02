@@ -22,6 +22,7 @@ class AuthService {
         'fotoPerfil': user.fotoPerfil,
         'personesDependents': user.personesDependents.map((persona) => persona.toJson()).toList(),
         'activitats': user.activitats,
+        'certificats': user.certificats,
       });
 
       return null; 
