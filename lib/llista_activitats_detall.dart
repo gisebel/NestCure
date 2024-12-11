@@ -105,6 +105,10 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     );
   }
 
+  int getTotalHours() {
+    return _activitats.fold(0, (sum, activitat) => sum + activitat.hours);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,6 +140,38 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                       },
                     ),
                   ),
+            const SizedBox(height: 16.0),
+            Card(
+              color: const Color.fromRGBO(167, 207, 57, 1),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Total de horas dedicadas',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromRGBO(45, 88, 133, 1),
+                      ),
+                    ),
+                    Text(
+                      '${getTotalHours()} h',
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(45, 88, 133, 1), 
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
