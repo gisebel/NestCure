@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:nestcure/certificate_provider.dart';
-//import 'package:nestcure/validate_certificate.dart';
 import 'package:nestcure/list_certificates.dart';
 import 'package:nestcure/llistat_activitats.dart';
 
@@ -50,7 +49,6 @@ class MyApp extends StatelessWidget {
         ),
         home: LoginPage(),
         routes: {
-          //'/validate': (context) => const ValidateCertificate(),
           '/list_certificates': (context) => const ListCertificates(),
           '/knowledge_tests': (context) => const KnowledgeTestsScreen(),
           '/persones_cuidades': (context) => const PersonesDependentsWidget(),

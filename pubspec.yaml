@@ -13,13 +13,13 @@ dependencies:
   http: ^1.2.2
   provider: ^6.0.3
   url_launcher: ^6.0.10
-  path_provider: ^2.0.15
+  path_provider: ^2.0.11
   file_picker: ^8.0.7
   permission_handler: ^11.3.1
   intl: ^0.19.0
   pdf: ^3.11.1
   printing: ^5.10.0
-  open_filex: ^4.1.0
+  open_filex: ^4.6.0
   cupertino_icons: ^1.0.6
   survey_kit: ^1.0.0-dev.5
   html: ^0.15.5

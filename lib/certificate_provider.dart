@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Certificate {
-  final String name;
+  final String title;
   final String description;
-  final String fileUrl;
+  final String fileName;
   final DateTime date; 
 
   Certificate({
-    required this.name,
+    required this.title,
     required this.description,
-    required this.fileUrl,
+    required this.fileName,
     required this.date,
   });
 
   factory Certificate.fromMap(Map<String, dynamic> data) {
     return Certificate(
-      name: data['name'] ?? '',
+      title: data['title'] ?? '',
       description: data['description'] ?? '',
-      fileUrl: data['fileUrl'] ?? '',
+      fileName: data['fileName'] ?? '',
       date: data['date'] is Timestamp
           ? (data['date'] as Timestamp).toDate()
           : DateTime.parse(data['date']),
@@ -27,9 +27,9 @@ class Certificate {
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'title': title,
       'description': description,
-      'fileUrl': fileUrl,
+      'fileName': fileName,
       'date': date,
     };
   }

@@ -1,13 +1,11 @@
-import 'dart:typed_data'; // Para manejar los bytes del archivo
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:intl/intl.dart'; // Para dar formato a la fecha
-import 'package:url_launcher/url_launcher.dart';
 
 class ListCertificates extends StatefulWidget {
   const ListCertificates({super.key});
@@ -17,20 +15,7 @@ class ListCertificates extends StatefulWidget {
 }
 
 class _ListCertificatesState extends State<ListCertificates> {
-  int? _selectedIndex;
   final TextEditingController _dateController = TextEditingController();
-
-  // Controlador para mostrar el estado de carga
-  bool _isUploading = false; // Bandera para indicar si el archivo está siendo cargado
-
-  Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   Future<void> _selectDate(BuildContext context, ValueChanged<DateTime> onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -48,40 +33,44 @@ class _ListCertificatesState extends State<ListCertificates> {
   }
 
   Future<void> _addCertificate(BuildContext context) async {
-    final TextEditingController nameController = TextEditingController();
+    final TextEditingController titleController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
     DateTime? selectedDate;
-    Uint8List? selectedFileBytes; // Para almacenar los bytes del archivo seleccionado
+    String? selectedFileName;
 
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Añadir Certificado'),
+          backgroundColor: Colors.white.withOpacity(0.95),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Añadir Certificado', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromRGBO(45, 88, 133, 1))),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre'),
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Título', border: OutlineInputBorder(), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(45, 88, 133, 1)))),
                 ),
+                const SizedBox(height: 16.0),
                 TextField(
                   controller: descriptionController,
-                  decoration: const InputDecoration(labelText: 'Descripción'),
+                  decoration: const InputDecoration(labelText: 'Descripción', border: OutlineInputBorder(), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(45, 88, 133, 1)))),
                 ),
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 16.0),
                 TextField(
                   controller: _dateController,
                   decoration: const InputDecoration(
                     labelText: 'Fecha',
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(45, 88, 133, 1))),
                   ),
                   readOnly: true,
                   onTap: () => _selectDate(context, (pickedDate) {
                     selectedDate = pickedDate;
                   }),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
                     final result = await FilePicker.platform.pickFiles(
@@ -89,20 +78,22 @@ class _ListCertificatesState extends State<ListCertificates> {
                       allowedExtensions: ['pdf'],
                     );
                     if (result != null) {
-                      print("Archivo seleccionado: ${result.files.single.name}");
                       setState(() {
-                        selectedFileBytes = result.files.single.bytes;  // Obtener los bytes del archivo
+                        selectedFileName = result.files.single.name;
                       });
-                    } else {
-                      print("No se seleccionó ningún archivo");
                     }
                   },
-                  child: const Text('Seleccionar PDF'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 20.0),
+                    backgroundColor: Color.fromRGBO(45, 88, 133, 1),  // Use backgroundColor instead of primary
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('Seleccionar PDF', style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
-                if (selectedFileBytes != null)
+                if (selectedFileName != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Text('Archivo seleccionado'),
+                    child: Text('Archivo seleccionado: $selectedFileName', style: TextStyle(fontSize: 14, color: Colors.green)),
                   ),
               ],
             ),
@@ -110,74 +101,54 @@ class _ListCertificatesState extends State<ListCertificates> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
+              child: const Text('Cancelar', style: TextStyle(fontSize: 16, color: Colors.red)),
             ),
             ElevatedButton(
               onPressed: () async {
-                if (nameController.text.isNotEmpty &&
+                if (titleController.text.isNotEmpty &&
                     descriptionController.text.isNotEmpty &&
                     selectedDate != null &&
-                    selectedFileBytes != null) {
-                  print("Iniciando proceso de carga...");
+                    selectedFileName != null) {
                   try {
-                    setState(() {
-                      _isUploading = true; // Indicamos que la carga ha comenzado
-                    });
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Usuario no autenticado')),
+                      );
+                      return;
+                    }
 
-                    // Subir archivo a Firebase Storage usando los bytes
-                    final storageRef = FirebaseStorage.instance
-                        .ref()
-                        .child('certificates/${nameController.text}_${DateTime.now().millisecondsSinceEpoch}.pdf');
-                    print("Subiendo archivo a Firebase Storage...");
-                    final uploadTask = storageRef.putData(selectedFileBytes!);  // Usar putData para subir los bytes
-
-                    // Escuchar el progreso de la carga
-                    uploadTask.snapshotEvents.listen((taskSnapshot) {
-                      print("Progreso de carga: ${taskSnapshot.bytesTransferred}/${taskSnapshot.totalBytes}");
-                    });
-
-                    // Esperar la finalización de la carga
-                    final snapshot = await uploadTask.whenComplete(() => {});
-                    final fileUrl = await snapshot.ref.getDownloadURL();
-                    print("Archivo subido exitosamente. URL: $fileUrl");
-
-                    // Guardar en Firestore
-                    final newCertificate = Certificate(
-                      name: nameController.text,
+                    final certificateData = Certificate(
+                      title: titleController.text,
                       description: descriptionController.text,
-                      fileUrl: fileUrl,
+                      fileName: selectedFileName!,
                       date: selectedDate!,
                     );
-                    print("Guardando certificado en Firestore...");
-                    await FirebaseFirestore.instance.collection('certificates').add(newCertificate.toJson());
 
-                    // Actualizar el provider
-                    Provider.of<CertificateProvider>(context, listen: false).addCertificate(newCertificate);
+                    final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+                    await userRef.update({
+                      'certificats': FieldValue.arrayUnion([certificateData.toJson()])
+                    });
+
+                    Provider.of<CertificateProvider>(context, listen: false)
+                        .addCertificate(certificateData);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Certificado añadido con éxito')),
                     );
-
                     Navigator.pop(context);
                   } catch (e) {
-                    print("Error durante la carga o guardado: $e");
-                    // Mostrar un mensaje de error si algo sale mal
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error al subir el archivo: $e')),
+                      SnackBar(content: Text('Error al guardar el certificado: $e')),
                     );
-                  } finally {
-                    setState(() {
-                      _isUploading = false; // Terminó la carga
-                    });
                   }
                 } else {
-                  print("Faltan datos: nombre, descripción, fecha o archivo");
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Todos los campos son obligatorios')),
                   );
                 }
               },
-              child: const Text('Guardar'),
+              child: const Text('Guardar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -185,90 +156,204 @@ class _ListCertificatesState extends State<ListCertificates> {
     );
   }
 
+  Future<void> _deleteCertificate(Certificate certificate) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario no autenticado')),
+        );
+        return;
+      }
+
+      final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+      await userRef.update({
+        'certificats': FieldValue.arrayRemove([certificate.toJson()]) // Eliminar el certificado completo
+      });
+
+      // Eliminar el certificado localmente
+      Provider.of<CertificateProvider>(context, listen: false).removeCertificate(certificate);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Certificado eliminado con éxito')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al eliminar el certificado: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final certificateProvider = Provider.of<CertificateProvider>(context);
-    final certificates = certificateProvider.certificates;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Scaffold(
+        appBar: customAppBar(context, false),
+        body: const Center(child: Text('Por favor, inicia sesión para ver los certificados.')),
+      );
+    }
 
     return Scaffold(
       appBar: customAppBar(context, false),
-      body: ListView.builder(
-        itemCount: certificates.length,
-        itemBuilder: (context, index) {
-          final certificate = certificates[index];
-
-          return ExpansionTile(
-            leading: Icon(
-              Icons.book,
-              color: _selectedIndex == index ? Colors.green : Colors.grey,
-            ),
-            title: Text(
-              certificate.name,
-              textAlign: TextAlign.left,
-            ),
-            onExpansionChanged: (expanded) {
-              setState(() {
-                _selectedIndex = expanded ? index : null;
-              });
-            },
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Consumer<CertificateProvider>(
+        builder: (context, provider, child) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      certificate.description,
-                      textAlign: TextAlign.left,
+                    const Text(
+                      'Mis certificados',
+                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      'Fecha: ${DateFormat('dd-MM-yyyy').format(certificate.date)}',
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            _launchURL(certificate.fileUrl);
-                          },
-                          child: const Text(
-                            "Abrir fichero",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            // Eliminar de Firestore y Provider
-                            await FirebaseFirestore.instance
-                                .collection('certificates')
-                                .where('fileUrl', isEqualTo: certificate.fileUrl)
-                                .get()
-                                .then((snapshot) {
-                              for (var doc in snapshot.docs) {
-                                doc.reference.delete();
-                              }
-                            });
-
-                            certificateProvider.removeCertificate(certificate);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Certificado eliminado')),
-                            );
-                          },
-                        ),
-                      ],
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline_rounded, color: Color.fromRGBO(45, 88, 133, 1)),
+                      onPressed: () => _addCertificate(context),
                     ),
                   ],
                 ),
+                const SizedBox(height: 20.0),
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('usuarios')
+                      .doc(user.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('Error al cargar los certificados.'));
+                    }
+
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return const Center(child: Text('No hay certificados disponibles.'));
+                    }
+
+                    final data = snapshot.data!.data() as Map<String, dynamic>;
+                    final certificatsData = data['certificats'];
+
+                    if (certificatsData == null || certificatsData.isEmpty) {
+                      return const Center(child: Text('No tienes certificados guardados.'));
+                    }
+
+                    List<Certificate> certificates = [];
+                    for (var item in certificatsData) {
+                      if (item is Map<String, dynamic>) {
+                        certificates.add(Certificate.fromMap(item));
+                      }
+                    }
+                    return Expanded(
+  child: ListView.builder(
+    padding: EdgeInsets.zero, // Remueve el margen extra de la lista
+    itemCount: certificates.length,
+    itemBuilder: (context, index) {
+      final certificate = certificates[index];
+      return Card(
+        margin: const EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18), // Bordes redondeados más pronunciados
+        ),
+        elevation: 6, // Sombra más suave para darle profundidad
+        color: Colors.white, // Color de fondo de la tarjeta
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18), // Asegura que la tarjeta tenga bordes redondeados
+          child: ExpansionTile(
+            tilePadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Relleno más espacioso
+            title: Text(
+              certificate.title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Color.fromRGBO(45, 88, 133, 1), // Título con el color azul que mencionaste
+              ),
+            ),
+            childrenPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Padding interno
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Título
+                  const Text(
+                    'Título:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(certificate.title, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 10.0),
+
+                  // Descripción
+                  const Text(
+                    'Descripción:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(certificate.description, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 10.0),
+
+                  // Fecha
+                  const Text(
+                    'Fecha:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('d MMMM yyyy, h:mm:ss a').format(certificate.date),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10.0),
+
+                  // Nombre del documento
+                  const Text(
+                    'Nombre del documento:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(certificate.fileName, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 10.0),
+
+                  // Botón de eliminar con icono estilizado
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.delete_forever, // Icono de eliminar más estilizado
+                        color: Colors.red,
+                        size: 30, // Hacerlo un poco más grande para llamar la atención
+                      ),
+                      onPressed: () => _deleteCertificate(certificate),
+                      splashRadius: 25, // Radio de animación al presionar
+                    ),
+                  ),
+                ],
               ),
             ],
+          ),
+        ),
+      );
+    },
+  ),
+);
+
+                  },
+                ),
+              ],
+            ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addCertificate(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
