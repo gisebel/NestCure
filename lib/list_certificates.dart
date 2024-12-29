@@ -85,7 +85,7 @@ class _ListCertificatesState extends State<ListCertificates> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 20.0),
-                    backgroundColor: Color.fromRGBO(45, 88, 133, 1),  // Use backgroundColor instead of primary
+                    backgroundColor: Color.fromRGBO(45, 88, 133, 1),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   child: const Text('Seleccionar PDF', style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -168,10 +168,9 @@ class _ListCertificatesState extends State<ListCertificates> {
 
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
       await userRef.update({
-        'certificats': FieldValue.arrayRemove([certificate.toJson()]) // Eliminar el certificado completo
+        'certificats': FieldValue.arrayRemove([certificate.toJson()])
       });
 
-      // Eliminar el certificado localmente
       Provider.of<CertificateProvider>(context, listen: false).removeCertificate(certificate);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -249,105 +248,99 @@ class _ListCertificatesState extends State<ListCertificates> {
                       }
                     }
                     return Expanded(
-  child: ListView.builder(
-    padding: EdgeInsets.zero, // Remueve el margen extra de la lista
-    itemCount: certificates.length,
-    itemBuilder: (context, index) {
-      final certificate = certificates[index];
-      return Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18), // Bordes redondeados más pronunciados
-        ),
-        elevation: 6, // Sombra más suave para darle profundidad
-        color: Colors.white, // Color de fondo de la tarjeta
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18), // Asegura que la tarjeta tenga bordes redondeados
-          child: ExpansionTile(
-            tilePadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Relleno más espacioso
-            title: Text(
-              certificate.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Color.fromRGBO(45, 88, 133, 1), // Título con el color azul que mencionaste
-              ),
-            ),
-            childrenPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Padding interno
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Título
-                  const Text(
-                    'Título:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(certificate.title, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 10.0),
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: certificates.length,
+                        itemBuilder: (context, index) {
+                          final certificate = certificates[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            elevation: 6,
+                            color: Colors.white,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: ExpansionTile(
+                                tilePadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                title: Text(
+                                  certificate.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Color.fromRGBO(45, 88, 133, 1),
+                                  ),
+                                ),
+                                childrenPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Título:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(certificate.title, style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 10.0),
 
-                  // Descripción
-                  const Text(
-                    'Descripción:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(certificate.description, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 10.0),
+                                      const Text(
+                                        'Descripción:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(certificate.description, style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 10.0),
 
-                  // Fecha
-                  const Text(
-                    'Fecha:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    DateFormat('d MMMM yyyy, h:mm:ss a').format(certificate.date),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 10.0),
+                                      const Text(
+                                        'Fecha:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(
+                                        DateFormat('d MMMM yyyy, h:mm:ss a').format(certificate.date),
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      const SizedBox(height: 10.0),
 
-                  // Nombre del documento
-                  const Text(
-                    'Nombre del documento:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(certificate.fileName, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 10.0),
+                                      const Text(
+                                        'Nombre del documento:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(certificate.fileName, style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 10.0),
 
-                  // Botón de eliminar con icono estilizado
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.delete_forever, // Icono de eliminar más estilizado
-                        color: Colors.red,
-                        size: 30, // Hacerlo un poco más grande para llamar la atención
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 30,
+                                          ),
+                                          onPressed: () => _deleteCertificate(certificate),
+                                          splashRadius: 25,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      onPressed: () => _deleteCertificate(certificate),
-                      splashRadius: 25, // Radio de animación al presionar
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  ),
-);
-
+                    );
                   },
                 ),
               ],

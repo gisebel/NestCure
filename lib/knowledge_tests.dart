@@ -213,19 +213,19 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
   }
 
   Future<void> _onCompleted(String testType, String testLevel) async {
-    final user = FirebaseAuth.instance.currentUser;
-    String testKey = _getTestKey(testType, testLevel);
+    final user = FirebaseAuth.instance.currentUser; // Obtener el usuario actual
+    final String testKey = _getTestKey(testType, testLevel); // Generar la clave del test
 
     if (user != null) {
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
 
-      final testsRef = userRef.collection('tests');
-      final testRef = testsRef.doc(testKey);
-
-      await testRef.set({
-        'completed': true,
-        'date': Timestamp.now(),
-      }, SetOptions(merge: true));
+      try {
+        await userRef.update({
+          'tests.$testKey': true, // Actualiza el campo específico dentro del mapa "tests"
+        });
+      } catch (e) {
+        print("Error al actualizar el estado del test: $e");
+      }
     }
   }
 

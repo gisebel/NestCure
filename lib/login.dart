@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
+    // Verificar si el correo o la contraseña están vacíos
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, ingresa el correo y la contraseña')),
@@ -26,18 +27,21 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
+      // Iniciar sesión con Firebase Auth usando el correo y la contraseña
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: password,
+        password: password,  // La contraseña proporcionada por el usuario
       );
 
+      // Navegar a la pantalla del perfil si el inicio de sesión es exitoso
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfileWidget(),
+          builder: (context) => ProfileWidget(),  // Cambiar a tu pantalla de perfil
         ),
       );
       print('Inicio de sesión exitoso');
     } on FirebaseAuthException catch (e) {
+      // Manejar posibles errores de inicio de sesión
       String errorMessage = e.message ?? 'Error desconocido';
 
       if (e.code == 'user-not-found') {
@@ -46,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         errorMessage = 'Contraseña incorrecta.';
       }
 
+      // Mostrar el mensaje de error si ocurre algún problema
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
       );

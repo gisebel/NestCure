@@ -20,14 +20,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _passwordController;
   late DateTime _selectedDate;
   late bool _esCuidadorPersonal;
-  bool _passwordVisible = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.user.nomCognoms);
     _descriptionController = TextEditingController(text: widget.user.descripcio);
-    _passwordController = TextEditingController(text: widget.user.contrasena);
     _selectedDate = widget.user.dataNaixement;
     _esCuidadorPersonal = widget.user.esCuidadorPersonal;
   }
@@ -128,7 +126,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           widget.user.nomCognoms = _nameController.text;
           widget.user.descripcio = _descriptionController.text;
           widget.user.dataNaixement = _selectedDate;
-          widget.user.contrasena = _passwordController.text;
           widget.user.esCuidadorPersonal = _esCuidadorPersonal;
         });
 
@@ -136,7 +133,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'nomCognoms': widget.user.nomCognoms,
           'descripcio': widget.user.descripcio,
           'dataNaixement': widget.user.dataNaixement,
-          'contrasena': widget.user.contrasena,
           'esCuidadorPersonal': widget.user.esCuidadorPersonal,
         });
 

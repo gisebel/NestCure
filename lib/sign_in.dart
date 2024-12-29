@@ -193,7 +193,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             nomCognoms: nomCognoms,
                             dataNaixement: dataNaixement!,
                             correu: correu,
-                            contrasena: contrasena,
                             esCuidadorPersonal: esCuidadorPersonal,
                             descripcio: experienciaPrevia,
                             fotoPerfil: '',

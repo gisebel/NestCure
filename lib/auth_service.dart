@@ -6,11 +6,11 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String?> registerUser(Usuari user) async {
+  Future<String?> registerUserWithPassword(Usuari user, String password) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: user.correu,
-        password: user.contrasena,
+        password: password,  // Usamos la contraseña recibida como parámetro
       );
 
       await _firestore.collection('users').doc(userCredential.user?.uid).set({
@@ -25,9 +25,9 @@ class AuthService {
         'certificats': user.certificats,
       });
 
-      return null; 
+      return null;  // Registro exitoso
     } catch (e) {
-      return e.toString();
+      return e.toString();  // Devolver el error si ocurre algún problema
     }
   }
 }

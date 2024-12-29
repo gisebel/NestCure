@@ -6,7 +6,6 @@ class Usuari {
   String nomCognoms;
   DateTime dataNaixement;
   String correu;
-  String contrasena;
   bool esCuidadorPersonal;
   String descripcio;
   String fotoPerfil;
@@ -19,7 +18,6 @@ class Usuari {
     required this.nomCognoms,
     required this.dataNaixement,
     required this.correu,
-    required this.contrasena,
     required this.esCuidadorPersonal,
     required this.descripcio,
     required this.fotoPerfil,
@@ -86,7 +84,6 @@ class Usuari {
       nomCognoms: firestoreData['nomCognoms'] ?? '',
       dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
       correu: firestoreData['correu'] ?? '',
-      contrasena: firestoreData['contrasena'] ?? '',
       esCuidadorPersonal: firestoreData['esCuidadorPersonal'] ?? false,
       descripcio: firestoreData['descripcio'] ?? '',
       fotoPerfil: firestoreData['fotoPerfil'] ?? '',
