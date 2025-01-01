@@ -9,8 +9,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -18,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    // Verificar si el correo o la contraseña están vacíos
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, ingresa el correo y la contraseña')),
@@ -27,21 +24,18 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      // Iniciar sesión con Firebase Auth usando el correo y la contraseña
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: password,  // La contraseña proporcionada por el usuario
+        password: password,
       );
 
-      // Navegar a la pantalla del perfil si el inicio de sesión es exitoso
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfileWidget(),  // Cambiar a tu pantalla de perfil
+          builder: (context) => ProfileWidget(),
         ),
       );
       print('Inicio de sesión exitoso');
     } on FirebaseAuthException catch (e) {
-      // Manejar posibles errores de inicio de sesión
       String errorMessage = e.message ?? 'Error desconocido';
 
       if (e.code == 'user-not-found') {
@@ -50,7 +44,6 @@ class _LoginPageState extends State<LoginPage> {
         errorMessage = 'Contraseña incorrecta.';
       }
 
-      // Mostrar el mensaje de error si ocurre algún problema
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
       );
@@ -60,81 +53,107 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
-      body: Container(
-        color: Color.fromRGBO(255, 255, 251, 245),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                'images/logo.jpg',
-                width: 200,
-                height: 200,
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(255, 255, 251, 245),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AnimatedContainer(
+                duration: Duration(seconds: 1),
+                curve: Curves.easeInOut,
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'images/logo.jpg',
+                  width: 150,
+                  height: 150,
+                ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Text(
-              'Inicia sesión',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 30.0),
+              Text(
+                'Inicia sesión',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Column(
+              SizedBox(height: 30.0),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Correo electrónico',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(Icons.email, color: Colors.grey),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                ),
+              ),
+              SizedBox(height: 30.0),
+              ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6C8E3E),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                ),
+                child: Text(
+                  'Iniciar sesión',
+                  style: TextStyle(fontSize: 18.0, color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Correo electrónico',
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña',
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(217, 232, 176, 1),
-                    ),
-                    child: Text('Iniciar sesión'),
-                  ),
-                  SizedBox(height: 15.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('¿No tienes cuenta?'),
-                      SizedBox(width: 10.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(255, 255, 251, 245),
+                  Text('¿No tienes cuenta?', style: TextStyle(color: Colors.black54)),
+                  SizedBox(width: 5.0),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterPage(),
                         ),
-                        child: Text('Crear cuenta'),
+                      );
+                    },
+                    child: Text(
+                      'Regístrate',
+                      style: TextStyle(
+                        color: Color(0xFF6C8E3E),
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

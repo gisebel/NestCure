@@ -32,12 +32,12 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dataNaixementController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _dataNaixementController.text = DateFormat('dd-MM-yyyy').format(picked);
       });
     }
   }
@@ -76,61 +76,58 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   'Regístrate',
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: 28.0,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               ],
             ),
             SizedBox(height: 20.0),
+            Divider(color: Colors.grey.shade400),
+            SizedBox(height: 10.0),
             Text(
               'Datos personales',
               style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 20.0,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
             SizedBox(height: 10.0),
-            TextField(
+            _buildTextField(
               controller: _nomCognomsController,
-              decoration: InputDecoration(
-                labelText: 'Nombre y Apellidos',
-                border: OutlineInputBorder(),
-              ),
+              labelText: 'Nombre y Apellidos',
+              icon: Icons.person,
             ),
             SizedBox(height: 10.0),
-            TextField(
+            _buildTextField(
               controller: _dataNaixementController,
-              decoration: InputDecoration(
-                labelText: 'Fecha de Nacimiento',
-                border: OutlineInputBorder(),
-              ),
-              readOnly: true,
+              labelText: 'Fecha de Nacimiento',
+              icon: Icons.calendar_today,
+              isReadOnly: true,
               onTap: () => _selectDate(context),
             ),
             SizedBox(height: 10.0),
-            TextField(
+            _buildTextField(
               controller: _correuController,
-              decoration: InputDecoration(
-                labelText: 'Correo electrónico',
-                border: OutlineInputBorder(),
-              ),
+              labelText: 'Correo electrónico',
+              icon: Icons.email,
             ),
             SizedBox(height: 10.0),
-            TextField(
+            _buildTextField(
               controller: _contrasenaController,
-              decoration: InputDecoration(
-                labelText: 'Contraseña',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
+              labelText: 'Contraseña',
+              icon: Icons.lock,
+              isObscure: true,
             ),
             SizedBox(height: 20.0),
             Text(
               'Rol del perfil',
               style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 20.0,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
             Row(
@@ -147,117 +144,162 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
             SizedBox(height: 10.0),
-            TextField(
+            _buildTextField(
               controller: _experienciaPreviaController,
-              decoration: InputDecoration(
-                labelText: 'Experiencia previa',
-                border: OutlineInputBorder(),
-              ),
+              labelText: 'Experiencia previa',
+              icon: Icons.description,
             ),
             SizedBox(height: 20.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(255, 102, 102, 1),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(255, 102, 102, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: Text('Cancelar'),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      String nomCognoms = _nomCognomsController.text;
-                      DateTime? dataNaixement = _selectedDate;
-                      String correu = _correuController.text;
-                      String contrasena = _contrasenaController.text;
-                      String experienciaPrevia = _experienciaPreviaController.text;
-                      bool esCuidadorPersonal = _esCuidadorPersonal;
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 20.0,
+                    ),
+                    child: Text('Cancelar', style: TextStyle(fontSize: 16.0)),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    String nomCognoms = _nomCognomsController.text;
+                    DateTime? dataNaixement = _selectedDate;
+                    String correu = _correuController.text;
+                    String contrasena = _contrasenaController.text;
+                    String experienciaPrevia = _experienciaPreviaController.text;
+                    bool esCuidadorPersonal = _esCuidadorPersonal;
 
-                      if (nomCognoms.isNotEmpty &&
-                          dataNaixement != null &&
-                          correu.isNotEmpty &&
-                          contrasena.isNotEmpty) {
+                    if (nomCognoms.isNotEmpty &&
+                        dataNaixement != null &&
+                        correu.isNotEmpty &&
+                        contrasena.isNotEmpty) {
+                      try {
+                        UserCredential userCredential =
+                            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: correu,
+                          password: contrasena,
+                        );
 
-                        try {
-                          UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                            email: correu,
-                            password: contrasena,
-                          );
+                        Usuari newUser = Usuari(
+                          nomCognoms: nomCognoms,
+                          dataNaixement: dataNaixement,
+                          correu: correu,
+                          esCuidadorPersonal: esCuidadorPersonal,
+                          descripcio: experienciaPrevia,
+                          fotoPerfil: '',
+                          personesDependents: [],
+                          activitats: [],
+                          tests: {
+                            'basicAttentionKnowledgeTest': false,
+                            'intermediateHealthKnowledgeTest': false,
+                            'advancedHealthKnowledgeTest': false,
+                            'basicCommunicationSkillsTest': false,
+                            'intermediateAttentionKnowledgeTest': false,
+                            'advancedAttentionKnowledgeTest': false,
+                            'basicPracticalSkillsTest': false,
+                            'intermediateCommunicationSkillsTest': false,
+                            'advancedCommunicationSkillsTest': false,
+                            'intermediatePracticalSkillsTest': false,
+                            'advancedPracticalSkillsTest': false,
+                            'basicHealthKnowledgeTest': false,
+                          },
+                          certificats: [],
+                        );
 
-                          Usuari newUser = Usuari(
-                            nomCognoms: nomCognoms,
-                            dataNaixement: dataNaixement!,
-                            correu: correu,
-                            esCuidadorPersonal: esCuidadorPersonal,
-                            descripcio: experienciaPrevia,
-                            fotoPerfil: '',
-                            personesDependents: [],
-                            activitats: [],
-                            tests: {
-                              'basicAttentionKnowledgeTest': false,
-                              'intermediateHealthKnowledgeTest': false,
-                              'advancedHealthKnowledgeTest': false,
-                              'basicCommunicationSkillsTest': false,
-                              'intermediateAttentionKnowledgeTest': false,
-                              'advancedAttentionKnowledgeTest': false,
-                              'basicPracticalSkillsTest': false,
-                              'intermediateCommunicationSkillsTest': false,
-                              'advancedCommunicationSkillsTest': false,
-                              'intermediatePracticalSkillsTest': false,
-                              'advancedPracticalSkillsTest': false,
-                              'basicHealthKnowledgeTest': false,
-                            },
-                            certificats: [],
-                          );
+                        await FirebaseFirestore.instance
+                            .collection('usuarios')
+                            .doc(userCredential.user!.uid)
+                            .set({
+                          'nomCognoms': newUser.nomCognoms,
+                          'dataNaixement': newUser.dataNaixement.toIso8601String(),
+                          'correu': newUser.correu,
+                          'esCuidadorPersonal': newUser.esCuidadorPersonal,
+                          'descripcio': newUser.descripcio,
+                          'fotoPerfil': newUser.fotoPerfil,
+                          'personesDependents': [],
+                          'activitats': [],
+                          'tests': newUser.tests,
+                          'certificats': [],
+                        });
 
-                          await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set({
-                            'nomCognoms': newUser.nomCognoms,
-                            'dataNaixement': newUser.dataNaixement.toIso8601String(),
-                            'correu': newUser.correu,
-                            'esCuidadorPersonal': newUser.esCuidadorPersonal,
-                            'descripcio': newUser.descripcio,
-                            'fotoPerfil': newUser.fotoPerfil,
-                            'personesDependents': [],
-                            'activitats': [],
-                            'tests': newUser.tests,
-                            'certificats': [],
-                          });
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Usuario registrado correctamente')),
-                          );
-
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error al registrar el usuario: $e')),
-                          );
-                        }
-                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Debes completar todos los campos')),
+                          SnackBar(content: Text('Usuario registrado correctamente')),
+                        );
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error al registrar el usuario: $e')),
                         );
                       }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(217, 232, 176, 1),
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Debes completar todos los campos')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(217, 232, 176, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: Text('Crear'),
                   ),
-                ],
-              ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 20.0,
+                    ),
+                    child: Text('Crear', style: TextStyle(fontSize: 16.0)),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    bool isObscure = false,
+    bool isReadOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: isObscure,
+      readOnly: isReadOnly,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon, color: Colors.black54),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.blue.shade300),
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

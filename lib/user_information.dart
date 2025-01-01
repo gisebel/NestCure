@@ -4,6 +4,7 @@ import 'package:nestcure/persona_dependent.dart';
 import 'package:nestcure/edit_profile.dart';
 import 'package:nestcure/app_bar.dart';
 import 'package:nestcure/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInformationWidget extends StatefulWidget {
   const UserInformationWidget({super.key});
@@ -39,90 +40,114 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
           }
 
           final user = snapshot.data!;
-          print("User: $user");
+
+          final birthDate = (user.dataNaixement is Timestamp)
+            ? (user.dataNaixement as Timestamp).toDate()
+            : user.dataNaixement;
+
+          String formattedBirthDate = '${birthDate.day.toString().padLeft(2, '0')}-${birthDate.month.toString().padLeft(2, '0')}-${birthDate.year.toString()}';
 
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Información personal',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white,
+                      child: ClipOval(
+                        child: Image.asset(
+                          'images/avatar.png',
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  ListTile(
-                    title: const Text('Foto de perfil'),
-                    trailing: user.fotoPerfil.isNotEmpty
-                        ? Image.network(
-                            user.fotoPerfil,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.person, size: 50);
-                            },
-                          )
-                        : const Icon(Icons.person, size: 50),
+                  _buildInfoTile(
+                    context,
+                    title: 'Nombre y Apellidos',
+                    subtitle: user.nomCognoms,
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Nombre y Apellidos'),
-                    subtitle: Text(user.nomCognoms),
+                  _buildInfoTile(
+                    context,
+                    title: 'Fecha de nacimiento',
+                    subtitle: formattedBirthDate,
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Fecha de nacimiento'),
-                    subtitle: Text(
-                        '${user.dataNaixement.day.toString().padLeft(2, '0')}-${user.dataNaixement.month.toString().padLeft(2, '0')}-${user.dataNaixement.year.toString()}'),
+                  _buildInfoTile(
+                    context,
+                    title: 'Correo electrónico',
+                    subtitle: user.correu,
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Correo electrónico'),
-                    subtitle: Text(user.correu),
+                  _buildInfoTile(
+                    context,
+                    title: 'Descripción',
+                    subtitle:
+                        user.descripcio.isNotEmpty ? user.descripcio : 'Sin descripción',
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Descripción'),
-                    subtitle: Text(user.descripcio.isNotEmpty ? user.descripcio : 'Sin descripción'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Tipo de cuidador'),
+                  _buildInfoTile(
+                    context,
+                    title: 'Tipo de cuidador',
                     subtitle: user.esCuidadorPersonal
-                        ? const Text('Cuidador Personal')
-                        : const Text('Cuidador Profesional'),
+                        ? 'Cuidador Personal'
+                        : 'Cuidador Profesional',
                   ),
-                  const Divider(),
                   ListTile(
-                    title: const Text('Personas a cargo'),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                    title: const Text(
+                      'Personas a cargo',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) {
-                          return const PersonesDependentsWidget();
-                        }),
+                        MaterialPageRoute(
+                          builder: (context) => const PersonesDependentsWidget(),
+                        ),
                       );
                     },
                   ),
-                  const Divider(),
+                  const Divider(thickness: 1, height: 24.0),
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
                         final result = await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) {
-                            return EditProfileScreen(user: user);
-                          }),
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(user: user),
+                          ),
                         );
                         if (result == true) {
                           setState(() {});
                         }
                       },
-                      child: const Text('Editar'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 14.0),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        elevation: 5,
+                        shadowColor: Colors.grey.withOpacity(0.5),
+                      ),
+                      child: const Text(
+                        'Editar perfil',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -131,6 +156,27 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildInfoTile(BuildContext context,
+      {required String title, required String subtitle}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const Divider(thickness: 1, height: 24.0),
+      ],
     );
   }
 }

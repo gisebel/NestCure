@@ -17,7 +17,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
-  late TextEditingController _passwordController;
   late DateTime _selectedDate;
   late bool _esCuidadorPersonal;
 
@@ -34,7 +33,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -60,18 +58,49 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre y Apellidos'),
+              Text(
+                'Editar perfil',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+              ),
+              const SizedBox(height: 20.0),
+
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  backgroundImage: widget.user.fotoPerfil.isNotEmpty
+                      ? NetworkImage(widget.user.fotoPerfil) as ImageProvider
+                      : const AssetImage('images/avatar.png'),
+                ),
               ),
               const SizedBox(height: 16.0),
+
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre y Apellidos',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+
               TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Descripción'),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                ),
                 maxLines: 3,
               ),
               const SizedBox(height: 16.0),
+
               ListTile(
                 title: const Text('Fecha de nacimiento'),
                 subtitle: Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
@@ -79,9 +108,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onTap: () => _selectDate(context),
               ),
               const SizedBox(height: 16.0),
+
               ListTile(
                 title: const Text('Rol del perfil'),
-                subtitle: Text(_esCuidadorPersonal ? 'Cuidador personal' : 'Cuidador professional'),
+                subtitle: Text(_esCuidadorPersonal ? 'Cuidador personal' : 'Cuidador profesional'),
                 trailing: Switch(
                   value: _esCuidadorPersonal,
                   onChanged: (bool newValue) {
@@ -92,20 +122,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 32.0),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  OutlinedButton(
+                    onPressed: () {
+                      _showCancelDialog();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       _saveProfile();
                     },
-                    child: const Text('Guardar'),
-                  ),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Cancelar'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
                   ),
                 ],
               ),
@@ -113,6 +164,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showCancelDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('¿Estás seguro de que quieres cancelar?'),
+          content: const Text('Se perderán los cambios realizados.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'No',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Sí',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/login.dart';
+import 'package:nestcure/profile.dart';
 
 AppBar customAppBar(BuildContext context, bool canReturnBack) {
   return AppBar(
@@ -8,7 +9,9 @@ AppBar customAppBar(BuildContext context, bool canReturnBack) {
         ? IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => ProfileWidget()),
+            );
             },
           )
         : null,

@@ -35,33 +35,6 @@ class ProfileWidget extends StatelessWidget {
       page: const UserInformationWidget(),
     ),
     ProfileItem(
-      name: "Certificados",
-      icon: const Icon(
-        Icons.book,
-        color: Color.fromRGBO(45, 87, 133, 1),
-        size: 28,
-      ),
-      page: const ListCertificates(),
-    ),
-    ProfileItem(
-      name: "Resgistro de actividades",
-      icon: const Icon(
-        Icons.content_paste_search,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const LlistaActivitats(),
-    ),
-    ProfileItem(
-      name: "Generar currículum vitae",
-      icon: const Icon(
-        Icons.create,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const CvGenerator(),
-    ),
-    ProfileItem(
       name: "Personas a cargo",
       icon: const Icon(
         Icons.people,
@@ -71,6 +44,15 @@ class ProfileWidget extends StatelessWidget {
       page: PersonesDependentsWidget(),
     ),
     ProfileItem(
+      name: "Registro de actividades",
+      icon: const Icon(
+        Icons.content_paste_search,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: const LlistaActivitats(),
+    ),
+    ProfileItem(
       name: "Tests de conocimientos",
       icon: const Icon(
         Icons.assessment,
@@ -78,6 +60,24 @@ class ProfileWidget extends StatelessWidget {
         size: 28,
       ),
       page: const KnowledgeTestsScreen(),
+    ),
+    ProfileItem(
+      name: "Certificados",
+      icon: const Icon(
+        Icons.book,
+        color: Color.fromRGBO(45, 87, 133, 1),
+        size: 28,
+      ),
+      page: const ListCertificates(),
+    ),
+    ProfileItem(
+      name: "Generar currículum vitae",
+      icon: const Icon(
+        Icons.create,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: const CvGenerator(),
     ),
   ];
 
@@ -89,40 +89,43 @@ class ProfileWidget extends StatelessWidget {
     return Scaffold(
       appBar: customAppBar(context, false),
       body: Center(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            ClipOval(
-              child: Container(
-                width: 150,
-                height: 150,
-                color: Colors.transparent,
-                child: Image.asset('images/avatar.png'),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              ClipOval(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  color: Colors.white,
+                  child: Image.asset('images/avatar.png', fit: BoxFit.cover),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            Text(
-              user.nomCognoms,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            const Divider(),
-            Expanded(
-              child: ListView.separated(
+              const SizedBox(height: 12.0),
+              Text(
+                user.nomCognoms,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(45, 87, 133, 1),
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              const Divider(thickness: 1),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: profileItems.length + 2,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == profileItems.length) {
                     return ListTile(
-                      contentPadding: const EdgeInsets.only(left: 30),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 30),
                       title: const Text(
                         "Eliminar cuenta",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       leading: const Icon(
                         Icons.delete,
@@ -132,11 +135,14 @@ class ProfileWidget extends StatelessWidget {
                     );
                   }
                   if (index == profileItems.length + 1) {
-                    return const Divider();
+                    return const Divider(thickness: 1);
                   }
                   return ListTile(
-                    contentPadding: const EdgeInsets.only(left: 30),
-                    title: Text(profileItems[index].name),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                    title: Text(
+                      profileItems[index].name,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                     leading: profileItems[index].icon,
                     onTap: () {
                       Navigator.of(context).push(
@@ -150,8 +156,8 @@ class ProfileWidget extends StatelessWidget {
                 separatorBuilder: (BuildContext context, int index) =>
                     const Divider(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -169,7 +175,7 @@ class ProfileWidget extends StatelessWidget {
             TextButton(
               child: const Text("Cancelar"),
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
@@ -181,19 +187,6 @@ class ProfileWidget extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  void _logout(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (Route<dynamic> route) => false,
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Cierre de sesión exitoso"),
-      ),
     );
   }
 

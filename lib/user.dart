@@ -1,6 +1,7 @@
 import 'package:nestcure/activitat.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:nestcure/certificate_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Usuari {
   String nomCognoms;
@@ -80,9 +81,20 @@ class Usuari {
             .toList()
         : <Certificate>[];
 
+    // Aquí se agrega la verificación si 'dataNaixement' es un Timestamp
+    var dataNaixement = firestoreData['dataNaixement'];
+    DateTime birthDate;
+    if (dataNaixement is Timestamp) {
+      birthDate = dataNaixement.toDate();  // Convertir el Timestamp a DateTime
+    } else if (dataNaixement is String) {
+      birthDate = DateTime.parse(dataNaixement);  // Parsear la cadena a DateTime
+    } else {
+      birthDate = DateTime.now();  // Valor por defecto si no está presente
+    }
+
     return Usuari(
       nomCognoms: firestoreData['nomCognoms'] ?? '',
-      dataNaixement: DateTime.parse(firestoreData['dataNaixement']),
+      dataNaixement: birthDate,
       correu: firestoreData['correu'] ?? '',
       esCuidadorPersonal: firestoreData['esCuidadorPersonal'] ?? false,
       descripcio: firestoreData['descripcio'] ?? '',
