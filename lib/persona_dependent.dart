@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nestcure/add_persona_dependent.dart';
 import 'package:nestcure/app_bar.dart';
-import 'package:nestcure/logged_user.dart';
 import 'package:nestcure/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,15 +121,13 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var user = LoggedUsuari().usuari;
-
     return Scaffold(
       appBar: customAppBar(context, false),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -139,13 +136,13 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                       const Text(
                         'Personas a cargo',
                         style: TextStyle(
-                          fontSize: 24.0,
+                          fontSize: 28.0,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.person_add),
+                      ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) {
@@ -153,9 +150,27 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                             }),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.person_add, color: Colors.white),
+                            SizedBox(width: 8.0),
+                            Text(
+                              'Agregar',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20.0),
                   Expanded(
                     child: ListView.builder(
                       itemCount: _personesDependents.length,
@@ -164,7 +179,11 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                         var date = DateFormat('dd-MM-yyyy').format(persona.fechaNacimiento);
 
                         return Card(
-                          margin: const EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          elevation: 5.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
                           child: ListTile(
                             leading: Icon(
                               persona.genero == 'Mujer'
@@ -172,33 +191,63 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                   : persona.genero == 'Hombre'
                                       ? Icons.man
                                       : Icons.person,
-                              color: const Color.fromRGBO(45, 88, 133, 1),
+                              color: Color(0xFF6C8E3E),
+                              size: 40.0,
                             ),
-                            title: Text(persona.nombre,
-                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                            title: Text(
+                              persona.nombre,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Fecha de nacimiento: $date'),
+                                Text(
+                                  'Fecha de nacimiento:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('$date'),
                                 const SizedBox(height: 4.0),
-                                Text('Edad: ${persona.edad} años'),
+                                Text(
+                                  'Edad:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.edad} años'),
                                 const SizedBox(height: 4.0),
-                                Text('Teléfono: ${persona.telefono}'),
+                                Text(
+                                  'Teléfono:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.telefono}'),
                                 const SizedBox(height: 4.0),
-                                Text('Dirección: ${persona.direccion}'),
+                                Text(
+                                  'Dirección:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.direccion}'),
                                 const SizedBox(height: 4.0),
-                                Text('Peso: ${persona.peso.toStringAsFixed(1)} kg'),
+                                Text(
+                                  'Peso:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.peso.toStringAsFixed(1)} kg'),
                                 const SizedBox(height: 4.0),
-                                Text('Altura: ${persona.altura.toStringAsFixed(2)} m'),
+                                Text(
+                                  'Altura:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.altura.toStringAsFixed(2)} m'),
                                 const SizedBox(height: 4.0),
-                                Text('Descripción: ${persona.descripcion}'),
+                                Text(
+                                  'Descripción:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('${persona.descripcion}'),
                               ],
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
                                 final personaToRemove = _personesDependents[index];
-                                print('Eliminando persona: ${personaToRemove.toJson()}');
                                 setState(() {
                                   _personesDependents.removeAt(index);
                                 });
@@ -223,7 +272,6 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Error al eliminar persona.')),
                                   );
-                                  print('Error al eliminar persona de Firestore: $e');
                                 }
                               },
                             ),

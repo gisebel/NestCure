@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       'Regístrate',
                       style: TextStyle(
-                        color: Color(0xFF6C8E3E),
+                        color: Color(0xFF2196F3),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

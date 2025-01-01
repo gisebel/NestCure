@@ -107,6 +107,39 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
     }
   }
 
+  void _showCancelDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('¿Estás seguro de que quieres cancelar?'),
+          content: const Text('Se perderán los cambios realizados.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'No',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Sí',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var user = LoggedUsuari();
@@ -116,7 +149,7 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -126,139 +159,139 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30.0),
-                TextField(
-                  controller: _nomController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField(_nomController, 'Nombre'),
                 const SizedBox(height: 10.0),
-                TextField(
-                  controller: _dataNaixementController,
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha Nacimiento',
-                    border: OutlineInputBorder(),
-                  ),
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                ),
+                _buildDatePickerField(_dataNaixementController, 'Fecha Nacimiento'),
                 const SizedBox(height: 10.0),
-                const Text(
-                  'Género: ',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
+                _buildGenderSelection(),
+                const SizedBox(height: 10.0),
+                _buildTextField(_telefonoController, 'Teléfono', keyboardType: TextInputType.phone),
+                const SizedBox(height: 10.0),
+                _buildTextField(_direccionController, 'Dirección'),
+                const SizedBox(height: 10.0),
+                _buildTextField(_pesoController, 'Peso (kg)', keyboardType: TextInputType.number),
+                const SizedBox(height: 10.0),
+                _buildTextField(_alturaController, 'Altura (m)', keyboardType: TextInputType.number),
+                const SizedBox(height: 10.0),
+                _buildTextField(_edadController, 'Edad (años)', keyboardType: TextInputType.number),
+                const SizedBox(height: 10.0),
+                _buildTextField(_descripcioController, 'Descripción', maxLines: null),
+                const SizedBox(height: 16.0),
+
+                // Botones Cancelar y Guardar
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Radio<String>(
-                            value: 'Mujer',
-                            groupValue: _gender,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _gender = value!;
-                              });
-                            },
-                          ),
-                          const Text('Mujer'),
-                        ],
+                    OutlinedButton(
+                      onPressed: _showCancelDialog,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 16.0),
                       ),
                     ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Radio<String>(
-                            value: 'Hombre',
-                            groupValue: _gender,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _gender = value!;
-                              });
-                            },
-                          ),
-                          const Text('Hombre'),
-                        ],
+                    ElevatedButton(
+                      onPressed: () {
+                        _addPersonaDependent(provider, user);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Guardar',
+                        style: TextStyle(fontSize: 16.0),
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _telefonoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Teléfono',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _direccionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Dirección',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _pesoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Peso (kg)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _alturaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Altura (m)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _edadController,
-                  decoration: const InputDecoration(
-                    labelText: 'Edad (años)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10.0),
-                TextField(
-                  controller: _descripcioController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton(
-                    onPressed: () => _addPersonaDependent(provider, user),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white, width: 2.0),
-                      backgroundColor: const Color.fromRGBO(180, 205, 96, 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      elevation: 5,
-                    ),
-                    child: const Text('Crear',
-                        style: TextStyle(color: Colors.white)),
-                  ),
                 ),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType? keyboardType, int? maxLines}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType,
+      maxLines: maxLines ?? 1,
+    );
+  }
+
+  Widget _buildDatePickerField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+      ),
+      readOnly: true,
+      onTap: () => _selectDate(context),
+    );
+  }
+
+  Widget _buildGenderSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Género: ',
+          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Radio<String>(
+                    value: 'Mujer',
+                    groupValue: _gender,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _gender = value!;
+                      });
+                    },
+                  ),
+                  const Text('Mujer'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  Radio<String>(
+                    value: 'Hombre',
+                    groupValue: _gender,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _gender = value!;
+                      });
+                    },
+                  ),
+                  const Text('Hombre'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
