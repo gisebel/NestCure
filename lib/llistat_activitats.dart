@@ -8,10 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nestcure/activitat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:async';
 
 class LlistaActivitats extends StatefulWidget {
-  const LlistaActivitats({super.key});
+  const LlistaActivitats({Key? key}) : super(key: key);
 
   @override
   State<LlistaActivitats> createState() => _LlistaActivitatsState();
@@ -32,80 +31,104 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
       appBar: customAppBar(context, false),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Actividades registradas',
-                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.add_circle_outline_rounded),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) {
-                              return const RegistreActivitatPage();
-                            }),
-                          );
-                        },
-                      ),
-                    ],
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 16.0),
+                Expanded(
+                  child: StreamBuilder<Map<String, List<Activitat>>>(
+                    stream: _getActivitiesStream(user),
+                    builder: (context, snapshot) {
+                      // Estado de carga
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      // Error
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+
+                      // No datos
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No hay actividades registradas.'));
+                      }
+
+                      return _buildActivityList(snapshot.data!);
+                    },
                   ),
-                  Expanded(
-                    child: StreamBuilder<Map<String, List<Activitat>>>(
-                      stream: _getActivitiesStream(user),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-
-                        if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        }
-
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No hay actividades registradas.'));
-                        }
-
-                        var dependentsActivities = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: user.usuari.personesDependents.length,
-                          itemBuilder: (context, index) {
-                            var dependent = user.usuari.personesDependents[index];
-                            var activities = dependentsActivities[dependent.nombre] ?? [];
-
-                            return ListTile(
-                              title: Text(dependent.nombre),
-                              subtitle: Text('Tiene ${activities.length} actividades'),
-                              trailing: const Icon(Icons.arrow_forward_ios),
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) {
-                                    return LlistaActivitatsDetall(
-                                      activitats: activities,
-                                      nom: dependent.nombre,
-                                    );
-                                  }),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        const Text(
+          'Actividades registradas',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        const Spacer(),
+        IconButton(
+          icon: const Icon(Icons.add_circle_outline_rounded, size: 30.0),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const RegistreActivitatPage()),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivityList(Map<String, List<Activitat>> activitiesMap) {
+    return ListView.builder(
+      itemCount: user.usuari.personesDependents.length,
+      itemBuilder: (context, index) {
+        final dependent = user.usuari.personesDependents[index];
+        final activities = activitiesMap[dependent.nombre] ?? [];
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          elevation: 4.0,
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              child: const Icon(Icons.person, color: Colors.black54),
+            ),
+            title: Text(
+              dependent.nombre,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              'Tiene ${activities.length} actividades',
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 20.0),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return LlistaActivitatsDetall(
+                    activitats: activities,
+                    nom: dependent.nombre,
+                  );
+                }),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -115,22 +138,20 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .snapshots()
         .map((snapshot) {
-          final Map<String, List<Activitat>> activitiesMap = {};
+      final Map<String, List<Activitat>> activitiesMap = {};
 
-          if (snapshot.exists) {
-            final activitatsData = snapshot.data()?['activitats'] ?? [];
-            for (var activitatData in activitatsData) {
-              String dependantName = activitatData['dependantName'] ?? '';
-              if (dependantName.isNotEmpty) {
-                Activitat activity = Activitat.fromMap(activitatData);
-                if (!activitiesMap.containsKey(dependantName)) {
-                  activitiesMap[dependantName] = [];
-                }
-                activitiesMap[dependantName]?.add(activity);
-              }
-            }
+      if (snapshot.exists) {
+        final activitatsData = snapshot.data()?['activitats'] ?? [];
+        for (var activitatData in activitatsData) {
+          final dependantName = activitatData['dependantName'] ?? '';
+          if (dependantName.isNotEmpty) {
+            final activity = Activitat.fromMap(activitatData);
+            activitiesMap.putIfAbsent(dependantName, () => []).add(activity);
           }
-          return activitiesMap;
-        });
+        }
+      }
+
+      return activitiesMap;
+    });
   }
 }

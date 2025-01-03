@@ -8,11 +8,11 @@ import 'package:nestcure/advanced_health_knowledge_test.dart';
 import 'package:nestcure/basic_communication_skills_test.dart';
 import 'package:nestcure/intermediate_attention_knowledge_test.dart';
 import 'package:nestcure/advanced_attention_knowledge_test.dart';
-import 'package:nestcure/basic_practical_skills_test.dart'; 
+import 'package:nestcure/basic_practical_skills_test.dart';
 import 'package:nestcure/intermediate_communication_skills_test.dart';
 import 'package:nestcure/advanced_communication_skills_test.dart';
-import 'package:nestcure/intermediate_practical_skills_test.dart'; 
-import 'package:nestcure/advanced_practical_skills_test.dart'; 
+import 'package:nestcure/intermediate_practical_skills_test.dart';
+import 'package:nestcure/advanced_practical_skills_test.dart';
 import 'package:nestcure/basic_health_knowledge_test.dart';
 
 class KnowledgeTestsScreen extends StatefulWidget {
@@ -23,46 +23,48 @@ class KnowledgeTestsScreen extends StatefulWidget {
 }
 
 class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(context, true),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Tests de conocimiento',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                'Tests de Conocimiento',
+                style: TextStyle(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               _buildTestButton(
                 context,
                 testType: 'Conocimientos de salud',
                 levels: ['Básico', 'Intermedio', 'Avanzado'],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               _buildTestButton(
                 context,
                 testType: 'Conocimientos de atención',
                 levels: ['Básico', 'Intermedio', 'Avanzado'],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               _buildTestButton(
                 context,
                 testType: 'Habilidades de comunicación',
                 levels: ['Básico', 'Intermedio', 'Avanzado'],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               _buildTestButton(
                 context,
                 testType: 'Habilidades prácticas',
                 levels: ['Básico', 'Intermedio', 'Avanzado'],
               ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -74,25 +76,36 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
     return ExpansionTile(
       title: Text(
         testType,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Color.fromRGBO(45, 87, 133, 1)
+        ),
+      ),
+      leading: Icon(
+        Icons.assignment,
+        color: Color.fromRGBO(45, 87, 133, 1)
       ),
       children: levels.map((level) {
         final testKey = _getTestKey(testType, level);
 
         return ListTile(
-          title: Text(level),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          title: Text(
+            level,
+            style: TextStyle(fontSize: 16.0, color: Colors.black87),
+          ),
           trailing: StreamBuilder<DocumentSnapshot>(
             stream: _getTestStatusStream(testKey),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Text('Cargando...');
+                return const CircularProgressIndicator();
               }
               final testStatus = snapshot.data?.get('tests.$testKey') ?? false;
-              return Text(
-                testStatus ? 'Completado' : 'No completado',
-                style: TextStyle(
-                  color: testStatus ? Colors.green : Colors.red,
-                ),
+              return Icon(
+                testStatus ? Icons.check_circle : Icons.radio_button_unchecked,
+                color: testStatus ? Colors.green : Colors.red,
+                size: 30.0,
               );
             },
           ),
@@ -125,7 +138,7 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
       stream: _getTestStatusStream(testKey),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         final testStatus = snapshot.data?.get('tests.$testKey') ?? false;
 
@@ -213,15 +226,15 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
   }
 
   Future<void> _onCompleted(String testType, String testLevel) async {
-    final user = FirebaseAuth.instance.currentUser; // Obtener el usuario actual
-    final String testKey = _getTestKey(testType, testLevel); // Generar la clave del test
+    final user = FirebaseAuth.instance.currentUser;
+    final String testKey = _getTestKey(testType, testLevel);
 
     if (user != null) {
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
 
       try {
         await userRef.update({
-          'tests.$testKey': true, // Actualiza el campo específico dentro del mapa "tests"
+          'tests.$testKey': true,
         });
       } catch (e) {
         print("Error al actualizar el estado del test: $e");
@@ -269,7 +282,7 @@ class TestCompletedScreen extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               '¡Felicidades! Ya has completado este test.',
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, color: Colors.teal),
             ),
           ],
         ),

@@ -6,8 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class LlistaActivitatsDetall extends StatefulWidget {
   final List<Activitat> activitats;
   final String nom;
-  const LlistaActivitatsDetall(
-      {super.key, required this.activitats, required this.nom});
+
+  const LlistaActivitatsDetall({
+    Key? key,
+    required this.activitats,
+    required this.nom,
+  }) : super(key: key);
 
   @override
   State<LlistaActivitatsDetall> createState() => _LlistaActivitatsDetallState();
@@ -22,7 +26,7 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     _loadActivitats();
   }
 
-  void _loadActivitats() async {
+  Future<void> _loadActivitats() async {
     try {
       final activitiesSnapshot = await FirebaseFirestore.instance
           .collection('usuarios')
@@ -33,7 +37,6 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
 
       for (var doc in activitiesSnapshot.docs) {
         final activitatsData = doc.data()['activitats'] ?? [];
-
         for (var activitatData in activitatsData) {
           if (activitatData['dependantName'] == widget.nom) {
             loadedActivitats.add(Activitat.fromMap(activitatData));
@@ -47,7 +50,13 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     } catch (e) {
       print("Error al cargar actividades desde Firestore: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al cargar actividades.')),
+        SnackBar(
+          content: Text(
+            'Error al cargar actividades.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -60,7 +69,8 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
           .get();
 
       for (var userDoc in userSnapshot.docs) {
-        var activitatsData = List<Map<String, dynamic>>.from(userDoc['activitats'] ?? []);
+        var activitatsData =
+            List<Map<String, dynamic>>.from(userDoc['activitats'] ?? []);
         activitatsData.removeWhere((element) => element['id'] == activitat.id);
         await FirebaseFirestore.instance
             .collection('usuarios')
@@ -72,12 +82,24 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
         _activitats.removeWhere((a) => a.id == activitat.id);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Actividad eliminada exitosamente.')),
+        SnackBar(
+          content: Text(
+            'Actividad eliminada exitosamente.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
       );
     } catch (e) {
       print("Error al eliminar la actividad: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al eliminar la actividad.')),
+        SnackBar(
+          content: Text(
+            'Error al eliminar la actividad.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -86,19 +108,28 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Confirmar eliminación"),
-        content: const Text("¿Estás seguro de que quieres eliminar esta actividad?"),
+        title: Text(
+          "Confirmar eliminación",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text("¿Estás seguro de que quieres eliminar esta actividad?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("Cancelar"),
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: Colors.grey[700]),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               _deleteActivity(activitat);
             },
-            child: const Text("Eliminar"),
+            child: Text(
+              "Eliminar",
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -114,19 +145,27 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
     return Scaffold(
       appBar: customAppBar(context, true),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Actividades registradas de ${widget.nom}',
-              style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              'Actividades de ${widget.nom}',
+              style: TextStyle(
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey[900],
+              ),
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 10.0),
             _activitats.isEmpty
-                ? const Text(
-                    'No hay actividades registradas.',
-                    style: TextStyle(fontSize: 15.0),
+                ? Expanded(
+                    child: Center(
+                      child: Text(
+                        'No hay actividades registradas.',
+                        style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                      ),
+                    ),
                   )
                 : Expanded(
                     child: ListView.builder(
@@ -140,9 +179,8 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                       },
                     ),
                   ),
-            const SizedBox(height: 16.0),
             Card(
-              color: const Color.fromRGBO(167, 207, 57, 1),
+              color: Colors.teal[50],
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -152,20 +190,20 @@ class _LlistaActivitatsDetallState extends State<LlistaActivitatsDetall> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Total de horas dedicadas',
+                    Text(
+                      'Total de horas dedicadas:',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(45, 88, 133, 1),
+                        color: Colors.teal[800],
                       ),
                     ),
                     Text(
                       '${getTotalHours()} h',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(45, 88, 133, 1), 
+                        color: Colors.teal[900],
                       ),
                     ),
                   ],
@@ -183,7 +221,8 @@ class ActivityCard extends StatelessWidget {
   final Activitat activitat;
   final VoidCallback onDelete;
 
-  ActivityCard({super.key, required this.activitat, required this.onDelete});
+  ActivityCard({Key? key, required this.activitat, required this.onDelete})
+      : super(key: key);
 
   final Map<String, IconData> activityIcons = {
     'Higiene personal': Icons.clean_hands,
@@ -199,80 +238,73 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.teal[100],
+          child: Icon(
+            activityIcons[activitat.type],
+            color: Colors.teal[800],
+          ),
+        ),
+        title: Text(
+          activitat.title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 5),
             Row(
               children: [
-                Icon(
-                  activityIcons[activitat.type],
-                  color: const Color.fromRGBO(167, 207, 57, 1), // Color verde
-                ),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Text(
-                    activitat.title,
-                    style: const TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
                 Text(
-                  '${activitat.hours} h',
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(45, 88, 133, 1),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${activitat.date.day}-${activitat.date.month}-${activitat.date.year}',
-                    style: const TextStyle(fontSize: 14.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: onDelete,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10.0),
-            Row(
-              children: [
-                const Text(
-                  'Tipo: ',
+                  'Horas: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text(activitat.type),
+                Text(
+                  '${activitat.hours}',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
               ],
             ),
-            const SizedBox(height: 10.0),
+            SizedBox(height: 5),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
+                  'Fecha: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${activitat.date.day}-${activitat.date.month}-${activitat.date.year}',
+                  style: TextStyle(fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            Row(
+              children: [
+                Text(
                   'Descripción: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Text(
-                    activitat.description,
-                    overflow: TextOverflow.visible,
+                    '${activitat.description}',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.normal),
                   ),
                 ),
               ],
             ),
           ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
         ),
       ),
     );

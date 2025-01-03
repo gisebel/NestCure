@@ -119,6 +119,68 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
     }
   }
 
+  void _confirmDelete(PersonaDependent persona, int index) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          "Confirmar eliminación",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text("¿Estás seguro de que quieres eliminar a esta persona dependiente?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await _deletePersona(persona, index);
+            },
+            child: Text(
+              "Eliminar",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deletePersona(PersonaDependent persona, int index) async {
+    try {
+      // Elimina la persona de la lista local
+      setState(() {
+        _personesDependents.removeAt(index);
+      });
+
+      // Elimina la persona en Firestore
+      final userDoc = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(FirebaseAuth.instance.currentUser?.uid);
+
+      await userDoc.update({
+        'personesDependents': FieldValue.arrayRemove([persona.toJson()])
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Persona eliminada correctamente.')),
+      );
+    } catch (e) {
+      setState(() {
+        _personesDependents.insert(index, persona); // Restaurar en caso de error
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al eliminar persona.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,79 +263,76 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Fecha de nacimiento:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Fecha de nacimiento: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('$date'),
+                                  ],
                                 ),
-                                Text('$date'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Edad:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Edad: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('${persona.edad} años'),
+                                  ],
                                 ),
-                                Text('${persona.edad} años'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Teléfono:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Teléfono: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('${persona.telefono}'),
+                                  ],
                                 ),
-                                Text('${persona.telefono}'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Dirección:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Dirección: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('${persona.direccion}'),
+                                  ],
                                 ),
-                                Text('${persona.direccion}'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Peso:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Peso: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('${persona.peso.toStringAsFixed(1)} kg'),
+                                  ],
                                 ),
-                                Text('${persona.peso.toStringAsFixed(1)} kg'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Altura:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Altura: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text('${persona.altura.toStringAsFixed(2)} m'),
+                                  ],
                                 ),
-                                Text('${persona.altura.toStringAsFixed(2)} m'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Descripción:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Descripción: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Expanded(
+                                      child: Text('${persona.descripcion}'),
+                                    ),
+                                  ],
                                 ),
-                                Text('${persona.descripcion}'),
                               ],
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                final personaToRemove = _personesDependents[index];
-                                setState(() {
-                                  _personesDependents.removeAt(index);
-                                });
-
-                                try {
-                                  final userDoc = FirebaseFirestore.instance
-                                      .collection('usuarios')
-                                      .doc(FirebaseAuth.instance.currentUser?.uid);
-
-                                  await userDoc.update({
-                                    'personesDependents': FieldValue.arrayRemove([personaToRemove.toJson()])
-                                  });
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Persona eliminada correctamente.')),
-                                  );
-                                } catch (e) {
-                                  setState(() {
-                                    _personesDependents.insert(index, personaToRemove);
-                                  });
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Error al eliminar persona.')),
-                                  );
-                                }
-                              },
+                              onPressed: () => _confirmDelete(persona, index), // Llamar a la función de confirmación
                             ),
                           ),
                         );
