@@ -1,19 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:nestcure/user.dart';
-import 'package:nestcure/persona_dependent.dart';
-import 'package:nestcure/activitat.dart';
-import 'package:nestcure/certificate_provider.dart';
 
 class CvGenerator extends StatelessWidget {
   const CvGenerator({Key? key}) : super(key: key);
 
-  // Método para obtener los datos del usuario autenticado
   Stream<DocumentSnapshot> _getUserDataStream() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -22,6 +20,29 @@ class CvGenerator extends StatelessWidget {
     } else {
       return Stream.empty();
     }
+  }
+
+  // Función para guardar el PDF en el dispositivo
+  Future<String> savePdf(pw.Document pdf) async {
+    final outputDir = await getTemporaryDirectory(); // Obtén el directorio temporal
+    final filePath = '${outputDir.path}/cv_documento.pdf';
+
+    final file = File(filePath);
+    await file.writeAsBytes(await pdf.save()); // Guarda el PDF
+
+    return filePath; // Devuelve la ruta del archivo
+  }
+
+  // Función para abrir el PDF dentro de la app
+  void openPdf(BuildContext context, String filePath) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PDFView(
+          filePath: filePath,
+        ),
+      ),
+    );
   }
 
   @override
@@ -45,28 +66,7 @@ class CvGenerator extends StatelessWidget {
             return const Center(child: Text('Por favor, inicia sesión para generar tu CV'));
           }
 
-          final userData = snapshot.data!;
-          final user = Usuari(
-            nomCognoms: userData['nomCognoms'] ?? '',
-            correu: userData['correu'] ?? '',
-            esCuidadorPersonal: userData['esCuidadorPersonal'] ?? false,
-            dataNaixement: DateTime.parse(userData['dataNaixement']),
-            descripcio: userData['descripcio'] ?? '',
-            fotoPerfil: userData['fotoPerfil'] ?? '',
-            personesDependents: (userData['personesDependents'] as List<dynamic>)
-                .map((e) => PersonaDependent.fromMap(e))
-                .toList(),
-            activitats: (userData['activitats'] as List<dynamic>)
-                .map((e) => Activitat.fromMap(e))
-                .toList(),
-            certificats: (userData['certificats'] as List<dynamic>)
-                .map((e) => Certificate.fromMap(Map<String, dynamic>.from(e)))
-                .toList(),
-            tests: userData['tests'] != null
-                ? Map<String, bool>.from(userData['tests'])
-                : {},
-          );
-
+          final user = Usuari.fromFirestore(snapshot.data!.data() as Map<String, dynamic>);
           return _buildContent(context, user);
         },
       ),
@@ -90,14 +90,11 @@ class CvGenerator extends StatelessWidget {
               }
 
               final pdf = await generatePdf(user);
-              await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+              final filePath = await savePdf(pdf); // Guarda el PDF
+
+              openPdf(context, filePath); // Abre el PDF directamente en la app
             },
             child: const Text('Generar PDF'),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () => _launchURL(),
-            child: const Text('Conecta con Suara'),
           ),
         ],
       ),
@@ -106,8 +103,6 @@ class CvGenerator extends StatelessWidget {
 
   Future<pw.Document> generatePdf(Usuari user) async {
     final pdf = pw.Document();
-
-    // Descarga la imagen del perfil desde la URL
     final profileImage = user.fotoPerfil.isNotEmpty
         ? await networkImage(user.fotoPerfil)
         : null;
@@ -172,61 +167,73 @@ class CvGenerator extends StatelessWidget {
                 style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
               ),
               pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 14)),
+              
+              // Sección de actividades
               pw.SizedBox(height: 20),
               pw.Text(
-                'Personas a Cargo',
+                'Actividades',
                 style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
               ),
-              pw.SizedBox(height: 10),
-              ...user.personesDependents.map((persona) {
-                return pw.Column(
+              ...user.activitats.map(
+                (actividad) => pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      '- ${persona.nombre}',
-                      style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                      actividad.title ?? 'Sin título',
+                      style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
                     ),
-                    pw.Text('  Edad: ${persona.edad} años'),
-                    pw.Text('  Dirección: ${persona.direccion}'),
-                    pw.Text('  Descripción: ${persona.descripcion}'),
-                    pw.SizedBox(height: 8),
-                  ],
-                );
-              }).toList(),
-              pw.SizedBox(height: 20),
-              if (user.activitats.isNotEmpty)
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Actividades',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-                    ),
-                    pw.SizedBox(height: 10),
-                    ...user.activitats.map((actividad) {
-                      return pw.Text(
-                        '- ${actividad.title}: ${actividad.description} (${actividad.hours} horas)',
-                        style: pw.TextStyle(fontSize: 14),
-                      );
-                    }).toList(),
+                    pw.Text('Fecha: ${actividad.date}'),
+                    pw.Text('Descripción: ${actividad.description}'),
+                    pw.Text('Horas: ${actividad.hours}'),
+                    pw.Divider(),
                   ],
                 ),
+              ),
+
+              // Sección de certificados
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Certificados',
+                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
+              ),
+              ...user.certificats.map(
+                (certificado) => pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      certificado.title ?? 'Sin título',
+                      style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.Text('Fecha: ${certificado.date}'),
+                    pw.Text('Descripción: ${certificado.description}'),
+                    pw.Divider(),
+                  ],
+                ),
+              ),
+
+              // Sección de tests
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Tests de Conocimientos',
+                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
+              ),
+              pw.Text('Atención Básica: ${user.tests['basicAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Comunicación Básica: ${user.tests['basicCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Salud Básica: ${user.tests['basicHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Prácticas Básicas: ${user.tests['basicPracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Atención Intermedia: ${user.tests['intermediateAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Comunicación Intermedia: ${user.tests['intermediateCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Salud Intermedia: ${user.tests['intermediateHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Prácticas Intermedias: ${user.tests['intermediatePracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Atención Avanzada: ${user.tests['advancedAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Comunicación Avanzada: ${user.tests['advancedCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Salud Avanzada: ${user.tests['advancedHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              pw.Text('Prácticas Avanzadas: ${user.tests['advancedPracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
             ],
           );
         },
       ),
     );
-
     return pdf;
-  }
-
-  // Función para abrir el URL de Suara
-  void _launchURL() async {
-    const url = 'https://talent.suara.coop/#jobs';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'No se pudo abrir la URL';
-    }
   }
 }

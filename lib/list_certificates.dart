@@ -379,7 +379,6 @@ class _ListCertificatesState extends State<ListCertificates> {
               ],
             ),
             const SizedBox(height: 20),
-
             Expanded(
               child: ListView.builder(
                 itemCount: _certificates.length,
@@ -415,7 +414,6 @@ class _ListCertificatesState extends State<ListCertificates> {
                             style: TextStyle(color: Colors.grey[600], fontSize: 14.0),
                           ),
                           const SizedBox(height: 10),
-                          
                           Text(
                             'Fecha:',
                             style: TextStyle(
@@ -426,6 +424,18 @@ class _ListCertificatesState extends State<ListCertificates> {
                           Text(
                             DateFormat('dd-MM-yyyy').format(certificate.date),
                             style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Nombre del archivo:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey[800],
+                            ),
+                          ),
+                          Text(
+                            certificate.fileName,
+                            style: TextStyle(color: Colors.grey[600], fontSize: 14.0),
                           ),
                         ],
                       ),

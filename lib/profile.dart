@@ -8,6 +8,7 @@ import 'package:nestcure/user_information.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/cv_generator.dart';
 import 'package:nestcure/knowledge_tests.dart';
+import 'package:nestcure/conectar_suara.dart';
 
 class ProfileItem {
   final String name;
@@ -78,6 +79,15 @@ class ProfileWidget extends StatelessWidget {
         size: 28,
       ),
       page: const CvGenerator(),
+    ),
+    ProfileItem(
+      name: "Conectar con Suara",
+      icon: const Icon(
+        Icons.link,
+        color: Color.fromRGBO(45, 88, 133, 1),
+        size: 28,
+      ),
+      page: const ConnectWithSuaraPage(),
     ),
   ];
 

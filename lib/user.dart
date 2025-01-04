@@ -81,15 +81,14 @@ class Usuari {
             .toList()
         : <Certificate>[];
 
-    // Aquí se agrega la verificación si 'dataNaixement' es un Timestamp
     var dataNaixement = firestoreData['dataNaixement'];
     DateTime birthDate;
     if (dataNaixement is Timestamp) {
-      birthDate = dataNaixement.toDate();  // Convertir el Timestamp a DateTime
+      birthDate = dataNaixement.toDate();
     } else if (dataNaixement is String) {
-      birthDate = DateTime.parse(dataNaixement);  // Parsear la cadena a DateTime
+      birthDate = DateTime.parse(dataNaixement);
     } else {
-      birthDate = DateTime.now();  // Valor por defecto si no está presente
+      birthDate = DateTime.now();
     }
 
     return Usuari(
