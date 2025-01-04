@@ -5,12 +5,14 @@ class Certificate {
   final String title;
   final String description;
   final String fileName;
-  final DateTime date; 
+  final String fileUrl;
+  final DateTime date;
 
   Certificate({
     required this.title,
     required this.description,
     required this.fileName,
+    required this.fileUrl,
     required this.date,
   });
 
@@ -19,6 +21,7 @@ class Certificate {
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       fileName: data['fileName'] ?? '',
+      fileUrl: data['fileUrl'] ?? '',
       date: data['date'] is Timestamp
           ? (data['date'] as Timestamp).toDate()
           : DateTime.parse(data['date']),
@@ -30,6 +33,7 @@ class Certificate {
       'title': title,
       'description': description,
       'fileName': fileName,
+      'fileUrl': fileUrl,
       'date': date,
     };
   }

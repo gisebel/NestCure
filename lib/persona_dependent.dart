@@ -153,12 +153,10 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
 
   Future<void> _deletePersona(PersonaDependent persona, int index) async {
     try {
-      // Elimina la persona de la lista local
       setState(() {
         _personesDependents.removeAt(index);
       });
 
-      // Elimina la persona en Firestore
       final userDoc = FirebaseFirestore.instance
           .collection('usuarios')
           .doc(FirebaseAuth.instance.currentUser?.uid);
@@ -172,7 +170,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
       );
     } catch (e) {
       setState(() {
-        _personesDependents.insert(index, persona); // Restaurar en caso de error
+        _personesDependents.insert(index, persona);
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

@@ -42,17 +42,12 @@ class _LlistaActivitatsState extends State<LlistaActivitats> {
                   child: StreamBuilder<Map<String, List<Activitat>>>(
                     stream: _getActivitiesStream(user),
                     builder: (context, snapshot) {
-                      // Estado de carga
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-
-                      // Error
                       if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
-
-                      // No datos
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text('No hay actividades registradas.'));
                       }
