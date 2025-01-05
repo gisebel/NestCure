@@ -12,9 +12,9 @@ class Usuari {
   String fotoPerfil;
   List<PersonaDependent> personesDependents;
   List<Activitat> activitats;
-  Map<String, bool> tests;
+  Map<String, int> tests;
   List<Certificate> certificats;
-  String genero;  // Nueva variable para almacenar el género
+  String genero;
 
   Usuari({
     required this.nomCognoms,
@@ -26,20 +26,21 @@ class Usuari {
     required this.personesDependents,
     required this.activitats,
     required this.certificats,
-    required Map<String, bool>? tests,
-    required this.genero,  // Incluir genero en el constructor
+    required Map<String, int>? tests,
+    required this.genero,
   }) : tests = tests ?? {
-      'basicAttentionKnowledgeTest': false,
-      'intermediateHealthKnowledgeTest': false,
-      'advancedHealthKnowledgeTest': false,
-      'basicCommunicationSkillsTest': false,
-      'intermediateAttentionKnowledgeTest': false,
-      'advancedAttentionKnowledgeTest': false,
-      'basicPracticalSkillsTest': false,
-      'intermediateCommunicationSkillsTest': false,
-      'advancedCommunicationSkillsTest': false,
-      'intermediatePracticalSkillsTest': false,
-      'advancedPracticalSkillsTest': false,
+      'basicAttentionKnowledgeTest': 0,
+      'intermediateHealthKnowledgeTest': 0,
+      'advancedHealthKnowledgeTest': 0,
+      'basicCommunicationSkillsTest': 0,
+      'intermediateAttentionKnowledgeTest': 0,
+      'advancedAttentionKnowledgeTest': 0,
+      'basicPracticalSkillsTest': 0,
+      'intermediateCommunicationSkillsTest': 0,
+      'advancedCommunicationSkillsTest': 0,
+      'intermediatePracticalSkillsTest': 0,
+      'advancedPracticalSkillsTest': 0,
+      'basicHealthKnowledgeTest': 0,
   };
 
   @override
@@ -61,20 +62,20 @@ class Usuari {
         : <Activitat>[];
 
     var tests = (firestoreData['tests'] is Map<String, dynamic>)
-        ? Map<String, bool>.from(firestoreData['tests'])
+        ? Map<String, int>.from(firestoreData['tests'])
         : {
-            'basicAttentionKnowledgeTest': false,
-            'intermediateHealthKnowledgeTest': false,
-            'advancedHealthKnowledgeTest': false,
-            'basicCommunicationSkillsTest': false,
-            'intermediateAttentionKnowledgeTest': false,
-            'advancedAttentionKnowledgeTest': false,
-            'basicPracticalSkillsTest': false,
-            'intermediateCommunicationSkillsTest': false,
-            'advancedCommunicationSkillsTest': false,
-            'intermediatePracticalSkillsTest': false,
-            'advancedPracticalSkillsTest': false,
-            'basicHealthKnowledgeTest': false,
+            'basicAttentionKnowledgeTest': 0,
+            'intermediateHealthKnowledgeTest': 0,
+            'advancedHealthKnowledgeTest': 0,
+            'basicCommunicationSkillsTest': 0,
+            'intermediateAttentionKnowledgeTest': 0,
+            'advancedAttentionKnowledgeTest': 0,
+            'basicPracticalSkillsTest': 0,
+            'intermediateCommunicationSkillsTest': 0,
+            'advancedCommunicationSkillsTest': 0,
+            'intermediatePracticalSkillsTest': 0,
+            'advancedPracticalSkillsTest': 0,
+            'basicHealthKnowledgeTest': 0,
           };
 
     var certificats = (firestoreData['certificats'] is List<dynamic>)
@@ -104,7 +105,7 @@ class Usuari {
       activitats: activitats,
       tests: tests,
       certificats: certificats,
-      genero: firestoreData['genero'] ?? 'Mujer',  // Recuperamos el genero (valor predeterminado 'Mujer')
+      genero: firestoreData['genero'] ?? 'Mujer',
     );
   }
 }

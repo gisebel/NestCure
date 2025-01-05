@@ -4,7 +4,7 @@ import 'app_bar.dart';
 class BasicHealthKnowledgeTestScreen extends StatefulWidget {
   final String testType;
   final String testLevel;
-  final VoidCallback onCompleted;
+  final Function(int) onCompleted;
 
   const BasicHealthKnowledgeTestScreen({
     super.key,
@@ -125,11 +125,10 @@ class _BasicHealthKnowledgeTestScreenState
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
       } else {
-        widget.onCompleted();
+        widget.onCompleted(correctAnswers);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) =>
-                CompletionScreen(correctAnswers: correctAnswers),
+            builder: (context) => CompletionScreen(correctAnswers: correctAnswers),
           ),
         );
       }

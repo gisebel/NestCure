@@ -4,7 +4,7 @@ import 'package:nestcure/app_bar.dart';
 class AdvancedCommunicationSkillsTestScreen extends StatefulWidget {
   final String testType;
   final String testLevel;
-  final VoidCallback onCompleted;
+  final Function(int) onCompleted;
 
   const AdvancedCommunicationSkillsTestScreen({
     super.key,
@@ -125,7 +125,7 @@ class _AdvancedCommunicationSkillsTestScreenState
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
       } else {
-        widget.onCompleted();
+        widget.onCompleted(correctAnswers);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => CompletionScreen(correctAnswers: correctAnswers),

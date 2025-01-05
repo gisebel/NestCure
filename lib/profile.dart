@@ -98,9 +98,9 @@ class ProfileWidget extends StatelessWidget {
     var loggedUser = LoggedUsuari();
     var user = loggedUser.usuari;
 
-    String avatarImage = user.genero == "Mujer" 
-        ? 'images/avatar_chica.png' 
-        : 'images/avatar_chico.png';
+    String avatarImage = user.genero == "Mujer"
+              ? 'images/avatar_chica.png'
+              : 'images/avatar_chico.png';
 
     return Scaffold(
       appBar: customAppBar(context, false),
@@ -210,7 +210,6 @@ class ProfileWidget extends StatelessWidget {
     var loggedUser = LoggedUsuari();
     var user = loggedUser.usuari;
 
-    // Muestra un indicador de progreso mientras se procesa la eliminación.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -222,23 +221,18 @@ class ProfileWidget extends StatelessWidget {
     );
 
     try {
-      // 1. Eliminar los datos del usuario de Firestore
       await FirebaseFirestore.instance
           .collection('usuarios')
-          .where('correu', isEqualTo: user.correu) // Buscamos por correo
+          .where('correu', isEqualTo: user.correu)
           .get()
           .then((querySnapshot) async {
-        // Verificamos si hay algún documento que coincida con el correo
         if (querySnapshot.docs.isNotEmpty) {
-          // Aquí tomamos el primer documento que coincida (normalmente solo debe haber uno)
           await querySnapshot.docs.first.reference.delete();
         }
       });
 
-      // 2. Eliminar la cuenta del usuario de Firebase Authentication
       await FirebaseAuth.instance.currentUser?.delete();
 
-      // Si la eliminación es exitosa, redirige al usuario a la pantalla de login.
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -253,8 +247,6 @@ class ProfileWidget extends StatelessWidget {
       }
     } catch (e) {
       print("Error al eliminar la cuenta: $e");
-
-      // En caso de error, muestra un mensaje al usuario.
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -263,7 +255,6 @@ class ProfileWidget extends StatelessWidget {
         );
       }
     } finally {
-      // Cierra el diálogo de carga.
       if (Navigator.canPop(context)) {
         Navigator.of(context).pop();
       }

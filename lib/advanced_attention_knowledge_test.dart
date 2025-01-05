@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdvancedAttentionKnowledgeTestScreen extends StatefulWidget {
   final String testType;
   final String testLevel;
-  final VoidCallback onCompleted;
+  final Function(int) onCompleted;
 
   const AdvancedAttentionKnowledgeTestScreen({
     super.key,
@@ -125,7 +127,7 @@ class _AdvancedAttentionKnowledgeTestScreenState
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
       } else {
-        widget.onCompleted();
+        widget.onCompleted(correctAnswers);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => CompletionScreen(correctAnswers: correctAnswers),
@@ -196,14 +198,30 @@ class _AdvancedAttentionKnowledgeTestScreenState
   }
 }
 
-// Completion Screen
 class CompletionScreen extends StatelessWidget {
   final int correctAnswers;
 
   const CompletionScreen({super.key, required this.correctAnswers});
 
+  Future<void> saveTestResults(int score) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+
+      try {
+        await userRef.update({
+          'tests.advancedAttentionKnowledgeTest': score,
+        });
+      } catch (e) {
+        print("Error al actualizar el puntaje: $e");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    saveTestResults(correctAnswers);
+
     return Scaffold(
       appBar: customAppBar(context, false),
       backgroundColor: const Color.fromARGB(255, 255, 251, 245),

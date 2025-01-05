@@ -60,7 +60,7 @@ class CvGenerator extends StatelessWidget {
                 .map((e) => Certificate.fromMap(Map<String, dynamic>.from(e)))
                 .toList(),
             tests: userData['tests'] != null
-                ? Map<String, bool>.from(userData['tests'])
+                ? Map<String, int>.from(userData['tests'])
                 : {},
             genero: userData['genero'] ?? '',
           );
@@ -233,7 +233,7 @@ class CvGenerator extends StatelessWidget {
                 ),
               pw.SizedBox(height: 20),
               // Tests
-              if (user.tests.isNotEmpty)
+              /*if (user.tests.isNotEmpty)
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -250,6 +250,7 @@ class CvGenerator extends StatelessWidget {
                     }).toList(),
                   ],
                 ),
+              */
             ],
           );
         },

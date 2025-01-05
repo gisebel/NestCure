@@ -241,21 +241,21 @@ class _RegisterPageState extends State<RegisterPage> {
                           personesDependents: [],
                           activitats: [],
                           tests: {
-                            'basicAttentionKnowledgeTest': false,
-                            'intermediateHealthKnowledgeTest': false,
-                            'advancedHealthKnowledgeTest': false,
-                            'basicCommunicationSkillsTest': false,
-                            'intermediateAttentionKnowledgeTest': false,
-                            'advancedAttentionKnowledgeTest': false,
-                            'basicPracticalSkillsTest': false,
-                            'intermediateCommunicationSkillsTest': false,
-                            'advancedCommunicationSkillsTest': false,
-                            'intermediatePracticalSkillsTest': false,
-                            'advancedPracticalSkillsTest': false,
-                            'basicHealthKnowledgeTest': false,
+                            'basicAttentionKnowledgeTest': 0,
+                            'intermediateHealthKnowledgeTest': 0,
+                            'advancedHealthKnowledgeTest': 0,
+                            'basicCommunicationSkillsTest': 0,
+                            'intermediateAttentionKnowledgeTest': 0,
+                            'advancedAttentionKnowledgeTest': 0,
+                            'basicPracticalSkillsTest': 0,
+                            'intermediateCommunicationSkillsTest': 0,
+                            'advancedCommunicationSkillsTest': 0,
+                            'intermediatePracticalSkillsTest': 0,
+                            'advancedPracticalSkillsTest': 0,
+                            'basicHealthKnowledgeTest': 0,
                           },
                           certificats: [],
-                          genero: _genero,  // Guardamos el género
+                          genero: _genero,
                         );
 
                         await FirebaseFirestore.instance
@@ -272,7 +272,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           'activitats': [],
                           'tests': newUser.tests,
                           'certificats': [],
-                          'genero': newUser.genero,  // Guardamos el género en Firestore
+                          'genero': newUser.genero, 
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
