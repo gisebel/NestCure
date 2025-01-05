@@ -11,6 +11,7 @@ import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/conectar_suara.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nestcure/user.dart';
 
 class ProfileItem {
   final String name;
@@ -24,158 +25,188 @@ class ProfileItem {
   });
 }
 
-class ProfileWidget extends StatelessWidget {
+class ProfileWidget extends StatefulWidget {
   ProfileWidget({super.key});
 
-  final List<ProfileItem> profileItems = [
-    ProfileItem(
-      name: "Información personal",
-      icon: const Icon(
-        Icons.person,
-        color: Color.fromRGBO(45, 87, 133, 1),
-        size: 28,
-      ),
-      page: const UserInformationWidget(),
-    ),
-    ProfileItem(
-      name: "Personas a cargo",
-      icon: const Icon(
-        Icons.people,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: PersonesDependentsWidget(),
-    ),
-    ProfileItem(
-      name: "Registro de actividades",
-      icon: const Icon(
-        Icons.content_paste_search,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const LlistaActivitats(),
-    ),
-    ProfileItem(
-      name: "Tests de conocimientos",
-      icon: const Icon(
-        Icons.assessment,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const KnowledgeTestsScreen(),
-    ),
-    ProfileItem(
-      name: "Certificados",
-      icon: const Icon(
-        Icons.book,
-        color: Color.fromRGBO(45, 87, 133, 1),
-        size: 28,
-      ),
-      page: const ListCertificates(),
-    ),
-    ProfileItem(
-      name: "Generar currículum vitae",
-      icon: const Icon(
-        Icons.create,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const CvGenerator(),
-    ),
-    ProfileItem(
-      name: "Conectar con Suara",
-      icon: const Icon(
-        Icons.link,
-        color: Color.fromRGBO(45, 88, 133, 1),
-        size: 28,
-      ),
-      page: const ConnectWithSuaraPage(),
-    ),
-  ];
+  @override
+  _ProfileWidgetState createState() => _ProfileWidgetState();
+}
+
+class _ProfileWidgetState extends State<ProfileWidget> {
+  late final LoggedUsuari loggedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    loggedUser = LoggedUsuari();
+    loggedUser.loginWithFirebase();  // Asegúrate de cargar los datos al inicio
+  }
 
   @override
   Widget build(BuildContext context) {
-    var loggedUser = LoggedUsuari();
-    var user = loggedUser.usuari;
+    return StreamBuilder<Usuari>(
+      stream: loggedUser.userStream,  // Escuchamos los cambios en el usuario
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Scaffold(
+            appBar: customAppBar(context, false),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    String avatarImage = user.genero == "Mujer"
-              ? 'images/avatar_chica.png'
-              : 'images/avatar_chico.png';
+        final user = snapshot.data!;
+        print("User: ${user.correu}");
+        print("Genero: ${user.genero}");
 
-    return Scaffold(
-      appBar: customAppBar(context, false),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              ClipOval(
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  color: Colors.white,
-                  child: Image.asset(avatarImage, fit: BoxFit.cover),
-                ),
-              ),
-              const SizedBox(height: 12.0),
-              Text(
-                user.nomCognoms,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromRGBO(45, 87, 133, 1),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              const Divider(thickness: 1),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: profileItems.length + 2,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == profileItems.length) {
-                    return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                      title: const Text(
-                        "Eliminar cuenta",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      leading: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                      onTap: () => _confirmDeleteAccount(context),
-                    );
-                  }
-                  if (index == profileItems.length + 1) {
-                    return const Divider(thickness: 1);
-                  }
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                    title: Text(
-                      profileItems[index].name,
-                      style: const TextStyle(fontSize: 16),
+        String avatarImage = '';
+        if (user.genero == "Mujer") {
+          avatarImage = 'images/avatar_chica.png';
+        } else if (user.genero == "Hombre") {
+          avatarImage = 'images/avatar_chico.png';
+        }
+
+        List<ProfileItem> profileItems = [
+          ProfileItem(
+            name: "Información personal",
+            icon: const Icon(
+              Icons.person,
+              color: Color.fromRGBO(45, 87, 133, 1),
+              size: 28,
+            ),
+            page: const UserInformationWidget(),
+          ),
+          ProfileItem(
+            name: "Personas a cargo",
+            icon: const Icon(
+              Icons.people,
+              color: Color.fromRGBO(45, 88, 133, 1),
+              size: 28,
+            ),
+            page: PersonesDependentsWidget(),
+          ),
+          ProfileItem(
+            name: "Registro de actividades",
+            icon: const Icon(
+              Icons.content_paste_search,
+              color: Color.fromRGBO(45, 88, 133, 1),
+              size: 28,
+            ),
+            page: const LlistaActivitats(),
+          ),
+          ProfileItem(
+            name: "Tests de conocimientos",
+            icon: const Icon(
+              Icons.assessment,
+              color: Color.fromRGBO(45, 88, 133, 1),
+              size: 28,
+            ),
+            page: const KnowledgeTestsScreen(),
+          ),
+          ProfileItem(
+            name: "Certificados",
+            icon: const Icon(
+              Icons.book,
+              color: Color.fromRGBO(45, 87, 133, 1),
+              size: 28,
+            ),
+            page: const ListCertificates(),
+          ),
+          ProfileItem(
+            name: "Generar currículum vitae",
+            icon: const Icon(
+              Icons.create,
+              color: Color.fromRGBO(45, 88, 133, 1),
+              size: 28,
+            ),
+            page: const CvGenerator(),
+          ),
+          ProfileItem(
+            name: "Conectar con Suara",
+            icon: const Icon(
+              Icons.link,
+              color: Color.fromRGBO(45, 88, 133, 1),
+              size: 28,
+            ),
+            page: const ConnectWithSuaraPage(),
+          ),
+        ];
+
+        return Scaffold(
+          appBar: customAppBar(context, false),
+          body: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  ClipOval(
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      color: Colors.white,
+                      child: Image.asset(avatarImage, fit: BoxFit.cover),
                     ),
-                    leading: profileItems[index].icon,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) {
-                          return profileItems[index].page;
-                        }),
+                  ),
+                  const SizedBox(height: 12.0),
+                  Text(
+                    user.nomCognoms,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromRGBO(45, 87, 133, 1),
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  const Divider(thickness: 1),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: profileItems.length + 2,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == profileItems.length) {
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          title: const Text(
+                            "Eliminar cuenta",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          leading: const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onTap: () => _confirmDeleteAccount(context),
+                        );
+                      }
+                      if (index == profileItems.length + 1) {
+                        return const Divider(thickness: 1);
+                      }
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                        title: Text(
+                          profileItems[index].name,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        leading: profileItems[index].icon,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return profileItems[index].page;
+                            }),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -209,6 +240,9 @@ class ProfileWidget extends StatelessWidget {
   void _deleteAccount(BuildContext context) async {
     var loggedUser = LoggedUsuari();
     var user = loggedUser.usuari;
+
+    print ("User: ${user.correu}");
+    print("Genero: ${user.genero}");
 
     showDialog(
       context: context,
