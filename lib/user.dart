@@ -14,6 +14,7 @@ class Usuari {
   List<Activitat> activitats;
   Map<String, bool> tests;
   List<Certificate> certificats;
+  String genero;  // Nueva variable para almacenar el género
 
   Usuari({
     required this.nomCognoms,
@@ -26,6 +27,7 @@ class Usuari {
     required this.activitats,
     required this.certificats,
     required Map<String, bool>? tests,
+    required this.genero,  // Incluir genero en el constructor
   }) : tests = tests ?? {
       'basicAttentionKnowledgeTest': false,
       'intermediateHealthKnowledgeTest': false,
@@ -42,7 +44,7 @@ class Usuari {
 
   @override
   String toString() {
-    return 'Usuari(nomCognoms: $nomCognoms, dataNaixement: $dataNaixement, correu: $correu, descripcio: $descripcio)';
+    return 'Usuari(nomCognoms: $nomCognoms, dataNaixement: $dataNaixement, correu: $correu, descripcio: $descripcio, genero: $genero)';
   }
 
   factory Usuari.fromFirestore(Map<String, dynamic> firestoreData) {
@@ -102,6 +104,7 @@ class Usuari {
       activitats: activitats,
       tests: tests,
       certificats: certificats,
+      genero: firestoreData['genero'] ?? 'Mujer',  // Recuperamos el genero (valor predeterminado 'Mujer')
     );
   }
 }

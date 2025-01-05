@@ -9,6 +9,8 @@ import 'package:nestcure/login.dart';
 import 'package:nestcure/cv_generator.dart';
 import 'package:nestcure/knowledge_tests.dart';
 import 'package:nestcure/conectar_suara.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileItem {
   final String name;
@@ -96,6 +98,10 @@ class ProfileWidget extends StatelessWidget {
     var loggedUser = LoggedUsuari();
     var user = loggedUser.usuari;
 
+    String avatarImage = user.genero == "Mujer" 
+        ? 'images/avatar_chica.png' 
+        : 'images/avatar_chico.png';
+
     return Scaffold(
       appBar: customAppBar(context, false),
       body: Center(
@@ -109,7 +115,7 @@ class ProfileWidget extends StatelessWidget {
                   width: 150,
                   height: 150,
                   color: Colors.white,
-                  child: Image.asset('images/avatar.png', fit: BoxFit.cover),
+                  child: Image.asset(avatarImage, fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(height: 12.0),
@@ -117,7 +123,7 @@ class ProfileWidget extends StatelessWidget {
                 user.nomCognoms,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(45, 87, 133, 1),
+                  color: const Color.fromRGBO(45, 87, 133, 1),
                 ),
               ),
               const SizedBox(height: 8.0),
@@ -202,7 +208,9 @@ class ProfileWidget extends StatelessWidget {
 
   void _deleteAccount(BuildContext context) async {
     var loggedUser = LoggedUsuari();
+    var user = loggedUser.usuari;
 
+    // Muestra un indicador de progreso mientras se procesa la eliminación.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -214,8 +222,23 @@ class ProfileWidget extends StatelessWidget {
     );
 
     try {
-      await loggedUser.deleteAccount();
+      // 1. Eliminar los datos del usuario de Firestore
+      await FirebaseFirestore.instance
+          .collection('usuarios')
+          .where('correu', isEqualTo: user.correu) // Buscamos por correo
+          .get()
+          .then((querySnapshot) async {
+        // Verificamos si hay algún documento que coincida con el correo
+        if (querySnapshot.docs.isNotEmpty) {
+          // Aquí tomamos el primer documento que coincida (normalmente solo debe haber uno)
+          await querySnapshot.docs.first.reference.delete();
+        }
+      });
 
+      // 2. Eliminar la cuenta del usuario de Firebase Authentication
+      await FirebaseAuth.instance.currentUser?.delete();
+
+      // Si la eliminación es exitosa, redirige al usuario a la pantalla de login.
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -231,6 +254,7 @@ class ProfileWidget extends StatelessWidget {
     } catch (e) {
       print("Error al eliminar la cuenta: $e");
 
+      // En caso de error, muestra un mensaje al usuario.
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -239,6 +263,7 @@ class ProfileWidget extends StatelessWidget {
         );
       }
     } finally {
+      // Cierra el diálogo de carga.
       if (Navigator.canPop(context)) {
         Navigator.of(context).pop();
       }

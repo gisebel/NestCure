@@ -68,18 +68,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
               ),
               const SizedBox(height: 20.0),
-
               Center(
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.white,
                   backgroundImage: widget.user.fotoPerfil.isNotEmpty
                       ? NetworkImage(widget.user.fotoPerfil) as ImageProvider
-                      : const AssetImage('images/avatar.png'),
+                      : (widget.user.genero == 'Mujer'
+                          ? const AssetImage('images/avatar_chica.png')
+                          : const AssetImage('images/avatar_chico.png')),
                 ),
               ),
               const SizedBox(height: 16.0),
-
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -89,7 +89,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -100,7 +99,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16.0),
-
               ListTile(
                 title: const Text('Fecha de nacimiento'),
                 subtitle: Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
@@ -108,7 +106,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onTap: () => _selectDate(context),
               ),
               const SizedBox(height: 16.0),
-
               ListTile(
                 title: const Text('Rol del perfil'),
                 subtitle: Text(_esCuidadorPersonal ? 'Cuidador personal' : 'Cuidador profesional'),
@@ -122,7 +119,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 32.0),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

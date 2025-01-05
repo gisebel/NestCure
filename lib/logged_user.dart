@@ -16,6 +16,7 @@ class LoggedUsuari {
     activitats: [],
     tests: {},
     certificats: [],
+    genero: '',
   );
 
   LoggedUsuari._internal();
@@ -74,6 +75,7 @@ class LoggedUsuari {
           activitats: [],
           tests: {},
           certificats: [],
+          genero: '',
         );
       });
     }
@@ -91,6 +93,7 @@ class LoggedUsuari {
       activitats: [],
       tests: {},
       certificats: [],
+      genero: '',
     );
   }
 

@@ -41,11 +41,17 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
 
           final user = snapshot.data!;
 
+          // Formatear la fecha de nacimiento
           final birthDate = (user.dataNaixement is Timestamp)
-            ? (user.dataNaixement as Timestamp).toDate()
-            : user.dataNaixement;
+              ? (user.dataNaixement as Timestamp).toDate()
+              : user.dataNaixement;
 
           String formattedBirthDate = '${birthDate.day.toString().padLeft(2, '0')}-${birthDate.month.toString().padLeft(2, '0')}-${birthDate.year.toString()}';
+
+          // Seleccionar el avatar según el género
+          String avatarImage = user.genero == "Mujer"
+              ? 'images/avatar_chica.png'
+              : 'images/avatar_chico.png';
 
           return SingleChildScrollView(
             child: Padding(
@@ -66,7 +72,7 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                       backgroundColor: Colors.white,
                       child: ClipOval(
                         child: Image.asset(
-                          'images/avatar.png',
+                          avatarImage, // Usamos la imagen dinámica del avatar
                           fit: BoxFit.cover,
                           width: 100,
                           height: 100,
@@ -93,8 +99,7 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                   _buildInfoTile(
                     context,
                     title: 'Descripción',
-                    subtitle:
-                        user.descripcio.isNotEmpty ? user.descripcio : 'Sin descripción',
+                    subtitle: user.descripcio.isNotEmpty ? user.descripcio : 'Sin descripción',
                   ),
                   _buildInfoTile(
                     context,

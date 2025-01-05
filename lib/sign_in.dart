@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
+  String _genero = 'Mujer';  // Variable para almacenar el género seleccionado
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -150,6 +151,47 @@ class _RegisterPageState extends State<RegisterPage> {
               icon: Icons.description,
             ),
             SizedBox(height: 20.0),
+            Text(
+              'Género',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Mujer',
+                      groupValue: _genero,
+                      onChanged: (value) {
+                        setState(() {
+                          _genero = value!;
+                        });
+                      },
+                    ),
+                    Text('Mujer'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Hombre',
+                      groupValue: _genero,
+                      onChanged: (value) {
+                        setState(() {
+                          _genero = value!;
+                        });
+                      },
+                    ),
+                    Text('Hombre'),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -213,6 +255,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             'basicHealthKnowledgeTest': false,
                           },
                           certificats: [],
+                          genero: _genero,  // Guardamos el género
                         );
 
                         await FirebaseFirestore.instance
@@ -229,6 +272,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           'activitats': [],
                           'tests': newUser.tests,
                           'certificats': [],
+                          'genero': newUser.genero,  // Guardamos el género en Firestore
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(

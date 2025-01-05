@@ -1,13 +1,14 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:nestcure/user.dart';
+import 'package:nestcure/persona_dependent.dart';
+import 'package:nestcure/activitat.dart';
+import 'package:nestcure/certificate_provider.dart';
+import 'package:nestcure/app_bar.dart';
 
 class CvGenerator extends StatelessWidget {
   const CvGenerator({Key? key}) : super(key: key);
@@ -22,35 +23,10 @@ class CvGenerator extends StatelessWidget {
     }
   }
 
-  // Función para guardar el PDF en el dispositivo
-  Future<String> savePdf(pw.Document pdf) async {
-    final outputDir = await getTemporaryDirectory(); // Obtén el directorio temporal
-    final filePath = '${outputDir.path}/cv_documento.pdf';
-
-    final file = File(filePath);
-    await file.writeAsBytes(await pdf.save()); // Guarda el PDF
-
-    return filePath; // Devuelve la ruta del archivo
-  }
-
-  // Función para abrir el PDF dentro de la app
-  void openPdf(BuildContext context, String filePath) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PDFView(
-          filePath: filePath,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Generar CV'),
-      ),
+      appBar: customAppBar(context, false),
       body: StreamBuilder<DocumentSnapshot>(
         stream: _getUserDataStream(),
         builder: (context, snapshot) {
@@ -66,7 +42,29 @@ class CvGenerator extends StatelessWidget {
             return const Center(child: Text('Por favor, inicia sesión para generar tu CV'));
           }
 
-          final user = Usuari.fromFirestore(snapshot.data!.data() as Map<String, dynamic>);
+          final userData = snapshot.data!;
+          final user = Usuari(
+            nomCognoms: userData['nomCognoms'] ?? '',
+            correu: userData['correu'] ?? '',
+            esCuidadorPersonal: userData['esCuidadorPersonal'] ?? false,
+            dataNaixement: (userData['dataNaixement'] as Timestamp).toDate(),
+            descripcio: userData['descripcio'] ?? '',
+            fotoPerfil: userData['fotoPerfil'] ?? '',
+            personesDependents: (userData['personesDependents'] as List<dynamic>)
+                .map((e) => PersonaDependent.fromMap(e))
+                .toList(),
+            activitats: (userData['activitats'] as List<dynamic>)
+                .map((e) => Activitat.fromMap(e))
+                .toList(),
+            certificats: (userData['certificats'] as List<dynamic>)
+                .map((e) => Certificate.fromMap(Map<String, dynamic>.from(e)))
+                .toList(),
+            tests: userData['tests'] != null
+                ? Map<String, bool>.from(userData['tests'])
+                : {},
+            genero: userData['genero'] ?? '',
+          );
+
           return _buildContent(context, user);
         },
       ),
@@ -90,9 +88,7 @@ class CvGenerator extends StatelessWidget {
               }
 
               final pdf = await generatePdf(user);
-              final filePath = await savePdf(pdf); // Guarda el PDF
-
-              openPdf(context, filePath); // Abre el PDF directamente en la app
+              await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
             },
             child: const Text('Generar PDF'),
           ),
@@ -103,9 +99,15 @@ class CvGenerator extends StatelessWidget {
 
   Future<pw.Document> generatePdf(Usuari user) async {
     final pdf = pw.Document();
+
+    // Aquí usamos imágenes predeterminadas para hombre y mujer
+    final defaultImage = user.genero == 'Mujer'
+        ? 'images/avatar_chica.png' 
+        : 'images/avatar_chico.png';
+
     final profileImage = user.fotoPerfil.isNotEmpty
-        ? await networkImage(user.fotoPerfil)
-        : null;
+        ? await networkImage(user.fotoPerfil)  // Si tiene foto de perfil, usarla
+        : await networkImage(defaultImage); // Si no tiene foto de perfil, usar la predeterminada
 
     pdf.addPage(
       pw.Page(
@@ -115,6 +117,7 @@ class CvGenerator extends StatelessWidget {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
+              // Encabezado con foto de perfil e información personal
               pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
@@ -162,73 +165,91 @@ class CvGenerator extends StatelessWidget {
                 ],
               ),
               pw.Divider(),
+              // Descripción
               pw.Text(
                 'Descripción',
                 style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
               ),
               pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 14)),
-              
-              // Sección de actividades
               pw.SizedBox(height: 20),
-              pw.Text(
-                'Actividades',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-              ),
-              ...user.activitats.map(
-                (actividad) => pw.Column(
+              // Actividades
+              if (user.activitats.isNotEmpty)
+                pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      actividad.title ?? 'Sin título',
-                      style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                      'Actividades',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
                     ),
-                    pw.Text('Fecha: ${actividad.date}'),
-                    pw.Text('Descripción: ${actividad.description}'),
-                    pw.Text('Horas: ${actividad.hours}'),
-                    pw.Divider(),
+                    pw.SizedBox(height: 10),
+                    ...user.activitats.map((actividad) {
+                      return pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            '- ${actividad.title} (${actividad.type})',
+                            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                          ),
+                          pw.Text('  Fecha: ${actividad.date.day}-${actividad.date.month}-${actividad.date.year}'),
+                          pw.Text('  Horas: ${actividad.hours}'),
+                          pw.Text('  Descripción: ${actividad.description}'),
+                          pw.SizedBox(height: 8),
+                        ],
+                      );
+                    }).toList(),
                   ],
                 ),
-              ),
-
-              // Sección de certificados
               pw.SizedBox(height: 20),
-              pw.Text(
-                'Certificados',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-              ),
-              ...user.certificats.map(
-                (certificado) => pw.Column(
+              // Certificados
+              if (user.certificats.isNotEmpty)
+                pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      certificado.title ?? 'Sin título',
-                      style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                      'Certificados',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
                     ),
-                    pw.Text('Fecha: ${certificado.date}'),
-                    pw.Text('Descripción: ${certificado.description}'),
-                    pw.Divider(),
+                    pw.SizedBox(height: 10),
+                    ...user.certificats.map((certificado) {
+                      return pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            '- ${certificado.title}',
+                            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                          ),
+                          pw.Text('  Fecha: ${certificado.date.day}-${certificado.date.month}-${certificado.date.year}'),
+                          pw.Text('  Descripción: ${certificado.description}'),
+                          if (certificado.fileUrl != null)
+                            pw.Text(
+                              '  URL: ${certificado.fileUrl}',
+                              style: pw.TextStyle(color: PdfColors.blue),
+                            ),
+                          pw.SizedBox(height: 8),
+                        ],
+                      );
+                    }).toList(),
                   ],
                 ),
-              ),
-
-              // Sección de tests
               pw.SizedBox(height: 20),
-              pw.Text(
-                'Tests de Conocimientos',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-              ),
-              pw.Text('Atención Básica: ${user.tests['basicAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Comunicación Básica: ${user.tests['basicCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Salud Básica: ${user.tests['basicHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Prácticas Básicas: ${user.tests['basicPracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Atención Intermedia: ${user.tests['intermediateAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Comunicación Intermedia: ${user.tests['intermediateCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Salud Intermedia: ${user.tests['intermediateHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Prácticas Intermedias: ${user.tests['intermediatePracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Atención Avanzada: ${user.tests['advancedAttentionKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Comunicación Avanzada: ${user.tests['advancedCommunicationSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Salud Avanzada: ${user.tests['advancedHealthKnowledgeTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
-              pw.Text('Prácticas Avanzadas: ${user.tests['advancedPracticalSkillsTest'] ?? false ? 'Aprobado' : 'No aprobado'}'),
+              // Tests
+              if (user.tests.isNotEmpty)
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Resultados de Tests',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
+                    ),
+                    pw.SizedBox(height: 10),
+                    ...user.tests.entries.map((test) {
+                      return pw.Text(
+                        '- ${test.key}: ${test.value ? 'Aprobado' : 'No Aprobado'}',
+                        style: pw.TextStyle(fontSize: 14),
+                      );
+                    }).toList(),
+                  ],
+                ),
             ],
           );
         },
