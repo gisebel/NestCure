@@ -27,7 +27,17 @@ class _LoginPageState extends State<LoginPage> {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-      print('Inicio de sesión exitoso: ${userCredential.user?.uid}');
+      User? user = userCredential.user;
+
+      if (user != null && !user.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor, verifica tu correo electrónico.')),
+        );
+        await FirebaseAuth.instance.signOut();
+        return;
+      }
+
+      print('Inicio de sesión exitoso: ${user?.uid}');
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -50,6 +60,39 @@ class _LoginPageState extends State<LoginPage> {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al iniciar sesión: $e')),
+      );
+    }
+  }
+
+  Future<void> _resetPassword() async {
+    String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, ingresa tu correo electrónico')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Correo de restablecimiento enviado a $email')),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Error desconocido';
+
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No hay ningún usuario registrado con este correo.';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al enviar el correo de restablecimiento: $e')),
       );
     }
   }
@@ -155,6 +198,19 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 10.0),
+              GestureDetector(
+                onTap: _resetPassword,  
+                child: Text(
+                  '¿Has olvidado la contraseña?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color.fromRGBO(45, 87, 133, 1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                  ),
+                ),
               ),
             ],
           ),

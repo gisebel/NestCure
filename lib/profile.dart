@@ -159,7 +159,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                             "Eliminar cuenta",
                             style: TextStyle(
                               color: Colors.red,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           leading: const Icon(

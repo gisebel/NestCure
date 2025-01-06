@@ -23,12 +23,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _correuController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
   final TextEditingController _experienciaPreviaController = TextEditingController();
-  final TextEditingController _telefonoController = TextEditingController();  // Nuevo campo
-  final TextEditingController _direccionController = TextEditingController();  // Nuevo campo
+  final TextEditingController _telefonoController = TextEditingController();
+  final TextEditingController _direccionController = TextEditingController();
 
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
-  String _genero = 'Mujer';  // Variable para almacenar el género seleccionado
+  String _genero = 'Mujer';
+  bool _isPasswordVisible = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -45,7 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<bool> _isEmailRegistered(String email) async {
+  Future<bool> isEmailRegistered(String email) async {
     try {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection('usuarios')
@@ -118,12 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
               icon: Icons.email,
             ),
             SizedBox(height: 10.0),
-            _buildTextField(
-              controller: _contrasenaController,
-              labelText: 'Contraseña',
-              icon: Icons.lock,
-              isObscure: true,
-            ),
+            _buildPasswordField(),
             SizedBox(height: 10.0),
             _buildTextField(
               controller: _telefonoController,
@@ -135,34 +131,6 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _direccionController,
               labelText: 'Dirección',
               icon: Icons.home,
-            ),
-            SizedBox(height: 20.0),
-            Text(
-              'Rol del perfil',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _esCuidadorPersonal,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _esCuidadorPersonal = value ?? false;
-                    });
-                  },
-                ),
-                Text('Cuidador profesional'),
-              ],
-            ),
-            SizedBox(height: 10.0),
-            _buildTextField(
-              controller: _experienciaPreviaController,
-              labelText: 'Experiencia previa',
-              icon: Icons.description,
             ),
             SizedBox(height: 20.0),
             Text(
@@ -204,6 +172,34 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
               ],
+            ),            
+            SizedBox(height: 20.0),
+            Text(
+              'Rol del perfil',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Row(
+              children: [
+                Checkbox(
+                  value: _esCuidadorPersonal,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _esCuidadorPersonal = value ?? false;
+                    });
+                  },
+                ),
+                Text('Cuidador profesional'),
+              ],
+            ),
+            SizedBox(height: 10.0),
+            _buildTextField(
+              controller: _experienciaPreviaController,
+              labelText: 'Experiencia previa',
+              icon: Icons.description,
             ),
             SizedBox(height: 20.0),
             Row(
@@ -233,19 +229,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     String contrasena = _contrasenaController.text;
                     String experienciaPrevia = _experienciaPreviaController.text;
                     bool esCuidadorPersonal = _esCuidadorPersonal;
-                    String telefono = _telefonoController.text;  // Nuevo campo
-                    String direccion = _direccionController.text; // Nuevo campo
+                    String telefono = _telefonoController.text;
+                    String direccion = _direccionController.text;
 
                     if (nomCognoms.isNotEmpty &&
                         dataNaixement != null &&
                         correu.isNotEmpty &&
                         contrasena.isNotEmpty) {
                       try {
-                        UserCredential userCredential =
-                            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        bool emailRegistered = await isEmailRegistered(correu);
+                        if (emailRegistered) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Este correo electrónico ya está registrado')),
+                          );
+                          return;
+                        }
+
+                        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                           email: correu,
                           password: contrasena,
                         );
+
+                        await userCredential.user!.sendEmailVerification();
 
                         Usuari newUser = Usuari(
                           nomCognoms: nomCognoms,
@@ -272,8 +277,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           certificats: [],
                           genero: _genero,
-                          telefono: telefono,  // Nuevo campo
-                          direccion: direccion, // Nuevo campo
+                          telefono: telefono,
+                          direccion: direccion,
                         );
 
                         await FirebaseFirestore.instance
@@ -331,6 +336,39 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextField(
+      controller: _contrasenaController,
+      obscureText: !_isPasswordVisible,
+      decoration: InputDecoration(
+        labelText: 'Contraseña',
+        prefixIcon: Icon(Icons.lock, color: Colors.black54),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(color: Colors.blue.shade300),
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.black54,
+          ),
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;  // Alternar visibilidad
+            });
+          },
         ),
       ),
     );
