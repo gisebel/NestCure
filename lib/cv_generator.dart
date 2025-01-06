@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:nestcure/user.dart';
 import 'package:nestcure/persona_dependent.dart';
 import 'package:nestcure/activitat.dart';
 import 'package:nestcure/certificate_provider.dart';
 import 'package:nestcure/app_bar.dart';
+import 'package:http/http.dart' as http;
 
 class CvGenerator extends StatelessWidget {
   const CvGenerator({Key? key}) : super(key: key);
@@ -63,6 +65,8 @@ class CvGenerator extends StatelessWidget {
                 ? Map<String, int>.from(userData['tests'])
                 : {},
             genero: userData['genero'] ?? '',
+            telefono: userData['telefono'] ?? '',
+            direccion: userData['direccion'] ?? '',
           );
 
           return _buildContent(context, user);
@@ -72,42 +76,108 @@ class CvGenerator extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, Usuari user) {
-    return Center(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ElevatedButton(
-            onPressed: () async {
-              if (user.nomCognoms.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Por favor, completa tus datos para generar el CV'),
-                  ),
-                );
-                return;
-              }
-
-              final pdf = await generatePdf(user);
-              await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
-            },
-            child: const Text('Generar PDF'),
-          ),
+          _buildCvSection(user),
+          const SizedBox(height: 40),
+          _buildConnectWithSuaraSection(),
         ],
       ),
     );
   }
 
+  Widget _buildCvSection(Usuari user) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Generar currículum vitae',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Crea tu currículum vitae profesional de forma automática.',
+          style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: () async {
+            final pdf = await generatePdf(user);
+            await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+          },
+          icon: const Icon(Icons.picture_as_pdf, size: 24.0),
+          label: const Text(
+            'Generar documento',
+            style: TextStyle(fontSize: 18.0),
+          ),
+          style: ElevatedButton.styleFrom(
+            elevation: 3,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            backgroundColor: Color.fromRGBO(45, 87, 133, 1),
+            foregroundColor: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectWithSuaraSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Conéctate con Suara',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Accede a oportunidades laborales y únete a una comunidad profesional dedicada al cuidado y la atención.',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: _launchURL,
+          icon: const Icon(Icons.link, size: 24.0),
+          label: const Text(
+            'Ir a Suara',
+            style: TextStyle(fontSize: 18.0),
+          ),
+          style: ElevatedButton.styleFrom(
+            elevation: 3,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            backgroundColor:  Color.fromRGBO(45, 87, 133, 1),
+            foregroundColor: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _launchURL() async {
+    const url = 'https://talent.suara.coop/#jobs';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'No se pudo abrir la URL';
+    }
+  }
+
   Future<pw.Document> generatePdf(Usuari user) async {
     final pdf = pw.Document();
-
-    // Aquí usamos imágenes predeterminadas para hombre y mujer
+    
     final defaultImage = user.genero == 'Mujer'
         ? 'images/avatar_chica.png' 
         : 'images/avatar_chico.png';
-
-    final profileImage = user.fotoPerfil.isNotEmpty
-        ? await networkImage(user.fotoPerfil)  // Si tiene foto de perfil, usarla
-        : await networkImage(defaultImage); // Si no tiene foto de perfil, usar la predeterminada
+    final profileImage = await downloadImage(user.fotoPerfil.isNotEmpty ? user.fotoPerfil : defaultImage);
 
     pdf.addPage(
       pw.Page(
@@ -117,7 +187,6 @@ class CvGenerator extends StatelessWidget {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Encabezado con foto de perfil e información personal
               pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
@@ -139,123 +208,85 @@ class CvGenerator extends StatelessWidget {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
-                          user.nomCognoms.toUpperCase(),
-                          style: pw.TextStyle(
-                            fontSize: 24,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColors.blueGrey900,
-                          ),
+                          user.nomCognoms,
+                          style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
                         ),
-                        pw.SizedBox(height: 8),
-                        pw.Text(
-                          'Correo: ${user.correu}',
-                          style: pw.TextStyle(fontSize: 14, color: PdfColors.blueGrey700),
-                        ),
-                        pw.Text(
-                          'Rol: ${user.esCuidadorPersonal ? 'Cuidador Personal' : 'Cuidador Profesional'}',
-                          style: pw.TextStyle(fontSize: 14, color: PdfColors.blueGrey700),
-                        ),
-                        pw.Text(
-                          'Fecha de Nacimiento: ${user.dataNaixement.day}-${user.dataNaixement.month}-${user.dataNaixement.year}',
-                          style: pw.TextStyle(fontSize: 14, color: PdfColors.blueGrey700),
-                        ),
+                        pw.Text(user.correu, style: pw.TextStyle(fontSize: 16)),
+                        pw.Text('Rol: ${user.esCuidadorPersonal ? 'Cuidador Personal' : 'Cuidador Profesional'}'),
+                        pw.Text('Fecha de Nacimiento: ${user.dataNaixement.day}-${user.dataNaixement.month}-${user.dataNaixement.year}'),
+                        pw.Text('Teléfono: ${user.telefono}'),
+                        pw.Text('Dirección: ${user.direccion}'),
                       ],
                     ),
                   ),
                 ],
               ),
-              pw.Divider(),
-              // Descripción
-              pw.Text(
-                'Descripción',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-              ),
-              pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 14)),
               pw.SizedBox(height: 20),
-              // Actividades
-              if (user.activitats.isNotEmpty)
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Actividades',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-                    ),
-                    pw.SizedBox(height: 10),
-                    ...user.activitats.map((actividad) {
-                      return pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            '- ${actividad.title} (${actividad.type})',
-                            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-                          ),
-                          pw.Text('  Fecha: ${actividad.date.day}-${actividad.date.month}-${actividad.date.year}'),
-                          pw.Text('  Horas: ${actividad.hours}'),
-                          pw.Text('  Descripción: ${actividad.description}'),
-                          pw.SizedBox(height: 8),
-                        ],
-                      );
-                    }).toList(),
-                  ],
-                ),
-              pw.SizedBox(height: 20),
-              // Certificados
-              if (user.certificats.isNotEmpty)
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Certificados',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-                    ),
-                    pw.SizedBox(height: 10),
-                    ...user.certificats.map((certificado) {
-                      return pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            '- ${certificado.title}',
-                            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-                          ),
-                          pw.Text('  Fecha: ${certificado.date.day}-${certificado.date.month}-${certificado.date.year}'),
-                          pw.Text('  Descripción: ${certificado.description}'),
-                          if (certificado.fileUrl != null)
-                            pw.Text(
-                              '  URL: ${certificado.fileUrl}',
-                              style: pw.TextStyle(color: PdfColors.blue),
-                            ),
-                          pw.SizedBox(height: 8),
-                        ],
-                      );
-                    }).toList(),
-                  ],
-                ),
-              pw.SizedBox(height: 20),
-              // Tests
-              /*if (user.tests.isNotEmpty)
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Resultados de Tests',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo),
-                    ),
-                    pw.SizedBox(height: 10),
-                    ...user.tests.entries.map((test) {
+
+              pw.Text('Descripción:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+              pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 16)),
+
+              if (user.tests.isNotEmpty) ...[
+                pw.SizedBox(height: 20),
+                pw.Text('Tests realizados:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                ...user.tests.entries
+                    .where((entry) => entry.value >= 5)
+                    .map((entry) {
+                      final formattedKey = entry.key.replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(0)}');
                       return pw.Text(
-                        '- ${test.key}: ${test.value ? 'Aprobado' : 'No Aprobado'}',
-                        style: pw.TextStyle(fontSize: 14),
+                        '$formattedKey: ${entry.value}',
+                        style: pw.TextStyle(fontSize: 16),
                       );
                     }).toList(),
-                  ],
-                ),
-              */
+              ],
+
+              if (user.activitats.isNotEmpty) ...[
+                pw.SizedBox(height: 20),
+                pw.Text('Actividades realizadas:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                ...user.activitats.map((activitat) {
+                  return pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Título: ${activitat.title}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                      pw.Text('Fecha: ${activitat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 16)),
+                      pw.Text('Horas: ${activitat.hours}', style: pw.TextStyle(fontSize: 16)),
+                      pw.Text('Descripción: ${activitat.description}', style: pw.TextStyle(fontSize: 16)),
+                      pw.SizedBox(height: 10),
+                    ],
+                  );
+                }).toList(),
+              ],
+
+              if (user.certificats.isNotEmpty) ...[
+                pw.SizedBox(height: 20),
+                pw.Text('Certificados:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                ...user.certificats.map((certificat) {
+                  return pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Título: ${certificat.title}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                      pw.Text('Fecha: ${certificat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 16)),
+                      pw.Text('Descripción: ${certificat.description}', style: pw.TextStyle(fontSize: 16)),
+                      pw.Text('Nombre del fichero: ${certificat.fileName}', style: pw.TextStyle(fontSize: 16)),
+                      pw.SizedBox(height: 10),
+                    ],
+                  );
+                }).toList(),
+              ],
             ],
           );
         },
       ),
     );
     return pdf;
+  }
+
+  Future<pw.ImageProvider> downloadImage(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return pw.MemoryImage(response.bodyBytes);
+    } else {
+      throw Exception('Failed to load image');
+    }
   }
 }

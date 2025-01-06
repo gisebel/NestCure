@@ -17,6 +17,8 @@ class LoggedUsuari {
     tests: {},
     certificats: [],
     genero: '',
+    telefono: '',
+    direccion: '',
   );
 
   LoggedUsuari._internal();
@@ -76,6 +78,8 @@ class LoggedUsuari {
           tests: {},
           certificats: [],
           genero: '',
+          telefono: '',
+          direccion: '',
         );
       });
     }
@@ -94,6 +98,8 @@ class LoggedUsuari {
       tests: {},
       certificats: [],
       genero: '',
+      telefono: '',
+      direccion: '',
     );
   }
 

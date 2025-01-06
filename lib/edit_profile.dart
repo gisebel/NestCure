@@ -17,6 +17,8 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
   late DateTime _selectedDate;
   late bool _esCuidadorPersonal;
 
@@ -25,6 +27,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.user.nomCognoms);
     _descriptionController = TextEditingController(text: widget.user.descripcio);
+    _phoneController = TextEditingController(text: widget.user.telefono);
+    _addressController = TextEditingController(text: widget.user.direccion);
     _selectedDate = widget.user.dataNaixement;
     _esCuidadorPersonal = widget.user.esCuidadorPersonal;
   }
@@ -33,6 +37,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -97,6 +103,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                 ),
                 maxLines: 3,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Teléfono',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  labelText: 'Dirección',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                ),
               ),
               const SizedBox(height: 16.0),
               ListTile(
@@ -205,6 +229,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           widget.user.nomCognoms = _nameController.text;
           widget.user.descripcio = _descriptionController.text;
+          widget.user.telefono = _phoneController.text;
+          widget.user.direccion = _addressController.text;
           widget.user.dataNaixement = _selectedDate;
           widget.user.esCuidadorPersonal = _esCuidadorPersonal;
         });
@@ -212,6 +238,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         await FirebaseFirestore.instance.collection('usuarios').doc(userId).update({
           'nomCognoms': widget.user.nomCognoms,
           'descripcio': widget.user.descripcio,
+          'telefono': widget.user.telefono,
+          'direccion': widget.user.direccion,
           'dataNaixement': widget.user.dataNaixement,
           'esCuidadorPersonal': widget.user.esCuidadorPersonal,
         });

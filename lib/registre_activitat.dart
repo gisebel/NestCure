@@ -250,8 +250,6 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                             type: selectedTipusActivitat!,
                             dependantName: selectedPersonaCuidada!,
                           );
-                          var persona = user.personesDependents.firstWhere(
-                              (persona) => persona.nombre == selectedPersonaCuidada);
                           try {
                             final userRef = FirebaseFirestore.instance
                                 .collection('usuarios')

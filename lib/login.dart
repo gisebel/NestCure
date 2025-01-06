@@ -24,19 +24,18 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      print('Inicio de sesión exitoso: ${userCredential.user?.uid}');
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => ProfileWidget(),
         ),
       );
-      print('Inicio de sesión exitoso');
     } on FirebaseAuthException catch (e) {
-      String errorMessage = e.message ?? 'Error desconocido';
+      String errorMessage = 'Error desconocido';
 
       if (e.code == 'user-not-found') {
         errorMessage = 'No hay ningún usuario registrado con este correo.';
@@ -46,6 +45,11 @@ class _LoginPageState extends State<LoginPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al iniciar sesión: $e')),
       );
     }
   }

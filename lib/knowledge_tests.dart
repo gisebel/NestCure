@@ -103,7 +103,6 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
               }
               final testStatus = snapshot.data?.get('tests.$testKey') ?? 0;
 
-              // Aseguramos que testStatus sea un número y comparamos si es mayor que 0
               return Icon(
                 testStatus > 0 ? Icons.check_circle : Icons.radio_button_unchecked,
                 color: testStatus > 0 ? Colors.green : Colors.red,
@@ -144,7 +143,6 @@ class _KnowledgeTestsScreenState extends State<KnowledgeTestsScreen> {
         }
         final testStatus = snapshot.data?.get('tests.$testKey') ?? 0;
 
-        // Usamos el valor numérico (testStatus) y verificamos si es mayor a 0
         if (testStatus > 0) {
           return TestCompletedScreen();
         } else {

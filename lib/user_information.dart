@@ -105,6 +105,21 @@ class _UserInformationWidgetState extends State<UserInformationWidget> {
                         ? 'Cuidador Personal'
                         : 'Cuidador Profesional',
                   ),
+                  _buildInfoTile(
+                    context,
+                    title: 'Teléfono',
+                    subtitle: user.telefono.isNotEmpty ? user.telefono : 'No disponible',
+                  ),
+                  _buildInfoTile(
+                    context,
+                    title: 'Dirección',
+                    subtitle: user.direccion.isNotEmpty ? user.direccion : 'No disponible',
+                  ),
+                  _buildInfoTile(
+                    context,
+                    title: 'Género',
+                    subtitle: user.genero.isNotEmpty ? user.genero : 'No especificado',
+                  ),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
                     title: const Text(

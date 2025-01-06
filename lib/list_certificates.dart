@@ -288,6 +288,9 @@ class _ListCertificatesState extends State<ListCertificates> {
         return;
       }
 
+      final storageRef = FirebaseStorage.instance.ref().child('certificates/${certificate.fileName}');
+      await storageRef.delete();
+      
       final userRef = FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
       await userRef.update({
         'certificats': FieldValue.arrayRemove([certificate.toJson()])
@@ -298,11 +301,11 @@ class _ListCertificatesState extends State<ListCertificates> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Certificado eliminado con éxito')),
+        const SnackBar(content: Text('Certificado y archivo eliminados con éxito')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al eliminar el certificado: $e')),
+        SnackBar(content: Text('Error al eliminar el certificado o archivo: $e')),
       );
     }
   }

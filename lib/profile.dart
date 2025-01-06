@@ -8,7 +8,6 @@ import 'package:nestcure/user_information.dart';
 import 'package:nestcure/login.dart';
 import 'package:nestcure/cv_generator.dart';
 import 'package:nestcure/knowledge_tests.dart';
-import 'package:nestcure/conectar_suara.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nestcure/user.dart';
@@ -39,13 +38,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   void initState() {
     super.initState();
     loggedUser = LoggedUsuari();
-    loggedUser.loginWithFirebase();  // Asegúrate de cargar los datos al inicio
+    loggedUser.loginWithFirebase();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Usuari>(
-      stream: loggedUser.userStream,  // Escuchamos los cambios en el usuario
+      stream: loggedUser.userStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Scaffold(
@@ -119,15 +118,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               size: 28,
             ),
             page: const CvGenerator(),
-          ),
-          ProfileItem(
-            name: "Conectar con Suara",
-            icon: const Icon(
-              Icons.link,
-              color: Color.fromRGBO(45, 88, 133, 1),
-              size: 28,
-            ),
-            page: const ConnectWithSuaraPage(),
           ),
         ];
 

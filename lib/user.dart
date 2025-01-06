@@ -15,6 +15,8 @@ class Usuari {
   Map<String, int> tests;
   List<Certificate> certificats;
   String genero;
+  String telefono;
+  String direccion;
 
   Usuari({
     required this.nomCognoms,
@@ -28,6 +30,8 @@ class Usuari {
     required this.certificats,
     required Map<String, int>? tests,
     required this.genero,
+    required this.telefono,
+    required this.direccion,
   }) : tests = tests ?? {
       'basicAttentionKnowledgeTest': 0,
       'intermediateHealthKnowledgeTest': 0,
@@ -45,7 +49,7 @@ class Usuari {
 
   @override
   String toString() {
-    return 'Usuari(nomCognoms: $nomCognoms, dataNaixement: $dataNaixement, correu: $correu, descripcio: $descripcio, genero: $genero)';
+    return 'Usuari(nomCognoms: $nomCognoms, dataNaixement: $dataNaixement, correu: $correu, descripcio: $descripcio, genero: $genero, telefono: $telefono, direccion: $direccion)';
   }
 
   factory Usuari.fromFirestore(Map<String, dynamic> firestoreData) {
@@ -106,6 +110,8 @@ class Usuari {
       tests: tests,
       certificats: certificats,
       genero: firestoreData['genero'] ?? 'Mujer',
+      telefono: firestoreData['telefono'] ?? '',
+      direccion: firestoreData['direccion'] ?? '',
     );
   }
 }

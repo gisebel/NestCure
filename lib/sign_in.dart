@@ -23,6 +23,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _correuController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
   final TextEditingController _experienciaPreviaController = TextEditingController();
+  final TextEditingController _telefonoController = TextEditingController();  // Nuevo campo
+  final TextEditingController _direccionController = TextEditingController();  // Nuevo campo
 
   DateTime? _selectedDate;
   bool _esCuidadorPersonal = false;
@@ -122,6 +124,18 @@ class _RegisterPageState extends State<RegisterPage> {
               icon: Icons.lock,
               isObscure: true,
             ),
+            SizedBox(height: 10.0),
+            _buildTextField(
+              controller: _telefonoController,
+              labelText: 'Número de Teléfono',
+              icon: Icons.phone,
+            ),
+            SizedBox(height: 10.0),
+            _buildTextField(
+              controller: _direccionController,
+              labelText: 'Dirección',
+              icon: Icons.home,
+            ),
             SizedBox(height: 20.0),
             Text(
               'Rol del perfil',
@@ -219,6 +233,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     String contrasena = _contrasenaController.text;
                     String experienciaPrevia = _experienciaPreviaController.text;
                     bool esCuidadorPersonal = _esCuidadorPersonal;
+                    String telefono = _telefonoController.text;  // Nuevo campo
+                    String direccion = _direccionController.text; // Nuevo campo
 
                     if (nomCognoms.isNotEmpty &&
                         dataNaixement != null &&
@@ -256,6 +272,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           certificats: [],
                           genero: _genero,
+                          telefono: telefono,  // Nuevo campo
+                          direccion: direccion, // Nuevo campo
                         );
 
                         await FirebaseFirestore.instance
@@ -273,6 +291,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           'tests': newUser.tests,
                           'certificats': [],
                           'genero': newUser.genero, 
+                          'telefono': newUser.telefono, 
+                          'direccion': newUser.direccion, 
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
