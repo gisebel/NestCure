@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+        .signInWithEmailAndPassword(email: email, password: password);
 
       User? user = userCredential.user;
 
@@ -45,12 +45,13 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Error desconocido';
-
+      String errorMessage;
       if (e.code == 'user-not-found') {
         errorMessage = 'No hay ningún usuario registrado con este correo.';
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Contraseña incorrecta.';
+      } else {
+        errorMessage = 'Error desconocido'; // Solo aplica si no se encuentra el código específico.
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

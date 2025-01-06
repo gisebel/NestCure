@@ -200,22 +200,23 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton(
+                      OutlinedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          side:
-                              const BorderSide(color: Colors.white, width: 2.0),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          elevation: 5,
-                          backgroundColor:
-                              const Color.fromRGBO(255, 102, 102, 1),
                         ),
-                        child: const Text('Atrás',
-                            style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(
+                            color: Color.fromRGBO(45, 87, 133, 1),
+                            fontSize: 16.0,
+                          ),
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: () async {
@@ -235,7 +236,8 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                           if (int.tryParse(_horesController.text) == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Las horas tienen que ser un número'),
+                                content:
+                                    Text('Las horas tienen que ser un número'),
                               ),
                             );
                             return;
@@ -255,11 +257,13 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                                 .collection('usuarios')
                                 .doc(FirebaseAuth.instance.currentUser?.uid);
                             await userRef.update({
-                              'activitats': FieldValue.arrayUnion([actividad.toJson()]),
+                              'activitats':
+                                  FieldValue.arrayUnion([actividad.toJson()]),
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Actividad registrada correctamente'),
+                                content: Text(
+                                    'Actividad registrada correctamente'),
                               ),
                             );
                             _titolController.clear();
@@ -279,20 +283,25 @@ class _RegistreActivitatState extends State<RegistreActivitatPage> {
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Error al registrar la actividad'),
+                                content: Text(
+                                    'Error al registrar la actividad'),
                               ),
                             );
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white, width: 2.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32.0, vertical: 12.0),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(30.0),
                           ),
-                          elevation: 5,
-                          backgroundColor: const Color.fromRGBO(69, 159, 144, 1),
                         ),
-                        child: const Text('Registrar actividad', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Guardar',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
                       ),
                     ],
                   ),

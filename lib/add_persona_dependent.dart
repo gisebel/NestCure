@@ -178,7 +178,6 @@ class _AddPersonaDependentWidgetState extends State<AddPersonaDependentWidget> {
                 _buildTextField(_descripcioController, 'Descripción', maxLines: null),
                 const SizedBox(height: 16.0),
 
-                // Botones Cancelar y Guardar
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

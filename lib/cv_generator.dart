@@ -132,7 +132,7 @@ class CvGenerator extends StatelessWidget {
             final pdf = await generatePdf(user);
             await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
           },
-          icon: const Icon(Icons.picture_as_pdf, size: 24.0),
+          icon: const Icon(Icons.picture_as_pdf, size: 24.0, color: Colors.white,),
           label: const Text(
             'Generar documento',
             style: TextStyle(fontSize: 18.0),
@@ -167,7 +167,7 @@ class CvGenerator extends StatelessWidget {
         const SizedBox(height: 20),
         ElevatedButton.icon(
           onPressed: _launchURL,
-          icon: const Icon(Icons.link, size: 24.0),
+          icon: const Icon(Icons.link, size: 24.0, color: Colors.white,),
           label: const Text(
             'Ir a Suara',
             style: TextStyle(fontSize: 18.0),
