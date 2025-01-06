@@ -117,7 +117,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               color: Color.fromRGBO(45, 88, 133, 1),
               size: 28,
             ),
-            page: const CvGenerator(),
+            page: CvGenerator(),
           ),
         ];
 

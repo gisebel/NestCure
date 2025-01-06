@@ -13,7 +13,7 @@ import 'package:nestcure/app_bar.dart';
 import 'package:http/http.dart' as http;
 
 class CvGenerator extends StatelessWidget {
-  const CvGenerator({Key? key}) : super(key: key);
+  CvGenerator({Key? key}) : super(key: key);
 
   Stream<DocumentSnapshot> _getUserDataStream() {
     final user = FirebaseAuth.instance.currentUser;
@@ -23,6 +23,31 @@ class CvGenerator extends StatelessWidget {
     } else {
       return Stream.empty();
     }
+  }
+
+  final Map<String, String> testTranslations = {
+    'HealthKnowledge': 'Conocimientos de salud',
+    'AttentionKnowledge': 'Conocimientos de atención',
+    'CommunicationSkills': 'Habilidades de comunicación',
+    'PracticalSkills': 'Habilidades prácticas',
+  };
+
+  final Map<String, String> testLevelTranslations = {
+    'basic': 'Básico: ',
+    'intermediate': 'Intermedio: ',
+    'advanced': 'Avanzado: ',
+  };
+
+  String getTestName(String testKey) {
+    final levelKeys = ['basic', 'intermediate', 'advanced'];
+    String? levelKey = levelKeys.firstWhere((key) => testKey.toLowerCase().startsWith(key));
+    String typeKey = testKey.substring(levelKey.length, testKey.length - 4);
+    typeKey = typeKey[0].toUpperCase() + typeKey.substring(1);
+
+    final translatedLevel = testLevelTranslations[levelKey] ?? levelKey;
+    final translatedType = testTranslations[typeKey] ?? typeKey;
+
+    return '$translatedLevel $translatedType';
   }
 
   @override
@@ -68,7 +93,6 @@ class CvGenerator extends StatelessWidget {
             telefono: userData['telefono'] ?? '',
             direccion: userData['direccion'] ?? '',
           );
-
           return _buildContent(context, user);
         },
       ),
@@ -132,7 +156,7 @@ class CvGenerator extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Conéctate con Suara',
+          'Conecta con Suara',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         const SizedBox(height: 20),
@@ -170,27 +194,32 @@ class CvGenerator extends StatelessWidget {
       throw 'No se pudo abrir la URL';
     }
   }
-
+  
   Future<pw.Document> generatePdf(Usuari user) async {
     final pdf = pw.Document();
-    
+
     final defaultImage = user.genero == 'Mujer'
-        ? 'images/avatar_chica.png' 
+        ? 'images/avatar_chica.png'
         : 'images/avatar_chico.png';
     final profileImage = await downloadImage(user.fotoPerfil.isNotEmpty ? user.fotoPerfil : defaultImage);
 
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(20),
+        margin: const pw.EdgeInsets.only(
+          left: 28, 
+          top: 28, 
+          right: 28, 
+          bottom: 50,
+        ), 
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  if (profileImage != null)
+          return <pw.Widget>[
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
                     pw.Container(
                       width: 100,
                       height: 100,
@@ -202,79 +231,151 @@ class CvGenerator extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (profileImage != null) pw.SizedBox(width: 20),
-                  pw.Expanded(
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          user.nomCognoms,
-                          style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-                        ),
-                        pw.Text(user.correu, style: pw.TextStyle(fontSize: 16)),
-                        pw.Text('Rol: ${user.esCuidadorPersonal ? 'Cuidador Personal' : 'Cuidador Profesional'}'),
-                        pw.Text('Fecha de Nacimiento: ${user.dataNaixement.day}-${user.dataNaixement.month}-${user.dataNaixement.year}'),
-                        pw.Text('Teléfono: ${user.telefono}'),
-                        pw.Text('Dirección: ${user.direccion}'),
-                      ],
+                    pw.SizedBox(width: 15),
+                    pw.Expanded(
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            user.nomCognoms,
+                            style: pw.TextStyle(
+                              fontSize: 24,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black,
+                            ),
+                          ),
+                          pw.Text(
+                            user.correu,
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              color: PdfColors.grey,
+                            ),
+                          ),
+                          pw.Text(
+                            'Rol: ${user.esCuidadorPersonal ? 'Cuidador Personal' : 'Cuidador Profesional'}',
+                            style: pw.TextStyle(fontSize: 14, color: PdfColors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                pw.Divider(),
+
+                pw.SizedBox(height: 10),
+                pw.Text(
+                  'Detalles Personales',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColor.fromInt(0x2D5885),
+                  ),
+                ),
+                pw.SizedBox(height: 5),
+                pw.Text('Teléfono: ${user.telefono}', style: pw.TextStyle(fontSize: 12)),
+                pw.Text('Dirección: ${user.direccion}', style: pw.TextStyle(fontSize: 12)),
+                pw.Text(
+                  'Fecha de Nacimiento: ${user.dataNaixement.day}-${user.dataNaixement.month}-${user.dataNaixement.year}',
+                  style: pw.TextStyle(fontSize: 12),
+                ),
+
+                pw.SizedBox(height: 10),
+                pw.Divider(),
+
+                pw.Text(
+                  'Descripción Personal',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColor.fromInt(0x2D5885),
+                  ),
+                ),
+                pw.SizedBox(height: 5),
+                pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 12)),
+
+                pw.SizedBox(height: 10),
+                pw.Divider(),
+
+                if (user.tests.isNotEmpty) ...[
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'Tests Realizados',
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColor.fromInt(0x2D5885),
                     ),
                   ),
+                  pw.SizedBox(height: 5),
+                  ...user.tests.entries
+                      .where((entry) => entry.value >= 5)
+                      .map((entry) {
+                        final testName = getTestName(entry.key);
+                        return pw.Text(
+                          '$testName: ${entry.value}',
+                          style: pw.TextStyle(fontSize: 12, color: PdfColors.black),
+                        );
+                      }).toList(),
                 ],
-              ),
-              pw.SizedBox(height: 20),
 
-              pw.Text('Descripción:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-              pw.Text(user.descripcio, style: pw.TextStyle(fontSize: 16)),
+                pw.SizedBox(height: 10),
+                pw.Divider(),
 
-              if (user.tests.isNotEmpty) ...[
-                pw.SizedBox(height: 20),
-                pw.Text('Tests realizados:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                ...user.tests.entries
-                    .where((entry) => entry.value >= 5)
-                    .map((entry) {
-                      final formattedKey = entry.key.replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(0)}');
-                      return pw.Text(
-                        '$formattedKey: ${entry.value}',
-                        style: pw.TextStyle(fontSize: 16),
-                      );
-                    }).toList(),
+                if (user.certificats.isNotEmpty) ...[
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'Certificados',
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColor.fromInt(0x2D5885),
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+                  ...user.certificats.map((certificat) {
+                    return pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Título: ${certificat.title}', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                        pw.Text('Fecha: ${certificat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Descripción: ${certificat.description}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Nombre del fichero: ${certificat.fileName}', style: pw.TextStyle(fontSize: 12)),
+                        pw.SizedBox(height: 10),
+                      ],
+                    );
+                  }).toList(),
+                ],
+
+                pw.SizedBox(height: 10),
+                pw.Divider(),
+
+                if (user.activitats.isNotEmpty) ...[
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'Actividades Realizadas',
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColor.fromInt(0x2D5885),
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+                  ...user.activitats.map((activitat) {
+                    return pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Título: ${activitat.title}', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                        pw.Text('Fecha: ${activitat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Horas: ${activitat.hours}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Descripción: ${activitat.description}', style: pw.TextStyle(fontSize: 12)),
+                        pw.SizedBox(height: 10),
+                      ],
+                    );
+                  }).toList(),
+                ],
               ],
-
-              if (user.activitats.isNotEmpty) ...[
-                pw.SizedBox(height: 20),
-                pw.Text('Actividades realizadas:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                ...user.activitats.map((activitat) {
-                  return pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Título: ${activitat.title}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                      pw.Text('Fecha: ${activitat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 16)),
-                      pw.Text('Horas: ${activitat.hours}', style: pw.TextStyle(fontSize: 16)),
-                      pw.Text('Descripción: ${activitat.description}', style: pw.TextStyle(fontSize: 16)),
-                      pw.SizedBox(height: 10),
-                    ],
-                  );
-                }).toList(),
-              ],
-
-              if (user.certificats.isNotEmpty) ...[
-                pw.SizedBox(height: 20),
-                pw.Text('Certificados:', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                ...user.certificats.map((certificat) {
-                  return pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Título: ${certificat.title}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                      pw.Text('Fecha: ${certificat.date.toLocal().toString().split(' ')[0]}', style: pw.TextStyle(fontSize: 16)),
-                      pw.Text('Descripción: ${certificat.description}', style: pw.TextStyle(fontSize: 16)),
-                      pw.Text('Nombre del fichero: ${certificat.fileName}', style: pw.TextStyle(fontSize: 16)),
-                      pw.SizedBox(height: 10),
-                    ],
-                  );
-                }).toList(),
-              ],
-            ],
-          );
+            ),
+          ];
         },
       ),
     );
