@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Contraseña incorrecta.';
       } else {
-        errorMessage = 'Error desconocido'; // Solo aplica si no se encuentra el código específico.
+        errorMessage = 'Error desconocido';
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

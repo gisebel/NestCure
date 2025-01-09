@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +11,13 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 class MockUserCredential extends Mock implements UserCredential {}
 
 // Mock de User
-class MockUser extends Mock implements User {}
+class MockUser extends Mock implements User {
+  @override
+  String get uid => '12345';
+
+  @override
+  String get email => 'test@example.com';
+}
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
@@ -22,6 +28,15 @@ void main() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockUserCredential = MockUserCredential();
     mockUser = MockUser();
+
+    // Configura el mock de UserCredential para que devuelva el mockUser
+    when(mockUserCredential.user).thenReturn(mockUser);
+
+    // Simulamos el comportamiento de Firebase Auth
+    when(mockFirebaseAuth.createUserWithEmailAndPassword(
+      email: 'test@example.com',
+      password: 'Password123',
+    )).thenAnswer((_) async => mockUserCredential);
   });
 
   testWidgets('Test de Registro de Usuario', (WidgetTester tester) async {
@@ -40,24 +55,9 @@ void main() {
     // Esperar a que la animación termine y los widgets se rendericen completamente
     await tester.pumpAndSettle();
 
-    // Simular que el botón de 'Crear' es presionado
+    // Asegurarse de que el botón de 'Crear' es visible antes de presionarlo
+    await tester.scrollUntilVisible(find.text('Crear'), 50.0);
     await tester.tap(find.text('Crear'));
-
-    // Simulamos el comportamiento de Firebase Auth
-    when(mockFirebaseAuth.createUserWithEmailAndPassword(
-      email: 'test@example.com',
-      password: 'Password123',
-    )).thenAnswer((_) async {
-      // Configuramos el mock de User
-      when(mockUser.uid).thenReturn('12345');
-      when(mockUser.email).thenReturn('test@example.com');
-
-      // Configuramos el mock de UserCredential
-      when(mockUserCredential.user).thenReturn(mockUser);
-
-      // Retornamos el mock de UserCredential
-      return Future.value(mockUserCredential);  // Asegúrate de devolver Future.value
-    });
 
     // Esperar a que la animación o el renderizado termine
     await tester.pumpAndSettle();
@@ -65,4 +65,4 @@ void main() {
     // Verificar si el flujo funciona como se espera
     expect(find.text('Usuario registrado correctamente'), findsOneWidget);
   });
-}*/
+}
