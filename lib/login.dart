@@ -23,9 +23,16 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('El correo electrónico ingresado no es válido.')),
+      );
+      return;
+    }
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+          .signInWithEmailAndPassword(email: email, password: password);
 
       User? user = userCredential.user;
 
@@ -45,14 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage;
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No hay ningún usuario registrado con este correo.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Contraseña incorrecta.';
-      } else {
-        errorMessage = 'Error desconocido';
-      }
+      String errorMessage = _getFirebaseAuthErrorMessage(e.code);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
@@ -60,9 +60,15 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al iniciar sesión: $e')),
+        SnackBar(content: Text('Error al iniciar sesión. Por favor, inténtalo de nuevo.')),
       );
     }
+  }
+
+  bool _isValidEmail(String email) {
+    // Validar usando una expresión regular
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    return emailRegex.hasMatch(email);
   }
 
   Future<void> _resetPassword() async {
@@ -75,17 +81,20 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('El correo electrónico ingresado no es válido.')),
+      );
+      return;
+    }
+
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Correo de restablecimiento enviado a $email')),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Error desconocido';
-
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No hay ningún usuario registrado con este correo.';
-      }
+      String errorMessage = _getFirebaseAuthErrorMessage(e.code);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
@@ -93,8 +102,29 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al enviar el correo de restablecimiento: $e')),
+        SnackBar(content: Text('Error al enviar el correo de restablecimiento.')),
       );
+    }
+  }
+
+  String _getFirebaseAuthErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'invalid-email':
+        return 'El correo electrónico ingresado no es válido.';
+      case 'user-disabled':
+        return 'El usuario ha sido deshabilitado.';
+      case 'user-not-found':
+        return 'No hay ningún usuario registrado con este correo.';
+      case 'wrong-password':
+        return 'La contraseña ingresada es incorrecta.';
+      case 'email-already-in-use':
+        return 'El correo electrónico ya está en uso.';
+      case 'operation-not-allowed':
+        return 'El inicio de sesión con correo y contraseña está deshabilitado.';
+      case 'weak-password':
+        return 'La contraseña es demasiado débil.';
+      default:
+        return 'Se produjo un error desconocido. Por favor, inténtalo de nuevo.';
     }
   }
 
@@ -202,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10.0),
               GestureDetector(
-                onTap: _resetPassword,  
+                onTap: _resetPassword,
                 child: Text(
                   '¿Has olvidado la contraseña?',
                   textAlign: TextAlign.center,

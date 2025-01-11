@@ -9,9 +9,7 @@ AppBar customAppBar(BuildContext context, bool canReturnBack) {
         ? IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => ProfileWidget()),
-            );
+              _navigateToProfileIfNotAlreadyThere(context);
             },
           )
         : null,
@@ -37,6 +35,21 @@ AppBar customAppBar(BuildContext context, bool canReturnBack) {
     ],
     centerTitle: true,
   );
+}
+
+void _navigateToProfileIfNotAlreadyThere(BuildContext context) {
+  if (!Navigator.of(context).canPop()) {
+    return;
+  }
+
+  if (ModalRoute.of(context)?.settings.name != '/profile') {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProfileWidget(),
+        settings: const RouteSettings(name: '/profile'),
+      ),
+    );
+  }
 }
 
 void _logout(BuildContext context) {
