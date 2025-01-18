@@ -185,7 +185,7 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
       appBar: customAppBar(context, false),
       body: Consumer<UserProvider>(
         builder: (context, provider, child) {
-          return Center(
+          return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
               child: Column(
@@ -230,9 +230,8 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20.0),
-                  Expanded(
-                    child: ListView.builder(
+                  ListView.builder(
+                  shrinkWrap: true,
                       itemCount: _personesDependents.length,
                       itemBuilder: (context, index) {
                         var persona = _personesDependents[index];
@@ -267,7 +266,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Fecha de nacimiento: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('$date'),
+                                    Expanded(
+                                      child: Text('$date'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -276,7 +277,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Edad: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('${persona.edad} años'),
+                                    Expanded(
+                                      child: Text('${persona.edad} años'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -285,7 +288,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Teléfono: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('${persona.telefono}'),
+                                    Expanded(
+                                      child: Text('${persona.telefono}'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -294,7 +299,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Dirección: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('${persona.direccion}'),
+                                    Expanded(
+                                      child: Text('${persona.direccion}'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -303,7 +310,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Peso: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('${persona.peso.toStringAsFixed(1)} kg'),
+                                    Expanded(
+                                      child: Text('${persona.peso.toStringAsFixed(1)} kg'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -312,7 +321,9 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                                       'Altura: ',
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text('${persona.altura.toStringAsFixed(2)} m'),
+                                    Expanded(
+                                      child: Text('${persona.altura.toStringAsFixed(2)} m'),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -330,13 +341,12 @@ class _PersonesDependentsWidgetState extends State<PersonesDependentsWidget> {
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmDelete(persona, index), // Llamar a la función de confirmación
+                              onPressed: () => _confirmDelete(persona, index),
                             ),
                           ),
                         );
                       },
                     ),
-                  ),
                 ],
               ),
             ),

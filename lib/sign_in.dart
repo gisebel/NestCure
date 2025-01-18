@@ -30,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _esCuidadorPersonal = false;
   String _genero = 'Mujer';
   bool _isPasswordVisible = false;
+  bool _aceptaPoliticaDatos = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -146,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   children: [
                     Radio<String>(
-                      value: 'Mujer',
+                                            value: 'Mujer',
                       groupValue: _genero,
                       onChanged: (value) {
                         setState(() {
@@ -159,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 Row(
                   children: [
-                    Radio<String>(
+                    Radio(
                       value: 'Hombre',
                       groupValue: _genero,
                       onChanged: (value) {
@@ -172,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
               ],
-            ),            
+            ),
             SizedBox(height: 20.0),
             Text(
               'Rol del perfil',
@@ -203,6 +204,27 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: 20.0),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: _aceptaPoliticaDatos,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _aceptaPoliticaDatos = value ?? false;
+                    });
+                  },
+                ),
+                Expanded(
+                  child: Text(
+                    'Acepto que mis datos personales se almacenen en la base de datos de Firebase y que se encripten de forma anónima. '
+                    'También confirmo que he pedido autorización a las personas que cuido para que NestCure trate con sus datos personales.',
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20.0),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
@@ -212,6 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                     ),
+                    foregroundColor: Colors.black,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -223,6 +246,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    if (!_aceptaPoliticaDatos) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Debes aceptar la política de datos para registrarte.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
                     String nomCognoms = _nomCognomsController.text;
                     DateTime? dataNaixement = _selectedDate;
                     String correu = _correuController.text;
@@ -245,7 +279,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        UserCredential userCredential =
+                            await FirebaseAuth.instance.createUserWithEmailAndPassword(
                           email: correu,
                           password: contrasena,
                         );
@@ -295,9 +330,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           'activitats': [],
                           'tests': newUser.tests,
                           'certificats': [],
-                          'genero': newUser.genero, 
-                          'telefono': newUser.telefono, 
-                          'direccion': newUser.direccion, 
+                          'genero': newUser.genero,
+                          'telefono': newUser.telefono,
+                          'direccion': newUser.direccion,
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -324,6 +359,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                     ),
+                    foregroundColor: Colors.black,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -366,7 +402,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           onPressed: () {
             setState(() {
-              _isPasswordVisible = !_isPasswordVisible;  // Alternar visibilidad
+              _isPasswordVisible = !_isPasswordVisible;
             });
           },
         ),

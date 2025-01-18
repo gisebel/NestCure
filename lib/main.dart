@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'NestCure',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

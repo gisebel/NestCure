@@ -111,24 +111,16 @@ class _LoginPageState extends State<LoginPage> {
     switch (errorCode) {
       case 'invalid-email':
         return 'El correo electrónico ingresado no es válido.';
-      case 'user-disabled':
-        return 'El usuario ha sido deshabilitado.';
       case 'user-not-found':
         return 'No hay ningún usuario registrado con este correo.';
       case 'wrong-password':
         return 'La contraseña ingresada es incorrecta.';
-      case 'email-already-in-use':
-        return 'El correo electrónico ya está en uso.';
-      case 'operation-not-allowed':
-        return 'El inicio de sesión con correo y contraseña está deshabilitado.';
-      case 'weak-password':
-        return 'La contraseña es demasiado débil.';
       default:
-        return 'Se produjo un error desconocido. Por favor, inténtalo de nuevo.';
+        return 'No hay ningún usuario registrado con este correo. Por favor, regístrate.';
     }
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
@@ -153,6 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 30.0),
+
               Text(
                 'Inicia sesión',
                 textAlign: TextAlign.center,
@@ -163,6 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 30.0),
+
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -177,6 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 20.0),
+
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -191,6 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 30.0),
+
               ElevatedButton(
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
@@ -206,6 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 20.0),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -231,6 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: 10.0),
+
               GestureDetector(
                 onTap: _resetPassword,
                 child: Text(

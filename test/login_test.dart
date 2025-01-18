@@ -14,7 +14,6 @@ class MockUser extends Mock implements User {
 }
 
 void main() {
-
   TestWidgetsFlutterBinding.ensureInitialized();
   late MockFirebaseAuth mockFirebaseAuth;
 
